@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Nginx, Explained Simply — Web Server, Reverse Proxy, Load Balancer and HTTPS</title>
+  <meta name="description" content="A plain-English Nginx guide for beginners: serve a website, put it in front of your app as a reverse proxy, share traffic between servers, add HTTPS, and fix common errors.">
+  <meta name="color-scheme" content="dark">
+  <meta name="theme-color" content="#05060a">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="guide.css">
+</head>
+<body class="guide">
+
+  <header class="topbar">
+    <div class="topbar__inner">
+      <a class="topbar__brand" href="index.html">&larr;&nbsp; Deploybook</a>
+      <nav class="topbar__nav" aria-label="Jump to">
+        <a href="#words">The big picture</a>
+        <a href="#diagram">Diagram</a>
+        <a href="#proxy">Reverse proxy</a>
+        <a href="#https">HTTPS</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="top">
+
+    <section class="hero">
+      <p class="eyebrow">Beginner’s guide</p>
+      <h1>Nginx,<br>explained simply.</h1>
+      <p class="hero__lead">The front door for your website. Serve pages, pass visitors to your app, share the load, and add HTTPS, one small config file at a time.</p>
+      <p class="hero__meta">14 minute read</p>
+    </section>
+
+    <article class="article">
+
+      <nav class="contents" aria-label="Contents">
+        <h2>In this guide</h2>
+        <ol>
+          <li><a href="#story">What Nginx is</a></li>
+          <li><a href="#words">The restaurant host idea</a></li>
+          <li><a href="#install">Install and check it</a></li>
+          <li><a href="#config">Reading a config file</a></li>
+          <li><a href="#static">Serve your own website</a></li>
+          <li><a href="#proxy">Reverse proxy</a></li>
+          <li><a href="#balance">Share the load</a></li>
+          <li><a href="#diagram">The whole picture</a></li>
+          <li><a href="#https">Add HTTPS</a></li>
+          <li><a href="#tips">Handy settings</a></li>
+          <li><a href="#commands">Commands to remember</a></li>
+          <li><a href="#stuck">When things go wrong</a></li>
+          <li><a href="#recap">Quick recap</a></li>
+        </ol>
+      </nav>
+
+      <!-- 01 -->
+      <section class="section" id="story">
+        <span class="section__num">01</span>
+        <h2>What Nginx is</h2>
+        <p>When you type a website address, your browser asks a server for a page. Something on that server has to <strong>listen</strong> for the request and send the right thing back. That something is a <strong>web server</strong>.</p>
+        <p><strong>Nginx</strong> (say “engine-x”) is one of the most popular web servers in the world. It’s fast, light on memory, and free. A huge share of the internet’s busiest sites run through it.</p>
+        <p>It does three jobs, and you’ll learn all of them:</p>
+        <ul class="recap">
+          <li><span><strong>Web server.</strong> Hands out files such as pages, images and styles.</span></li>
+          <li><span><strong>Reverse proxy.</strong> Sits in front of your app and passes requests to it.</span></li>
+          <li><span><strong>Load balancer.</strong> Spreads visitors across several copies of your app.</span></li>
+        </ul>
+
+        <div class="oneline">
+          <span class="oneline__label">In one line</span>
+          <p>Nginx stands at the front of your server, listens for visitors, and sends each one to the right place.</p>
+        </div>
+      </section>
+
+      <!-- 02 -->
+      <section class="section" id="words">
+        <span class="section__num">02</span>
+        <h2>The restaurant host idea</h2>
+        <p>Picture the person who greets you at a restaurant door. They don’t cook. They welcome you and take you to the right table. Nginx works the same way.</p>
+
+        <div class="words" role="table" aria-label="Nginx words and their restaurant meaning">
+          <div class="words__row" role="row">
+            <div class="words__term" role="cell">Nginx</div>
+            <p class="words__def" role="cell">The host at the door. Greets every visitor and decides where they go.</p>
+          </div>
+          <div class="words__row" role="row">
+            <div class="words__term" role="cell">Static file</div>
+            <p class="words__def" role="cell">A ready-made dish, like a page, image or stylesheet. The host can hand it over straight away.</p>
+          </div>
+          <div class="words__row" role="row">
+            <div class="words__term" role="cell">Your app</div>
+            <p class="words__def" role="cell">The kitchen. It cooks dishes to order, such as a login or a search.</p>
+          </div>
+          <div class="words__row" role="row">
+            <div class="words__term" role="cell">Reverse proxy</div>
+            <p class="words__def" role="cell">The host carrying orders to the kitchen and bringing the food back. Guests never see the kitchen.</p>
+          </div>
+          <div class="words__row" role="row">
+            <div class="words__term" role="cell">Port</div>
+            <p class="words__def" role="cell">A numbered door. Websites use 80 for plain web and 443 for secure web.</p>
+          </div>
+          <div class="words__row" role="row">
+            <div class="words__term" role="cell">Server block</div>
+            <p class="words__def" role="cell">One restaurant’s rules. Lets one Nginx look after several websites.</p>
+          </div>
+          <div class="words__row" role="row">
+            <div class="words__term" role="cell">Location</div>
+            <p class="words__def" role="cell">A rule for one part of the menu: “for /api, go to the kitchen”.</p>
+          </div>
+          <div class="words__row" role="row">
+            <div class="words__term" role="cell">HTTPS</div>
+            <p class="words__def" role="cell">A sealed envelope. Nobody on the way can read what’s inside.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 03 -->
+      <section class="section" id="install">
+        <span class="section__num">03</span>
+        <h2>Install and check it</h2>
+        <p>Log in to a Linux server, such as the one from the <a href="ec2.html">EC2 guide</a>. Then install Nginx with the tool your system uses.</p>
+<pre class="code"><span class="c"># Amazon Linux</span>
+sudo dnf install -y nginx
+
+<span class="c"># Ubuntu or Debian</span>
+sudo apt update
+sudo apt install -y nginx</pre>
+        <p style="margin-top:16px;">Start it, and make sure it starts again whenever the server reboots:</p>
+<pre class="code">sudo systemctl enable --now nginx
+
+<span class="c"># is it running?</span>
+sudo systemctl status nginx
+
+<span class="c"># ask it for the home page, from the server itself</span>
+curl http://localhost</pre>
+        <p style="margin-top:16px;">You’ll see a short “Welcome to nginx!” page. Open your server’s public address in a browser and you’ll see the same. If it doesn’t load from outside, check the firewall (the security group on AWS) allows <strong>port 80</strong>.</p>
+
+        <h3>Where things live</h3>
+        <div class="words">
+          <div class="words__row"><div class="words__term">/etc/nginx/nginx.conf</div><p class="words__def">The main settings file. You rarely need to change it.</p></div>
+          <div class="words__row"><div class="words__term">/etc/nginx/conf.d/</div><p class="words__def">Your own site files go here. Every <em>.conf</em> file in this folder is loaded.</p></div>
+          <div class="words__row"><div class="words__term">/var/log/nginx/</div><p class="words__def">Two logs: <em>access.log</em> (who visited) and <em>error.log</em> (what went wrong).</p></div>
+          <div class="words__row"><div class="words__term">/usr/share/nginx/html</div><p class="words__def">The default folder of web pages on Amazon Linux. On Ubuntu it’s <em>/var/www/html</em>.</p></div>
+        </div>
+      </section>
+
+      <!-- 04 -->
+      <section class="section" id="config">
+        <span class="section__num">04</span>
+        <h2>Reading a config file</h2>
+        <p>Nginx is controlled by plain text files. They look odd at first, but they’re made of just two things: <strong>settings</strong> that end in a semicolon, and <strong>blocks</strong> in curly braces that group them.</p>
+        <p>Here’s a complete, tiny website:</p>
+<pre class="code">server {
+    listen 80;
+    server_name example.com;
+
+    root /var/www/mysite;
+    index index.html;
+
+    location / {
+        try_files $uri $uri/ =404;
+    }
+}</pre>
+        <p style="margin-top:16px;">Line by line:</p>
+        <ul class="recap">
+          <li><span><strong>server { }</strong> is one website’s rules.</span></li>
+          <li><span><strong>listen 80</strong> means “answer on port 80”.</span></li>
+          <li><span><strong>server_name</strong> is the address this site answers to. Use your domain, or an underscore <em>_</em> for “anything”.</span></li>
+          <li><span><strong>root</strong> is the folder holding your website’s files.</span></li>
+          <li><span><strong>index</strong> is the file to show when no page is named.</span></li>
+          <li><span><strong>location /</strong> is the rule for every address. <em>try_files</em> looks for a matching file, and shows a 404 if there isn’t one.</span></li>
+        </ul>
+
+        <div class="analogy">
+          <span class="analogy__label">The safety habit</span>
+          <p>After every change, test first with <strong>sudo nginx -t</strong>. If it says “syntax is ok”, apply it with <strong>sudo systemctl reload nginx</strong>. A reload swaps in the new rules without dropping anyone.</p>
+        </div>
+      </section>
+
+      <!-- 05 -->
+      <section class="section" id="static">
+        <span class="section__num">05</span>
+        <h2>Serve your own website</h2>
+        <p>Let’s replace the welcome page with your own. First make a folder and a page:</p>
+<pre class="code">sudo mkdir -p /var/www/mysite
+
+echo "&lt;h1&gt;My site, served by Nginx!&lt;/h1&gt;" | sudo tee /var/www/mysite/index.html</pre>
+        <p style="margin-top:16px;">Now create the config file, <strong>/etc/nginx/conf.d/mysite.conf</strong>:</p>
+<pre class="code">sudo nano /etc/nginx/conf.d/mysite.conf</pre>
+        <p style="margin-top:16px;">Paste in this, then save and exit:</p>
+<pre class="code">server {
+    listen 80 default_server;
+    server_name _;
+
+    root /var/www/mysite;
+    index index.html;
+
+    location / {
+        try_files $uri $uri/ =404;
+    }
+}</pre>
+        <p style="margin-top:16px;">On <strong>Ubuntu</strong>, remove its built-in default site, so the two don’t clash:</p>
+<pre class="code">sudo rm /etc/nginx/sites-enabled/default</pre>
+        <p style="margin-top:16px;">Finally, test and apply:</p>
+<pre class="code">sudo nginx -t
+sudo systemctl reload nginx
+curl http://localhost
+<span class="c"># &lt;h1&gt;My site, served by Nginx!&lt;/h1&gt;</span></pre>
+        <p style="margin-top:16px;">On <strong>Amazon Linux</strong>, the built-in config also has a default server on port 80. If you still see the welcome page, comment out its <em>server { }</em> block in <em>/etc/nginx/nginx.conf</em>, then reload again.</p>
+      </section>
+
+      <!-- 06 -->
+      <section class="section" id="proxy">
+        <span class="section__num">06</span>
+        <h2>Reverse proxy</h2>
+        <p>Here’s the job Nginx is used for most. Your app (Node, Python, Java, anything) listens on a port like <strong>3000</strong>. You don’t want people hitting that directly. Instead, Nginx takes the request on port 80 and <strong>passes it on</strong> to your app, then returns the answer.</p>
+
+        <div class="pair">
+          <div class="pair__item">
+            <h3>Why it’s worth it</h3>
+            <p>One front door for many apps. HTTPS in one place. Your app stays hidden. Static files are served fast.</p>
+          </div>
+          <div class="pair__item">
+            <h3>What you need</h3>
+            <p>An app running on a port. The one from the <a href="docker.html">Docker guide</a> works well.</p>
+          </div>
+        </div>
+
+        <p>Start an app on port 3000. If you built the Docker image, this does it:</p>
+<pre class="code">docker run -d -p 3000:3000 --name hello hello-app
+
+<span class="c"># check it answers directly</span>
+curl http://localhost:3000</pre>
+        <p style="margin-top:16px;">Now change the config so Nginx passes everything to it. Replace the <em>location</em> block in your <strong>mysite.conf</strong>:</p>
+<pre class="code">server {
+    listen 80 default_server;
+    server_name _;
+
+    location / {
+        proxy_pass http://127.0.0.1:3000;
+
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}</pre>
+        <p style="margin-top:16px;">The <strong>proxy_pass</strong> line is the heart of it: “send this to that address”. The <strong>proxy_set_header</strong> lines pass along who the real visitor was, so your app doesn’t think every request came from Nginx.</p>
+<pre class="code">sudo nginx -t &amp;&amp; sudo systemctl reload nginx
+curl http://localhost
+<span class="c"># Hello from my first container!</span></pre>
+        <p style="margin-top:16px;">Port 80 now reaches your app on port 3000, and you can close port 3000 to the outside world.</p>
+
+        <h3>Different paths, different places</h3>
+        <p>You can have several <em>location</em> rules. For example, files from a folder, and anything starting with <strong>/api</strong> to the app:</p>
+<pre class="code">location / {
+    root /var/www/mysite;
+    try_files $uri $uri/ =404;
+}
+
+location /api/ {
+    proxy_pass http://127.0.0.1:3000/;
+}</pre>
+      </section>
+
+      <!-- 07 -->
+      <section class="section" id="balance">
+        <span class="section__num">07</span>
+        <h2>Share the load</h2>
+        <p>One copy of your app can only handle so many visitors. Run <strong>two or more copies</strong>, and Nginx can share the visitors between them. This is <strong>load balancing</strong>.</p>
+        <p>You list the copies in an <strong>upstream</strong> group, and point <em>proxy_pass</em> at the group’s name. This goes above your <em>server</em> block:</p>
+<pre class="code">upstream my_app {
+    server 127.0.0.1:3000;
+    server 127.0.0.1:3001;
+}
+
+server {
+    listen 80 default_server;
+
+    location / {
+        proxy_pass http://my_app;
+        proxy_set_header Host $host;
+    }
+}</pre>
+        <p style="margin-top:16px;">By default, Nginx hands out visitors <strong>in turn</strong>: first to one, then the other. It also notices when a copy stops answering, and stops sending visitors to it for a while.</p>
+
+        <div class="words words--cmd">
+          <div class="words__row"><div class="words__term">(nothing)</div><p class="words__def"><strong>Round robin.</strong> Take turns. The default, and fine for most apps.</p></div>
+          <div class="words__row"><div class="words__term">least_conn;</div><p class="words__def">Send to whichever copy is least busy right now.</p></div>
+          <div class="words__row"><div class="words__term">ip_hash;</div><p class="words__def">The same visitor always goes to the same copy. Useful if the app remembers users in memory.</p></div>
+        </div>
+        <p style="margin-top:16px;">Add one of these words as the first line inside the <em>upstream</em> block to change the style.</p>
+      </section>
+
+    </article>
+
+    <!-- 08 Diagram -->
+    <section class="diagram-section" id="diagram">
+      <div class="diagram-head">
+        <span class="section__num" style="font-size:15px;font-weight:600;display:inline-block;margin-bottom:12px;">08</span>
+        <h2 style="margin:0 0 20px;font-size:clamp(30px,4.4vw,40px);line-height:1.15;font-weight:700;letter-spacing:-0.028em;">The whole picture</h2>
+        <p style="margin:0;color:var(--text-2);">One Nginx at the front does all three jobs. Each rule decides where a request goes: a folder of files, one app, or a group of apps that take turns.</p>
+      </div>
+
+      <figure class="diagram" style="margin:0;">
+        <svg viewBox="0 0 960 440" role="img" aria-labelledby="nt nd">
+          <title id="nt">Diagram of Nginx in front of files and apps</title>
+          <desc id="nd">Visitors reach Nginx on ports 80 and 443. A rule for slash serves static files from a folder. A rule for slash api passes requests to one app. A rule for slash shop shares requests between two copies of an app.</desc>
+
+          <defs>
+            <marker id="nah" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+              <path d="M0,1 L9,5 L0,9 z" class="d-arrow"/>
+            </marker>
+          </defs>
+
+          <!-- Visitors -->
+          <rect class="d-box" x="10" y="185" width="110" height="70" rx="14"/>
+          <text class="d-title" x="65" y="216" text-anchor="middle">Visitors</text>
+          <text class="d-sub" x="65" y="237" text-anchor="middle">browsers</text>
+          <line class="d-line" x1="122" y1="220" x2="188" y2="220" marker-end="url(#nah)"/>
+
+          <!-- Nginx -->
+          <rect class="d-cluster" x="190" y="30" width="300" height="380" rx="20"/>
+          <text class="d-small" x="212" y="58" style="fill:var(--accent-ink)">NGINX · the front door · ports 80, 443</text>
+
+          <rect class="d-pod" x="214" y="84" width="252" height="86" rx="12"/>
+          <text class="d-podtitle" x="340" y="118" text-anchor="middle" style="font-family:var(--mono)">location /</text>
+          <text class="d-sub" x="340" y="142" text-anchor="middle">hand over ready-made files</text>
+
+          <rect class="d-pod" x="214" y="184" width="252" height="86" rx="12"/>
+          <text class="d-podtitle" x="340" y="218" text-anchor="middle" style="font-family:var(--mono)">location /api</text>
+          <text class="d-sub" x="340" y="242" text-anchor="middle">pass to the app</text>
+
+          <rect class="d-pod" x="214" y="284" width="252" height="86" rx="12"/>
+          <text class="d-podtitle" x="340" y="318" text-anchor="middle" style="font-family:var(--mono)">location /shop</text>
+          <text class="d-sub" x="340" y="342" text-anchor="middle">share between copies</text>
+
+          <!-- Targets -->
+          <text class="d-small" x="600" y="62">BEHIND NGINX</text>
+
+          <rect class="d-box" x="600" y="84" width="330" height="86" rx="12"/>
+          <text class="d-title" x="765" y="118" text-anchor="middle">Folder of files</text>
+          <text class="d-sub" x="765" y="142" text-anchor="middle" style="font-family:var(--mono)">/var/www/mysite</text>
+
+          <rect class="d-lb" x="600" y="184" width="330" height="86" rx="12"/>
+          <text class="d-title" x="765" y="218" text-anchor="middle">Your app</text>
+          <text class="d-sub" x="765" y="242" text-anchor="middle" style="font-family:var(--mono)">127.0.0.1:3000</text>
+
+          <rect class="d-lb" x="600" y="284" width="330" height="86" rx="12"/>
+          <text class="d-title" x="765" y="318" text-anchor="middle">Two copies of an app</text>
+          <text class="d-sub" x="765" y="342" text-anchor="middle" style="font-family:var(--mono)">:3001 and :3002, taking turns</text>
+
+          <!-- arrows -->
+          <line class="d-line" x1="468" y1="127" x2="598" y2="127" marker-end="url(#nah)"/>
+          <line class="d-line" x1="468" y1="227" x2="598" y2="227" marker-end="url(#nah)"/>
+          <line class="d-line" x1="468" y1="327" x2="598" y2="327" marker-end="url(#nah)"/>
+
+          <!-- visitor fan-out -->
+          <path class="d-line" d="M158,220 L158,127 L212,127" marker-end="url(#nah)" style="stroke-dasharray:4 5;opacity:0.6"/>
+          <path class="d-line" d="M158,220 L158,327 L212,327" marker-end="url(#nah)" style="stroke-dasharray:4 5;opacity:0.6"/>
+        </svg>
+
+        <ul class="legend">
+          <li><strong>Web server</strong>Serves files straight from a folder, very quickly.</li>
+          <li><strong>Reverse proxy</strong>Passes the request to your app and returns the answer.</li>
+          <li><strong>Load balancer</strong>Shares visitors between copies of the same app.</li>
+          <li><strong>One door</strong>Visitors only ever talk to Nginx.</li>
+        </ul>
+      </figure>
+    </section>
+
+    <article class="article">
+
+      <!-- 09 -->
+      <section class="section" id="https">
+        <span class="section__num">09</span>
+        <h2>Add HTTPS</h2>
+        <p>Plain <strong>http</strong> sends everything in the open. <strong>HTTPS</strong> scrambles it, so no one in between can read it. Browsers also warn people away from sites without it.</p>
+        <p>To get HTTPS you need a <strong>certificate</strong>. A free tool called <strong>Certbot</strong> gets one from <em>Let’s Encrypt</em> and edits your Nginx config for you.</p>
+
+        <h3>Before you start</h3>
+        <ul class="recap">
+          <li><span>You need a <strong>domain name</strong>, such as <em>mysite.com</em>.</span></li>
+          <li><span>The domain’s <strong>A record</strong> must point to your server’s public IP.</span></li>
+          <li><span>Ports <strong>80 and 443</strong> must be open in your firewall or security group.</span></li>
+          <li><span>Your config’s <strong>server_name</strong> should be your domain, not an underscore.</span></li>
+        </ul>
+
+        <h3>Get the certificate</h3>
+<pre class="code"><span class="c"># Ubuntu</span>
+sudo apt install -y certbot python3-certbot-nginx
+
+<span class="c"># Amazon Linux</span>
+sudo dnf install -y certbot python3-certbot-nginx
+
+<span class="c"># get a certificate and let Certbot update Nginx</span>
+sudo certbot --nginx -d mysite.com -d www.mysite.com</pre>
+        <p style="margin-top:16px;">Answer the questions, and choose to redirect HTTP to HTTPS when asked. Certbot adds the certificate lines to your config and reloads Nginx. Visit <strong>https://mysite.com</strong> and look for the padlock.</p>
+
+        <h3>Renewal is automatic</h3>
+        <p>Certificates last about 90 days. Certbot sets up automatic renewal for you. You can check it works with a practice run:</p>
+<pre class="code">sudo certbot renew --dry-run</pre>
+      </section>
+
+      <!-- 10 -->
+      <section class="section" id="tips">
+        <span class="section__num">10</span>
+        <h2>Handy settings</h2>
+        <p>Three small additions that help almost every site. Put them inside your <em>server</em> block.</p>
+
+        <h3>Make pages smaller with compression</h3>
+<pre class="code">gzip on;
+gzip_types text/css application/javascript application/json image/svg+xml;</pre>
+
+        <h3>Let browsers remember images and styles</h3>
+        <p>This tells browsers to keep these files for 30 days, so repeat visits are much faster.</p>
+<pre class="code">location ~* \.(css|js|png|jpg|jpeg|gif|svg|ico|woff2)$ {
+    expires 30d;
+}</pre>
+
+        <h3>Allow bigger file uploads</h3>
+        <p>Nginx rejects uploads over 1 MB by default. Raise the limit if your app takes files.</p>
+<pre class="code">client_max_body_size 10m;</pre>
+        <p style="margin-top:16px;">As always: <strong>nginx -t</strong>, then <strong>reload</strong>.</p>
+      </section>
+
+      <!-- 11 -->
+      <section class="section" id="commands">
+        <span class="section__num">11</span>
+        <h2>Commands to remember</h2>
+        <div class="words words--cmd">
+          <div class="words__row"><div class="words__term">sudo nginx -t</div><p class="words__def">Test your config for mistakes. Do this before every reload.</p></div>
+          <div class="words__row"><div class="words__term">sudo systemctl reload nginx</div><p class="words__def">Apply config changes without dropping visitors.</p></div>
+          <div class="words__row"><div class="words__term">sudo systemctl restart nginx</div><p class="words__def">Stop and start it. Only when a reload isn’t enough.</p></div>
+          <div class="words__row"><div class="words__term">sudo systemctl status nginx</div><p class="words__def">Is it running? Shows recent messages.</p></div>
+          <div class="words__row"><div class="words__term">sudo systemctl stop nginx</div><p class="words__def">Turn it off.</p></div>
+          <div class="words__row"><div class="words__term">nginx -v</div><p class="words__def">Show the installed version.</p></div>
+          <div class="words__row"><div class="words__term">sudo nginx -T</div><p class="words__def">Test, and print the whole combined config.</p></div>
+          <div class="words__row"><div class="words__term">sudo tail -f /var/log/nginx/error.log</div><p class="words__def">Watch errors live. Your best debugging friend.</p></div>
+          <div class="words__row"><div class="words__term">sudo tail -f /var/log/nginx/access.log</div><p class="words__def">Watch visitors arrive.</p></div>
+        </div>
+      </section>
+
+      <!-- 12 -->
+      <section class="section" id="stuck">
+        <span class="section__num">12</span>
+        <h2>When things go wrong</h2>
+
+        <div class="words">
+          <div class="words__row">
+            <div class="words__term">502 Bad Gateway</div>
+            <p class="words__def">Nginx works, but your app doesn’t answer. Is the app running? Is the port in <em>proxy_pass</em> right? Test with <strong>curl http://127.0.0.1:3000</strong>.</p>
+          </div>
+          <div class="words__row">
+            <div class="words__term">404 Not Found</div>
+            <p class="words__def">Nginx can’t find the file. Check <em>root</em> points to the right folder and the file exists there.</p>
+          </div>
+          <div class="words__row">
+            <div class="words__term">403 Forbidden</div>
+            <p class="words__def">Nginx isn’t allowed to read the folder, or there’s no index file. Check permissions and the <em>index</em> line.</p>
+          </div>
+          <div class="words__row">
+            <div class="words__term">“nginx: configuration file test failed”</div>
+            <p class="words__def">A typo. The message names the file and line number. A missing semicolon is the usual cause.</p>
+          </div>
+          <div class="words__row">
+            <div class="words__term">I still see the “Welcome to nginx” page</div>
+            <p class="words__def">The default site is still winning. Remove it (Ubuntu) or comment out the default server (Amazon Linux), then reload.</p>
+          </div>
+          <div class="words__row">
+            <div class="words__term">My changes do nothing</div>
+            <p class="words__def">You forgot to reload. Run <strong>sudo nginx -t</strong>, then <strong>sudo systemctl reload nginx</strong>.</p>
+          </div>
+          <div class="words__row">
+            <div class="words__term">Works on the server, not from my laptop</div>
+            <p class="words__def">The firewall or security group is blocking port 80 or 443.</p>
+          </div>
+        </div>
+
+        <div class="analogy">
+          <span class="analogy__label">Where to look first</span>
+          <p>Nine times out of ten, the answer is in <strong>/var/log/nginx/error.log</strong>. Read the last few lines before you change anything.</p>
+        </div>
+      </section>
+
+      <!-- 13 -->
+      <section class="section" id="recap">
+        <span class="section__num">13</span>
+        <h2>Quick recap</h2>
+        <ul class="recap">
+          <li><span><strong>Nginx</strong> is the front door of your server. It listens and sends each visitor to the right place.</span></li>
+          <li><span>As a <strong>web server</strong>, it serves files from a folder.</span></li>
+          <li><span>As a <strong>reverse proxy</strong>, it passes requests to your app with <strong>proxy_pass</strong>.</span></li>
+          <li><span>As a <strong>load balancer</strong>, it shares visitors across copies listed in an <strong>upstream</strong>.</span></li>
+          <li><span><strong>Certbot</strong> adds free HTTPS in one command.</span></li>
+          <li><span>Always <strong>nginx -t</strong> first, then <strong>reload</strong>.</span></li>
+          <li><span>When stuck, read <strong>error.log</strong>.</span></li>
+        </ul>
+
+        <div class="oneline" style="margin-top:40px;">
+          <span class="oneline__label">If you remember one thing</span>
+          <p>Visitors only ever talk to Nginx. Your job is to tell it, in a small file, where each kind of request should go.</p>
+        </div>
+        <p style="margin-top:28px;"><a href="docker.html">Next: Docker, to package your app &rarr;</a></p>
+      </section>
+
+    </article>
+  </main>
+
+  <nav class="more" aria-label="More guides">
+    <p class="more__label">Keep learning</p>
+    <div class="more__grid">
+      <a href="ec2.html"><strong>EC2 servers</strong><span>Launch and connect to your first server.</span><em>15 min read &rarr;</em></a>
+      <a href="docker.html"><strong>Docker</strong><span>Images, containers and every command.</span><em>12 min read &rarr;</em></a>
+      <a href="index.html"><strong>All guides</strong><span>See the full roadmap from zero to deploy.</span><em>Back to home &rarr;</em></a>
+    </div>
+  </nav>
+
+  <footer class="footer">
+    A beginner’s guide to Nginx. Simplified on purpose. Real setups have more moving parts, but these ideas are the foundation for all of them.
+  </footer>
+
+</body>
+</html>

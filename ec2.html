@@ -14,7 +14,7 @@
 
   <header class="topbar">
     <div class="topbar__inner">
-      <a class="topbar__brand" href="index.html">&larr;&nbsp; Cloud, simply</a>
+      <a class="topbar__brand" href="index.html">&larr;&nbsp; Deploybook</a>
       <nav class="topbar__nav" aria-label="Jump to">
         <a href="#words">The big picture</a>
         <a href="#diagram">Diagram</a>
@@ -289,7 +289,7 @@ sudo systemctl enable --now nginx
 <span class="c"># write our own page</span>
 echo "&lt;h1&gt;Hello from my EC2 server!&lt;/h1&gt;" | sudo tee /usr/share/nginx/html/index.html</pre>
         <p style="margin-top:16px;">Now open <strong>http://</strong> followed by your public IP in a browser. You should see your message. You just hosted a website.</p>
-        <p>If the page doesn’t load, the cause is almost always the security group. Make sure <strong>HTTP (port 80)</strong> is allowed.</p>
+        <p>If the page doesn’t load, the cause is almost always the security group. Make sure <strong>HTTP (port 80)</strong> is allowed. Want to go further? The <a href="nginx.html">Nginx guide</a> shows how to serve your own site and add HTTPS.</p>
 
         <h3>The shortcut: user data</h3>
         <p>Typing commands by hand doesn’t scale. When launching, open <strong>Advanced details</strong> and paste a script into <strong>User data</strong>. EC2 runs it automatically the first time the server starts, so it comes up already set up.</p>
@@ -510,7 +510,7 @@ aws ec2 terminate-instances --instance-ids i-0123456789abcdef0</pre>
           <span class="oneline__label">If you remember one thing</span>
           <p>An EC2 instance is just a computer you’re borrowing. Open only the doors you need, keep the key safe, and give it back when you’re done.</p>
         </div>
-        <p style="margin-top:28px;"><a href="docker.html">Next: Docker, to package your app &rarr;</a></p>
+        <p style="margin-top:28px;"><a href="nginx.html">Next: Nginx, the front door for your website &rarr;</a></p>
       </section>
 
     </article>
@@ -520,7 +520,7 @@ aws ec2 terminate-instances --instance-ids i-0123456789abcdef0</pre>
     <p class="more__label">Keep learning</p>
     <div class="more__grid">
       <a href="aws.html"><strong>AWS essentials</strong><span>Regions, IAM, S3, VPC and costs.</span><em>14 min read &rarr;</em></a>
-      <a href="docker.html"><strong>Docker</strong><span>Images, containers and every command.</span><em>12 min read &rarr;</em></a>
+      <a href="nginx.html"><strong>Nginx</strong><span>Web server, proxy and HTTPS.</span><em>14 min read &rarr;</em></a>
       <a href="index.html"><strong>All guides</strong><span>See the full roadmap from zero to deploy.</span><em>Back to home &rarr;</em></a>
     </div>
   </nav>

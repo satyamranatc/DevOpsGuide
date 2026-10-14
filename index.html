@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Cloud, simply — The complete DevOps guide, from zero to deploy</title>
+  <title>Deploybook — The complete DevOps guide, from zero to deploy</title>
   <meta name="description" content="A complete library of plain-English DevOps guides: Linux, Git, AWS, Docker, Kubernetes, EKS, CI/CD, Terraform, monitoring and security. Start with the live EKS guide.">
   <meta name="color-scheme" content="dark">
   <meta name="theme-color" content="#05060a">
@@ -19,7 +19,7 @@
         <span class="menu-btn__bars" aria-hidden="true"></span>
         Menu
       </button>
-      <a class="topbar__brand" href="index.html">Cloud, simply</a>
+      <a class="topbar__brand" href="index.html">Deploybook</a>
       <span style="width:72px" aria-hidden="true"></span>
     </div>
   </header>
@@ -28,7 +28,7 @@
   <div class="scrim" id="scrim"></div>
   <aside class="drawer" id="drawer" aria-label="Site menu">
     <div class="drawer__head">
-      <a class="drawer__brand" href="index.html">Cloud, simply</a>
+      <a class="drawer__brand" href="index.html">Deploybook</a>
       <button class="drawer__close" id="menu-close" type="button" aria-label="Hide sidebar">&times;</button>
     </div>
 
@@ -68,14 +68,26 @@
           </a>
         </li>
         <li>
+          <a href="nginx.html">
+            <span class="drawer__title"><span class="drawer__step">4</span>Nginx</span>
+            <span class="drawer__desc">Web server, proxy and HTTPS &middot; 14 min</span>
+          </a>
+        </li>
+        <li>
           <a href="docker.html">
-            <span class="drawer__title"><span class="drawer__step">4</span>Docker</span>
+            <span class="drawer__title"><span class="drawer__step">5</span>Docker</span>
             <span class="drawer__desc">Images, containers and commands &middot; 12 min</span>
           </a>
         </li>
         <li>
+          <a href="cicd.html">
+            <span class="drawer__title"><span class="drawer__step">6</span>CI/CD with GitHub Actions</span>
+            <span class="drawer__desc">Auto-deploy React + Express &middot; 20 min</span>
+          </a>
+        </li>
+        <li>
           <a href="eks.html">
-            <span class="drawer__title"><span class="drawer__step">5</span>EKS</span>
+            <span class="drawer__title"><span class="drawer__step">7</span>EKS</span>
             <span class="drawer__desc">Kubernetes on AWS, explained &middot; 10 min</span>
           </a>
         </li>
@@ -115,7 +127,9 @@
             <li><a href="github.html"><strong>Git &amp; GitHub</strong><span>8 min read</span></a></li>
             <li><a href="aws.html"><strong>AWS essentials</strong><span>14 min read</span></a></li>
             <li><a href="ec2.html"><strong>EC2 servers</strong><span>15 min read</span></a></li>
+            <li><a href="nginx.html"><strong>Nginx</strong><span>14 min read</span></a></li>
             <li><a href="docker.html"><strong>Docker</strong><span>12 min read</span></a></li>
+            <li><a href="cicd.html"><strong>CI/CD</strong><span>20 min read</span></a></li>
             <li><a href="eks.html"><strong>EKS</strong><span>10 min read</span></a></li>
           </ul>
         </div>
@@ -123,8 +137,8 @@
 
       <div class="stats reveal" aria-label="Library at a glance">
         <div><strong>9</strong><span>stages</span></div>
-        <div><strong>52</strong><span>guides planned</span></div>
-        <div><strong>5</strong><span>live today</span></div>
+        <div><strong>53</strong><span>guides planned</span></div>
+        <div><strong>7</strong><span>live today</span></div>
       </div>
 
       <!-- Tool ribbon -->
@@ -231,6 +245,34 @@
         </div>
       </a>
 
+      <a class="live__card reveal" href="nginx.html" style="margin-bottom:24px">
+        <div>
+          <div class="live__top"><span class="pill">Live</span><span>Stage 02 · Cloud with AWS · 14 min read</span></div>
+          <h3 class="live__title">Nginx</h3>
+          <p class="live__sub">The front door for your website.</p>
+          <p class="live__text">Serve pages, pass visitors to your app, share the load between copies, and add free HTTPS, all from one small config file.</p>
+          <span class="btn btn--primary">Read the guide <span aria-hidden="true">&rarr;</span></span>
+        </div>
+
+        <div class="live__art" role="img" aria-label="Preview: Nginx receives visitors and passes them to apps.">
+          <div class="layers">
+            <div class="layer layer--cluster">
+              <span class="layer__name">VISITORS · ports 80 and 443</span>
+              <div class="layer layer--node">
+                <span class="layer__name">NGINX · the host at the door</span>
+                <div class="layer layer--pod">
+                  <span class="layer__name">LOCATION /api · a rule</span>
+                  <div class="layer layer--container">
+                    <span class="layer__name">YOUR APP · port 3000</span>
+                    proxy_pass http://127.0.0.1:3000;
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </a>
+
       <a class="live__card reveal" href="docker.html" style="margin-bottom:24px">
         <div>
           <div class="live__top"><span class="pill">Live</span><span>Stage 03 · Containers · 12 min read</span></div>
@@ -251,6 +293,34 @@
                   <div class="layer layer--container">
                     <span class="layer__name">YOUR APP</span>
                     docker run hello-app
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </a>
+
+      <a class="live__card reveal" href="cicd.html" style="margin-bottom:24px">
+        <div>
+          <div class="live__top"><span class="pill">Live</span><span>Stage 05 · CI/CD · 20 min read</span></div>
+          <h3 class="live__title">CI/CD</h3>
+          <p class="live__sub">Push your code. Watch it go live.</p>
+          <p class="live__text">A full project: GitHub Actions tests a React and Express app, builds Docker images, pushes them to Docker Hub, and deploys to EC2 behind Nginx.</p>
+          <span class="btn btn--primary">Read the guide <span aria-hidden="true">&rarr;</span></span>
+        </div>
+
+        <div class="live__art" role="img" aria-label="Preview: GitHub Actions builds images, pushes them to Docker Hub, and deploys to a server.">
+          <div class="layers">
+            <div class="layer layer--cluster">
+              <span class="layer__name">GITHUB ACTIONS · the robot</span>
+              <div class="layer layer--node">
+                <span class="layer__name">BUILD · Docker images</span>
+                <div class="layer layer--pod">
+                  <span class="layer__name">PUSH · Docker Hub</span>
+                  <div class="layer layer--container">
+                    <span class="layer__name">DEPLOY · your EC2 server</span>
+                    docker compose up -d
                   </div>
                 </div>
               </div>
@@ -326,13 +396,14 @@
             <li class="is-live"><a href="aws.html">AWS essentials <span class="pill">Live</span></a></li>
             <li>IAM: who can do what</li>
             <li class="is-live"><a href="ec2.html">EC2 servers <span class="pill">Live</span></a></li>
+            <li class="is-live"><a href="nginx.html">Nginx web server <span class="pill">Live</span></a></li>
             <li>S3 storage</li>
             <li>VPC networking</li>
             <li>Load balancers</li>
             <li>Auto Scaling</li>
             <li>Route 53 and DNS</li>
           </ul>
-          <p class="stage__count">8 guides · 2 live</p>
+          <p class="stage__count">9 guides · 3 live</p>
         </article>
 
         <article class="stage reveal" data-d="2">
@@ -372,13 +443,13 @@
           <p class="stage__desc">Test and ship your code automatically.</p>
           <ul class="stage__list">
             <li>What is CI/CD?</li>
-            <li>GitHub Actions</li>
+            <li class="is-live"><a href="cicd.html">GitHub Actions: React + Express to EC2 <span class="pill">Live</span></a></li>
             <li>Jenkins</li>
             <li>GitLab CI</li>
             <li>ArgoCD and GitOps</li>
             <li>AWS CodePipeline</li>
           </ul>
-          <p class="stage__count">6 guides</p>
+          <p class="stage__count">6 guides · 1 live</p>
         </article>
 
         <article class="stage reveal" data-d="2">

@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CI/CD with GitHub Actions — Deploy a React and Express App to EC2 with Docker, Docker Hub and Nginx</title>
+  <meta name="description" content="A complete beginner guide to CI/CD: push code to GitHub and have GitHub Actions test it, build Docker images, push them to Docker Hub and deploy a React and Express app to EC2 behind Nginx.">
+  <meta name="color-scheme" content="dark">
+  <meta name="theme-color" content="#05060a">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="guide.css">
+</head>
+<body class="guide">
+
+  <header class="topbar">
+    <div class="topbar__inner">
+      <a class="topbar__brand" href="index.html">&larr;&nbsp; Deploybook</a>
+      <nav class="topbar__nav" aria-label="Jump to">
+        <a href="#words">The big picture</a>
+        <a href="#diagram">Diagram</a>
+        <a href="#workflow">The workflow</a>
+        <a href="#stuck">Fixes</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="top">
+
+    <section class="hero">
+      <p class="eyebrow">Beginner’s project guide</p>
+      <h1>CI/CD with GitHub Actions,<br>explained simply.</h1>
+      <p class="hero__lead">Push your code, and a robot tests it, packs it into Docker, and puts it live on EC2 behind Nginx. We’ll build the whole thing for a small React and Express app.</p>
+      <p class="hero__meta">20 minute read</p>
+    </section>
+
+    <article class="article">
+
+      <nav class="contents" aria-label="Contents">
+        <h2>In this guide</h2>
+        <ol>
+          <li><a href="#story">The goal</a></li>
+          <li><a href="#words">The delivery-van idea</a></li>
+          <li><a href="#diagram">The whole picture</a></li>
+          <li><a href="#app">The app</a></li>
+          <li><a href="#docker">Put it in Docker</a></li>
+          <li><a href="#hub">Set up Docker Hub</a></li>
+          <li><a href="#server">Set up the EC2 server</a></li>
+          <li><a href="#secrets">Give GitHub the keys</a></li>
+          <li><a href="#workflow">Write the workflow</a></li>
+          <li><a href="#run">Watch it deploy</a></li>
+          <li><a href="#rollback">Rollbacks</a></li>
+          <li><a href="#safe">Make it safer</a></li>
+          <li><a href="#stuck">When things go wrong</a></li>
+          <li><a href="#recap">Quick recap</a></li>
+        </ol>
+      </nav>
+
+      <div class="analogy" style="margin-top:32px">
+        <span class="analogy__label">Before you start</span>
+        <p>This guide builds on the others. It helps to have read <a href="github.html">Git &amp; GitHub</a>, <a href="docker.html">Docker</a>, <a href="ec2.html">EC2</a> and <a href="nginx.html">Nginx</a>. You’ll also need free accounts on GitHub, Docker Hub and AWS, and Node 20 on your computer.</p>
+      </div>
+
+      <!-- 01 -->
+      <section class="section" id="story">
+        <span class="section__num">01</span>
+        <h2>The goal</h2>
+        <p>Right now, putting a change live probably means: test it, build it, log in to the server, copy files, restart things, and hope you didn’t forget a step. Do that ten times a day and you’ll make mistakes.</p>
+        <p>We want this instead:</p>
+
+        <div class="oneline">
+          <span class="oneline__label">The dream</span>
+          <p>You run <strong>git push</strong>. A few minutes later, your change is live. Nothing else to do.</p>
+        </div>
+
+        <p>That’s <strong>CI/CD</strong>, and <strong>GitHub Actions</strong> is the free robot on GitHub that does it for you. It watches your repository, and whenever you push, it runs the steps you wrote down.</p>
+      </section>
+
+      <!-- 02 -->
+      <section class="section" id="words">
+        <span class="section__num">02</span>
+        <h2>The delivery-van idea</h2>
+        <p>Think of a small factory that makes a product and ships it to a shop. Each CI/CD word fits somewhere in that story.</p>
+
+        <div class="words" role="table" aria-label="CI/CD words and their meaning">
+          <div class="words__row" role="row">
+            <div class="words__term" role="cell">CI</div>
+            <p class="words__def" role="cell"><strong>Continuous Integration.</strong> Every time someone adds code, it’s automatically built and tested. Like quality control on the factory floor.</p>
+          </div>
+          <div class="words__row" role="row">
+            <div class="words__term" role="cell">CD</div>
+            <p class="words__def" role="cell"><strong>Continuous Delivery or Deployment.</strong> Code that passes the checks is automatically sent live. Like the van that drives to the shop.</p>
+          </div>
+          <div class="words__row" role="row">
+            <div class="words__term" role="cell">Pipeline</div>
+            <p class="words__def" role="cell">The whole assembly line, from your push to the live site.</p>
+          </div>
+          <div class="words__row" role="row">
+            <div class="words__term" role="cell">Workflow</div>
+            <p class="words__def" role="cell">GitHub’s name for one pipeline. It’s a single file of instructions, written in YAML.</p>
+          </div>
+          <div class="words__row" role="row">
+            <div class="words__term" role="cell">Job</div>
+            <p class="words__def" role="cell">One stage of the line, such as “test” or “deploy”. Each job runs on its own fresh computer.</p>
+          </div>
+          <div class="words__row" role="row">
+            <div class="words__term" role="cell">Step</div>
+            <p class="words__def" role="cell">One small action inside a job, like “install packages”.</p>
+          </div>
+          <div class="words__row" role="row">
+            <div class="words__term" role="cell">Runner</div>
+            <p class="words__def" role="cell">The temporary computer GitHub lends you to run a job. It’s wiped when the job ends.</p>
+          </div>
+          <div class="words__row" role="row">
+            <div class="words__term" role="cell">Secret</div>
+            <p class="words__def" role="cell">A password or key stored safely in GitHub. Your workflow can use it, but nobody can read it.</p>
+          </div>
+          <div class="words__row" role="row">
+            <div class="words__term" role="cell">Docker Hub</div>
+            <p class="words__def" role="cell">The warehouse between factory and shop. Built images wait here to be collected.</p>
+          </div>
+        </div>
+      </section>
+
+    </article>
+
+    <!-- 03 Diagram -->
+    <section class="diagram-section" id="diagram">
+      <div class="diagram-head">
+        <span class="section__num" style="font-size:15px;font-weight:600;display:inline-block;margin-bottom:12px;">03</span>
+        <h2 style="margin:0 0 20px;font-size:clamp(30px,4.4vw,40px);line-height:1.15;font-weight:700;letter-spacing:-0.028em;">The whole picture</h2>
+        <p style="margin:0;color:var(--text-2);">This is the pipeline we’re building. Follow it from the top left: you push, the robot tests and builds, the images go to Docker Hub, and EC2 pulls and runs them.</p>
+      </div>
+
+      <figure class="diagram" style="margin:0;">
+        <svg viewBox="0 0 960 470" role="img" aria-labelledby="ct cd">
+          <title id="ct">Diagram of the CI/CD pipeline</title>
+          <desc id="cd">A developer pushes code to GitHub. GitHub Actions tests the code, builds Docker images and pushes them to Docker Hub. Actions then connects to EC2 over SSH, and EC2 pulls the images from Docker Hub. On EC2, an Nginx web container serves React and passes slash api requests to an Express api container. Visitors reach the web container on port 80.</desc>
+
+          <defs>
+            <marker id="cah" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+              <path d="M0,1 L9,5 L0,9 z" class="d-arrow"/>
+            </marker>
+          </defs>
+
+          <!-- Developer -->
+          <rect class="d-box" x="10" y="50" width="120" height="70" rx="14"/>
+          <text class="d-title" x="70" y="81" text-anchor="middle">You</text>
+          <text class="d-sub" x="70" y="102" text-anchor="middle">git push</text>
+          <line class="d-line" x1="132" y1="85" x2="168" y2="85" marker-end="url(#cah)"/>
+
+          <!-- GitHub -->
+          <rect class="d-node" x="170" y="50" width="130" height="70" rx="14"/>
+          <text class="d-title" x="235" y="81" text-anchor="middle">GitHub</text>
+          <text class="d-sub" x="235" y="102" text-anchor="middle">your code</text>
+          <line class="d-line" x1="302" y1="85" x2="338" y2="85" marker-end="url(#cah)"/>
+
+          <!-- Actions -->
+          <rect class="d-cluster" x="340" y="20" width="420" height="130" rx="18"/>
+          <text class="d-small" x="360" y="44" style="fill:var(--accent-ink)">GITHUB ACTIONS · the robot</text>
+          <rect class="d-pod" x="356" y="62" width="120" height="70" rx="10"/>
+          <text class="d-podtitle" x="416" y="92" text-anchor="middle">1 · Test</text>
+          <text class="d-sub" x="416" y="112" text-anchor="middle" style="font-size:12px">check it works</text>
+          <rect class="d-pod" x="490" y="62" width="120" height="70" rx="10"/>
+          <text class="d-podtitle" x="550" y="92" text-anchor="middle">2 · Build</text>
+          <text class="d-sub" x="550" y="112" text-anchor="middle" style="font-size:12px">make images</text>
+          <rect class="d-pod" x="624" y="62" width="120" height="70" rx="10"/>
+          <text class="d-podtitle" x="684" y="92" text-anchor="middle">3 · Push</text>
+          <text class="d-sub" x="684" y="112" text-anchor="middle" style="font-size:12px">upload images</text>
+
+          <!-- Docker Hub -->
+          <line class="d-line" x1="762" y1="85" x2="798" y2="85" marker-end="url(#cah)"/>
+          <rect class="d-lb" x="800" y="50" width="150" height="70" rx="14"/>
+          <text class="d-title" x="875" y="81" text-anchor="middle">Docker Hub</text>
+          <text class="d-sub" x="875" y="102" text-anchor="middle">image storage</text>
+
+          <!-- Deploy arrow & pull arrow -->
+          <line class="d-line" x1="550" y1="152" x2="550" y2="228" marker-end="url(#cah)"/>
+          <text class="d-sub" x="562" y="196" style="font-size:12px">4 · SSH in and deploy</text>
+          <line class="d-line" x1="875" y1="122" x2="875" y2="228" marker-end="url(#cah)" style="stroke-dasharray:5 5"/>
+          <text class="d-sub" x="863" y="180" text-anchor="end" style="font-family:var(--mono);font-size:12px">docker pull</text>
+
+          <!-- EC2 -->
+          <rect class="d-cloud" x="340" y="230" width="610" height="225" rx="20"/>
+          <text class="d-small" x="362" y="256">AWS EC2 · your server, running docker compose</text>
+
+          <rect class="d-pod" x="372" y="282" width="250" height="150" rx="14"/>
+          <text class="d-podtitle" x="497" y="332" text-anchor="middle">web container</text>
+          <text class="d-sub" x="497" y="356" text-anchor="middle">Nginx + React files</text>
+          <text class="d-sub" x="497" y="378" text-anchor="middle" style="font-family:var(--mono);font-size:12px">port 80</text>
+
+          <rect class="d-pod" x="688" y="282" width="250" height="150" rx="14"/>
+          <text class="d-podtitle" x="813" y="332" text-anchor="middle">api container</text>
+          <text class="d-sub" x="813" y="356" text-anchor="middle">Express</text>
+          <text class="d-sub" x="813" y="378" text-anchor="middle" style="font-family:var(--mono);font-size:12px">port 3000</text>
+
+          <line class="d-line" x1="624" y1="357" x2="686" y2="357" marker-end="url(#cah)"/>
+          <text class="d-sub" x="655" y="345" text-anchor="middle" style="font-family:var(--mono);font-size:12px">/api</text>
+
+          <!-- Visitors -->
+          <rect class="d-box" x="10" y="322" width="120" height="70" rx="14"/>
+          <text class="d-title" x="70" y="353" text-anchor="middle">Visitors</text>
+          <text class="d-sub" x="70" y="374" text-anchor="middle">browsers</text>
+          <line class="d-line" x1="132" y1="357" x2="370" y2="357" marker-end="url(#cah)"/>
+          <text class="d-sub" x="250" y="345" text-anchor="middle" style="font-size:12px">http, port 80</text>
+        </svg>
+
+        <ul class="legend">
+          <li><strong>Test</strong>Runs your checks. If anything fails, the pipeline stops here.</li>
+          <li><strong>Build and push</strong>Packs the React and Express apps into two Docker images and uploads them.</li>
+          <li><strong>Deploy</strong>Connects to EC2, pulls the new images and restarts the containers.</li>
+          <li><strong>Nginx</strong>Serves React and passes anything under /api to Express.</li>
+        </ul>
+      </figure>
+    </section>
+
+    <article class="article">
+
+      <!-- 04 -->
+      <section class="section" id="app">
+        <span class="section__num">04</span>
+        <h2>The app</h2>
+        <p>We need something small to deploy: a React page that shows a message from an Express API. Make a folder for the whole project, and create this layout inside it.</p>
+<pre class="code">myapp/
+├── server/                 <span class="c"># Express API</span>
+│   ├── app.js
+│   ├── index.js
+│   ├── app.test.js
+│   ├── package.json
+│   ├── Dockerfile
+│   └── .dockerignore
+├── client/                 <span class="c"># React app (made with Vite)</span>
+│   ├── src/App.jsx
+│   ├── vite.config.js
+│   ├── nginx.conf
+│   ├── Dockerfile
+│   └── .dockerignore
+├── compose.local.yaml      <span class="c"># for testing on your laptop</span>
+└── .github/workflows/deploy.yml</pre>
+
+        <h3>The Express API</h3>
+        <p>Inside <strong>server/</strong>, run <strong>npm init -y</strong> and <strong>npm install express</strong>. Then set the scripts in <strong>package.json</strong>:</p>
+<pre class="code"><span class="c">// server/package.json  (the "scripts" part)</span>
+"scripts": {
+  "start": "node index.js",
+  "test": "node --test"
+}</pre>
+        <p style="margin-top:16px;">We split the app in two files. <strong>app.js</strong> describes the routes. <strong>index.js</strong> starts listening. This lets the tests use the app without starting a real server.</p>
+<pre class="code"><span class="c">// server/app.js</span>
+const express = require('express');
+const app = express();
+
+app.get('/api/health', (req, res) =&gt; {
+  res.json({ status: 'ok' });
+});
+
+app.get('/api/hello', (req, res) =&gt; {
+  res.json({ message: 'Hello from Express, deployed automatically!' });
+});
+
+module.exports = app;</pre>
+<pre class="code"><span class="c">// server/index.js</span>
+const app = require('./app');
+const port = process.env.PORT || 3000;
+
+app.listen(port, () =&gt; console.log('API listening on port ' + port));</pre>
+
+        <h3>A test, so CI has something to check</h3>
+        <p>This uses Node’s built-in test tool, so there’s nothing extra to install.</p>
+<pre class="code"><span class="c">// server/app.test.js</span>
+const test = require('node:test');
+const assert = require('node:assert');
+const app = require('./app');
+
+test('health endpoint answers ok', async () =&gt; {
+  const server = app.listen(0);
+  const { port } = server.address();
+
+  const res = await fetch('http://127.0.0.1:' + port + '/api/health');
+  const body = await res.json();
+
+  assert.strictEqual(res.status, 200);
+  assert.strictEqual(body.status, 'ok');
+  server.close();
+});</pre>
+        <p style="margin-top:16px;">Check it passes on your computer. Then try the server:</p>
+<pre class="code">cd server
+npm test
+npm start
+<span class="c"># in another terminal:</span>
+curl http://localhost:3000/api/hello</pre>
+
+        <h3>The React app</h3>
+        <p>From the project folder, make the client with Vite:</p>
+<pre class="code">npm create vite@latest client -- --template react
+cd client
+npm install</pre>
+        <p style="margin-top:16px;">Replace <strong>src/App.jsx</strong> with a page that calls the API:</p>
+<pre class="code"><span class="c">// client/src/App.jsx</span>
+import { useEffect, useState } from 'react'
+
+export default function App() {
+  const [message, setMessage] = useState('Loading...')
+
+  useEffect(() =&gt; {
+    fetch('/api/hello')
+      .then((res) =&gt; res.json())
+      .then((data) =&gt; setMessage(data.message))
+      .catch(() =&gt; setMessage('Could not reach the API'))
+  }, [])
+
+  return &lt;h1&gt;{message}&lt;/h1&gt;
+}</pre>
+        <p style="margin-top:16px;">While developing, Vite needs to forward <strong>/api</strong> calls to Express. Set that in <strong>vite.config.js</strong>:</p>
+<pre class="code"><span class="c">// client/vite.config.js</span>
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+
+export default defineConfig({
+  plugins: [react()],
+  server: {
+    proxy: { '/api': 'http://localhost:3000' },
+  },
+})</pre>
+        <p style="margin-top:16px;">Run <strong>npm run dev</strong> in <em>client</em> (with the API running too), and your page shows the message from Express. Notice that React calls the plain path <strong>/api/hello</strong>, with no server address. In production, Nginx will handle that path, which is why it all fits together.</p>
+
+        <div class="analogy">
+          <span class="analogy__label">Commit the lock files</span>
+          <p>Make sure <strong>package-lock.json</strong> in both folders is committed to Git. The pipeline uses <strong>npm ci</strong>, which needs it, and it guarantees the same versions everywhere.</p>
+        </div>
+      </section>
+
+      <!-- 05 -->
+      <section class="section" id="docker">
+        <span class="section__num">05</span>
+        <h2>Put it in Docker</h2>
+        <p>Each part gets its own image: one for Express, one for React plus Nginx. If Docker is new, the <a href="docker.html">Docker guide</a> explains every word here.</p>
+
+        <h3>The API image</h3>
+<pre class="code"><span class="c"># server/Dockerfile</span>
+FROM node:20-alpine
+WORKDIR /app
+
+<span class="c"># install packages first, so Docker can reuse this step</span>
+COPY package*.json ./
+RUN npm ci --omit=dev
+
+COPY . .
+EXPOSE 3000
+CMD ["node", "index.js"]</pre>
+<pre class="code"><span class="c"># server/.dockerignore  (and the same in client/)</span>
+node_modules
+npm-debug.log
+.git</pre>
+
+        <h3>The web image, in two stages</h3>
+        <p>React has to be <em>built</em> into plain files before it can be served. The first stage builds it with Node. The second stage throws Node away and keeps only Nginx and the built files, which makes the final image small.</p>
+<pre class="code"><span class="c"># client/Dockerfile</span>
+<span class="c"># stage 1: build the React app</span>
+FROM node:20-alpine AS build
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci
+COPY . .
+RUN npm run build
+
+<span class="c"># stage 2: serve it with Nginx</span>
+FROM nginx:alpine
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+COPY --from=build /app/dist /usr/share/nginx/html
+EXPOSE 80</pre>
+
+        <h3>The Nginx config</h3>
+        <p>This is the front door from the <a href="nginx.html">Nginx guide</a>. It serves the React files, and passes <strong>/api</strong> to the Express container. Inside Docker, containers find each other by service name, so the API is simply <strong>api</strong>.</p>
+<pre class="code"><span class="c"># client/nginx.conf</span>
+server {
+    listen 80;
+    root /usr/share/nginx/html;
+    index index.html;
+
+    <span class="c"># anything starting with /api goes to Express</span>
+    location /api/ {
+        proxy_pass http://api:3000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+    <span class="c"># everything else is the React app</span>
+    location / {
+        try_files $uri /index.html;
+    }
+}</pre>
+        <p style="margin-top:16px;">The line <strong>try_files $uri /index.html</strong> sends unknown paths back to the React app, which is what lets React handle its own pages.</p>
+
+        <h3>Test it all on your laptop first</h3>
+        <p>A small compose file in the project root builds both images and runs them together:</p>
+<pre class="code"><span class="c"># compose.local.yaml</span>
+services:
+  api:
+    build: ./server
+
+  web:
+    build: ./client
+    ports:
+      - "8080:80"
+    depends_on:
+      - api</pre>
+<pre class="code">docker compose -f compose.local.yaml up --build</pre>
+        <p style="margin-top:16px;">Open <strong>http://localhost:8080</strong>. You should see “Hello from Express, deployed automatically!”. If so, the Docker part is finished. Press Ctrl+C and run <strong>docker compose -f compose.local.yaml down</strong> to stop.</p>
+      </section>
+
+      <!-- 06 -->
+      <section class="section" id="hub">
+        <span class="section__num">06</span>
+        <h2>Set up Docker Hub</h2>
+        <p>The robot needs somewhere to leave the built images, and the server needs somewhere to collect them. That’s <strong>Docker Hub</strong>.</p>
+
+        <ol class="steps">
+          <li>
+            <h3>Make an account</h3>
+            <p>Sign up at hub.docker.com. Your <strong>username</strong> becomes part of every image name, such as <em>yourname/myapp-api</em>.</p>
+          </li>
+          <li>
+            <h3>Create an access token</h3>
+            <p>Go to <strong>Account settings → Personal access tokens</strong> and create one with <strong>Read &amp; Write</strong> permission. Copy it now, because it’s only shown once. We use a token instead of your password, so it can be cancelled any time without changing your login.</p>
+          </li>
+          <li>
+            <h3>Nothing else to prepare</h3>
+            <p>The repositories <em>myapp-api</em> and <em>myapp-web</em> are created automatically the first time the pipeline pushes to them. Note that new repositories are public by default, so never put passwords or secrets inside an image.</p>
+          </li>
+        </ol>
+      </section>
+
+      <!-- 07 -->
+      <section class="section" id="server">
+        <span class="section__num">07</span>
+        <h2>Set up the EC2 server</h2>
+        <p>The server only needs Docker and a small file. It won’t build anything. It just pulls ready-made images, so even a small <strong>t3.micro</strong> is fine.</p>
+
+        <h3>Step 1 · Launch the instance</h3>
+        <p>Follow the <a href="ec2.html">EC2 guide</a> with these choices:</p>
+        <ul class="recap">
+          <li><span><strong>Ubuntu</strong> as the image. The login username is <strong>ubuntu</strong>.</span></li>
+          <li><span><strong>t3.micro</strong> as the size, with the key pair you already made.</span></li>
+          <li><span>A security group that allows <strong>SSH (22)</strong> and <strong>HTTP (80)</strong>.</span></li>
+        </ul>
+
+        <h3>Step 2 · Install Docker</h3>
+        <p>Log in with <strong>ssh -i my-key.pem ubuntu@YOUR-IP</strong>, then run:</p>
+<pre class="code"><span class="c"># install Docker and the compose plugin</span>
+curl -fsSL https://get.docker.com | sudo sh
+
+<span class="c"># let the ubuntu user run docker without sudo</span>
+sudo usermod -aG docker ubuntu</pre>
+        <p style="margin-top:16px;">Now <strong>log out and log back in</strong>, so the new permission applies. Check it with:</p>
+<pre class="code">docker --version
+docker compose version</pre>
+
+        <h3>Step 3 · Make a deploy key</h3>
+        <p>The robot needs its own key to log in. Don’t reuse your personal one. On <strong>your laptop</strong>, make a fresh pair:</p>
+<pre class="code">ssh-keygen -t ed25519 -f deploy_key -C "github-actions" -N ""</pre>
+        <p style="margin-top:16px;">This creates <strong>deploy_key</strong> (private) and <strong>deploy_key.pub</strong> (public). Add the public half to the server:</p>
+<pre class="code">cat deploy_key.pub | ssh -i my-key.pem ubuntu@YOUR-IP \
+  'cat &gt;&gt; ~/.ssh/authorized_keys'</pre>
+        <p style="margin-top:16px;">Test that it works, with no password asked:</p>
+<pre class="code">ssh -i deploy_key ubuntu@YOUR-IP "echo it works"</pre>
+
+        <h3>Step 4 · Add the compose file</h3>
+        <p>On the server, make a folder and a file. This is the file that decides what runs. Replace <strong>yourname</strong> with your Docker Hub username.</p>
+<pre class="code">mkdir -p ~/myapp
+nano ~/myapp/docker-compose.yml</pre>
+<pre class="code"><span class="c"># ~/myapp/docker-compose.yml  (on the server)</span>
+services:
+  api:
+    image: yourname/myapp-api:latest
+    restart: unless-stopped
+
+  web:
+    image: yourname/myapp-web:latest
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    depends_on:
+      - api</pre>
+        <p style="margin-top:16px;"><strong>restart: unless-stopped</strong> brings your containers back automatically if the server reboots or a container crashes. Only the <strong>web</strong> container is exposed to the outside, on port 80. The API stays hidden behind it.</p>
+      </section>
+
+      <!-- 08 -->
+      <section class="section" id="secrets">
+        <span class="section__num">08</span>
+        <h2>Give GitHub the keys</h2>
+        <p>The workflow needs five pieces of private information. Never write these in the file itself. Store them as <strong>secrets</strong>.</p>
+        <p>Push your project to a new GitHub repository first. Then open it and go to <strong>Settings → Secrets and variables → Actions → New repository secret</strong>, and add these five:</p>
+
+        <div class="words words--cmd">
+          <div class="words__row"><div class="words__term">DOCKERHUB_USERNAME</div><p class="words__def">Your Docker Hub username.</p></div>
+          <div class="words__row"><div class="words__term">DOCKERHUB_TOKEN</div><p class="words__def">The access token you copied from Docker Hub.</p></div>
+          <div class="words__row"><div class="words__term">EC2_HOST</div><p class="words__def">Your server’s public IP address.</p></div>
+          <div class="words__row"><div class="words__term">EC2_USER</div><p class="words__def">The login name: <em>ubuntu</em>.</p></div>
+          <div class="words__row"><div class="words__term">EC2_SSH_KEY</div><p class="words__def">The <strong>whole contents</strong> of the private file <em>deploy_key</em>, including the BEGIN and END lines.</p></div>
+        </div>
+
+        <p style="margin-top:20px;">To copy the key on a Mac, run <strong>pbcopy &lt; deploy_key</strong>, then paste. Once saved, GitHub never shows a secret again, which is the point.</p>
+
+        <div class="analogy">
+          <span class="analogy__label">Keep it safe</span>
+          <p>Never commit <strong>deploy_key</strong> or your <strong>.pem</strong> file to Git. After adding the secret, you can delete the local copy of <strong>deploy_key</strong>.</p>
+        </div>
+      </section>
+
+      <!-- 09 -->
+      <section class="section" id="workflow">
+        <span class="section__num">09</span>
+        <h2>Write the workflow</h2>
+        <p>Now the main event. Create this file exactly at <strong>.github/workflows/deploy.yml</strong>. The folder names matter, because GitHub only looks there.</p>
+<pre class="code"><span class="c"># .github/workflows/deploy.yml</span>
+name: CI/CD
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  <span class="c"># 1 · check the code works</span>
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: |
+            server/package-lock.json
+            client/package-lock.json
+
+      - name: Test the API
+        working-directory: server
+        run: |
+          npm ci
+          npm test
+
+      - name: Build the React app
+        working-directory: client
+        run: |
+          npm ci
+          npm run build
+
+  <span class="c"># 2 · build images and upload them to Docker Hub</span>
+  build-and-push:
+    needs: test
+    if: github.event_name == 'push' &amp;&amp; github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: docker/setup-buildx-action@v3
+
+      - uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and push the API image
+        uses: docker/build-push-action@v6
+        with:
+          context: ./server
+          push: true
+          tags: |
+            ${{ secrets.DOCKERHUB_USERNAME }}/myapp-api:latest
+            ${{ secrets.DOCKERHUB_USERNAME }}/myapp-api:${{ github.sha }}
+
+      - name: Build and push the web image
+        uses: docker/build-push-action@v6
+        with:
+          context: ./client
+          push: true
+          tags: |
+            ${{ secrets.DOCKERHUB_USERNAME }}/myapp-web:latest
+            ${{ secrets.DOCKERHUB_USERNAME }}/myapp-web:${{ github.sha }}
+
+  <span class="c"># 3 · log in to EC2 and start the new version</span>
+  deploy:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy over SSH
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            cd ~/myapp
+            docker compose pull
+            docker compose up -d
+            docker image prune -f</pre>
+
+        <h3>What each part does</h3>
+        <div class="words">
+          <div class="words__row"><div class="words__term">on:</div><p class="words__def">When to run. Every push to <em>main</em>, and every pull request aimed at <em>main</em>.</p></div>
+          <div class="words__row"><div class="words__term">test</div><p class="words__def">Runs on every push and pull request. Checks out your code, installs packages, runs the API test and makes sure React builds. This is the <strong>CI</strong> part.</p></div>
+          <div class="words__row"><div class="words__term">needs:</div><p class="words__def">Order. “Don’t start until that job has passed.” If the tests fail, nothing after them runs.</p></div>
+          <div class="words__row"><div class="words__term">if:</div><p class="words__def">Only build and deploy for pushes to <em>main</em>. Pull requests get tested, but never deployed.</p></div>
+          <div class="words__row"><div class="words__term">build-and-push</div><p class="words__def">Logs in to Docker Hub, builds both images, and uploads each with two tags: <em>latest</em>, and the exact commit ID so you can always find an old version.</p></div>
+          <div class="words__row"><div class="words__term">deploy</div><p class="words__def">Connects to EC2, pulls the new images, restarts only what changed, and deletes old unused images to save disk space. This is the <strong>CD</strong> part.</p></div>
+          <div class="words__row"><div class="words__term">${{ secrets.X }}</div><p class="words__def">How the file reads a secret, without ever showing it.</p></div>
+        </div>
+      </section>
+
+      <!-- 10 -->
+      <section class="section" id="run">
+        <span class="section__num">10</span>
+        <h2>Watch it deploy</h2>
+        <p>Time for the first run. From your project folder:</p>
+<pre class="code">git add .
+git commit -m "Add CI/CD pipeline"
+git push origin main</pre>
+
+        <ol class="steps">
+          <li>
+            <h3>Open the Actions tab</h3>
+            <p>On your repository page, click <strong>Actions</strong>. You’ll see a run called “Add CI/CD pipeline”, with a spinning yellow dot.</p>
+          </li>
+          <li>
+            <h3>Watch the three jobs</h3>
+            <p>Click the run. <strong>test</strong> goes first, then <strong>build-and-push</strong>, then <strong>deploy</strong>. Each turns into a green tick. Click any job to read its live log.</p>
+          </li>
+          <li>
+            <h3>Check Docker Hub</h3>
+            <p>Your two repositories, <em>myapp-api</em> and <em>myapp-web</em>, now appear with fresh images.</p>
+          </li>
+          <li>
+            <h3>Open your site</h3>
+            <p>Visit <strong>http://YOUR-IP</strong> in a browser. You should see “Hello from Express, deployed automatically!”.</p>
+          </li>
+        </ol>
+
+        <h3>Check from the server too</h3>
+<pre class="code">ssh -i my-key.pem ubuntu@YOUR-IP
+
+cd ~/myapp
+docker compose ps             <span class="c"># both containers should be "running"</span>
+docker compose logs api       <span class="c"># what Express has printed</span>
+curl http://localhost/api/hello</pre>
+
+        <h3>Now make a change</h3>
+        <p>This is the moment it clicks. Edit the message in <strong>server/app.js</strong>, then push:</p>
+<pre class="code"><span class="c"># change the text in server/app.js, then:</span>
+git add .
+git commit -m "Change the greeting"
+git push origin main</pre>
+        <p style="margin-top:16px;">Watch the Actions tab turn green again. A couple of minutes later, refresh your site, and the new message is live. You never logged in to the server.</p>
+
+        <div class="oneline">
+          <span class="oneline__label">That’s CI/CD</span>
+          <p>Edit, commit, push. The robot tests it, packs it, ships it and starts it.</p>
+        </div>
+      </section>
+
+      <!-- 11 -->
+      <section class="section" id="rollback">
+        <span class="section__num">11</span>
+        <h2>Rollbacks</h2>
+        <p>Say a bad change went live. Because every image was also tagged with its commit ID, you can go back. Find the ID of the last good commit with <strong>git log --oneline</strong>, but note that the tag is the <em>full</em> 40-character ID, which you can copy from the commit page on GitHub.</p>
+        <p>On the server, edit <strong>docker-compose.yml</strong> to use that tag instead of <em>latest</em>:</p>
+<pre class="code">image: yourname/myapp-api:3f2a9c1e5b7d...   <span class="c"># the full commit ID</span></pre>
+<pre class="code">docker compose pull
+docker compose up -d</pre>
+        <p style="margin-top:16px;">Once you’ve fixed the problem and pushed, change the file back to <em>latest</em>. A common alternative is to <strong>revert</strong> the bad commit in Git and push, so the pipeline redeploys the old code for you.</p>
+      </section>
+
+      <!-- 12 -->
+      <section class="section" id="safe">
+        <span class="section__num">12</span>
+        <h2>Make it safer</h2>
+        <p>What we built works, and it’s a solid start. Before using it for anything real, know about these limits.</p>
+
+        <div class="analogy">
+          <span class="analogy__label">Worth knowing</span>
+          <p>GitHub’s runners connect from many changing addresses, so for this setup, <strong>port 22 must be open to the internet</strong>. The SSH key is the only lock. Use a dedicated key (as we did), and never allow password logins.</p>
+        </div>
+
+        <div class="words">
+          <div class="words__row"><div class="words__term">Close port 22</div><p class="words__def">For a stricter setup, deploy with AWS Systems Manager, or a self-hosted runner, so SSH needn’t be open to everyone.</p></div>
+          <div class="words__row"><div class="words__term">Add HTTPS</div><p class="words__def">Point a domain at the server and add a certificate. The <a href="nginx.html#https">Nginx guide</a> shows how, with Certbot.</p></div>
+          <div class="words__row"><div class="words__term">Protect main</div><p class="words__def">In repository settings, require pull requests and passing tests before anything can be merged.</p></div>
+          <div class="words__row"><div class="words__term">Run real tests</div><p class="words__def">One health test is a start. Add more as the app grows, since the pipeline is only as good as its tests.</p></div>
+          <div class="words__row"><div class="words__term">Keep secrets out</div><p class="words__def">Pass passwords to containers as environment variables on the server. Never bake them into an image.</p></div>
+          <div class="words__row"><div class="words__term">Go faster</div><p class="words__def">Add Docker layer caching to <em>build-push-action</em> so repeat builds take seconds instead of minutes.</p></div>
+        </div>
+      </section>
+
+      <!-- 13 -->
+      <section class="section" id="stuck">
+        <span class="section__num">13</span>
+        <h2>When things go wrong</h2>
+        <p>The Actions tab shows exactly which step failed, with its full log. Start there every time.</p>
+
+        <div class="words">
+          <div class="words__row">
+            <div class="words__term">The workflow never starts</div>
+            <p class="words__def">The file must be at exactly <strong>.github/workflows/deploy.yml</strong>, and you must push to <em>main</em>. If your branch is called <em>master</em>, change it in the file.</p>
+          </div>
+          <div class="words__row">
+            <div class="words__term">“npm ci can only install with a lock file”</div>
+            <p class="words__def">You didn’t commit <strong>package-lock.json</strong> in <em>server</em> or <em>client</em>. Commit both.</p>
+          </div>
+          <div class="words__row">
+            <div class="words__term">Docker login fails</div>
+            <p class="words__def">Check <strong>DOCKERHUB_USERNAME</strong> and <strong>DOCKERHUB_TOKEN</strong>, with no extra spaces. Make sure the token has write permission.</p>
+          </div>
+          <div class="words__row">
+            <div class="words__term">“denied: requested access to the resource is denied”</div>
+            <p class="words__def">The image name doesn’t start with your Docker Hub username, or the token can’t write. Check the secrets.</p>
+          </div>
+          <div class="words__row">
+            <div class="words__term">Deploy step times out</div>
+            <p class="words__def">The server can’t be reached. Check <strong>EC2_HOST</strong> is the right IP, and that port 22 is open. Remember a stopped and started instance gets a new IP.</p>
+          </div>
+          <div class="words__row">
+            <div class="words__term">SSH: “Permission denied (publickey)”</div>
+            <p class="words__def">Wrong user or key. <strong>EC2_USER</strong> is <em>ubuntu</em>, and <strong>EC2_SSH_KEY</strong> must hold the whole private key, including the BEGIN and END lines.</p>
+          </div>
+          <div class="words__row">
+            <div class="words__term">“permission denied” running docker on the server</div>
+            <p class="words__def">You skipped <strong>usermod</strong>, or didn’t log out and back in afterwards.</p>
+          </div>
+          <div class="words__row">
+            <div class="words__term">502 Bad Gateway on the site</div>
+            <p class="words__def">Nginx is up but Express isn’t. Run <strong>docker compose logs api</strong> to see why it crashed.</p>
+          </div>
+          <div class="words__row">
+            <div class="words__term">The old version is still showing</div>
+            <p class="words__def">Check the deploy job finished green, then hard-refresh your browser. On the server, <strong>docker compose ps</strong> shows how long the containers have been up.</p>
+          </div>
+          <div class="words__row">
+            <div class="words__term">Server out of disk space</div>
+            <p class="words__def">Old images pile up. The workflow already prunes them. To clean more, run <strong>docker system prune</strong>.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 14 -->
+      <section class="section" id="recap">
+        <span class="section__num">14</span>
+        <h2>Quick recap</h2>
+        <ul class="recap">
+          <li><span><strong>CI</strong> tests every change. <strong>CD</strong> ships the ones that pass.</span></li>
+          <li><span>A <strong>workflow</strong> is one YAML file in <em>.github/workflows</em>, made of <strong>jobs</strong> and <strong>steps</strong>.</span></li>
+          <li><span>Our pipeline has three jobs: <strong>test</strong>, <strong>build-and-push</strong>, <strong>deploy</strong>.</span></li>
+          <li><span>Two images, <strong>api</strong> (Express) and <strong>web</strong> (React + Nginx), go to <strong>Docker Hub</strong>.</span></li>
+          <li><span>EC2 only runs <strong>docker compose pull</strong> and <strong>up -d</strong>. It never builds.</span></li>
+          <li><span>Passwords and keys live in <strong>GitHub secrets</strong>, never in the code.</span></li>
+          <li><span>Tag images with the <strong>commit ID</strong>, so you can roll back.</span></li>
+        </ul>
+
+        <div class="oneline" style="margin-top:40px;">
+          <span class="oneline__label">If you remember one thing</span>
+          <p>Automate the boring, error-prone steps once, and every push after that is safe, fast and identical.</p>
+        </div>
+        <p style="margin-top:28px;"><a href="eks.html">Next: run containers at a bigger scale with Kubernetes on EKS &rarr;</a></p>
+      </section>
+
+    </article>
+  </main>
+
+  <nav class="more" aria-label="More guides">
+    <p class="more__label">Keep learning</p>
+    <div class="more__grid">
+      <a href="docker.html"><strong>Docker</strong><span>Images, containers and every command.</span><em>12 min read &rarr;</em></a>
+      <a href="eks.html"><strong>EKS</strong><span>Kubernetes on AWS, explained simply.</span><em>10 min read &rarr;</em></a>
+      <a href="index.html"><strong>All guides</strong><span>See the full roadmap from zero to deploy.</span><em>Back to home &rarr;</em></a>
+    </div>
+  </nav>
+
+  <footer class="footer">
+    A beginner’s guide to CI/CD with GitHub Actions. Simplified on purpose. Real pipelines have more moving parts, but these ideas are the foundation for all of them.
+  </footer>
+
+</body>
+</html>
