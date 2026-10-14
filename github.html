@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Git and GitHub, Explained Simply — Repositories, Commits, Branches and Pull Requests</title>
+  <meta name="description" content="A plain-English guide to Git and GitHub for beginners: repositories, commits, branches, push, pull and pull requests, with one clear diagram.">
+  <meta name="color-scheme" content="dark">
+  <meta name="theme-color" content="#05060a">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="guide.css">
+</head>
+<body class="guide">
+
+  <header class="topbar">
+    <div class="topbar__inner">
+      <a class="topbar__brand" href="index.html">&larr;&nbsp; Cloud, simply</a>
+      <nav class="topbar__nav" aria-label="Jump to">
+        <a href="#words">The big picture</a>
+        <a href="#branch">Branches</a>
+        <a href="#diagram">Diagram</a>
+        <a href="#steps">Steps</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="top">
+
+    <section class="hero">
+      <p class="eyebrow">Beginner’s guide</p>
+      <h1>Git and GitHub,<br>explained simply.</h1>
+      <p class="hero__lead">Repositories, commits, branches and pull requests. How teams save their work, share it, and build software together without stepping on each other.</p>
+      <p class="hero__meta">8 minute read</p>
+    </section>
+
+    <article class="article">
+
+      <nav class="contents" aria-label="Contents">
+        <h2>In this guide</h2>
+        <ol>
+          <li><a href="#story">The problem we’re solving</a></li>
+          <li><a href="#two">Git and GitHub are different</a></li>
+          <li><a href="#words">The save-game idea</a></li>
+          <li><a href="#commit">Commit</a></li>
+          <li><a href="#branch">Branch</a></li>
+          <li><a href="#pr">Pull request</a></li>
+          <li><a href="#diagram">The whole picture</a></li>
+          <li><a href="#steps">Your first project, step by step</a></li>
+          <li><a href="#recap">Quick recap</a></li>
+        </ol>
+      </nav>
+
+      <!-- 01 -->
+      <section class="section" id="story">
+        <span class="section__num">01</span>
+        <h2>The problem we’re solving</h2>
+        <p>You’re writing an essay. You save a copy called <strong>essay_final.docx</strong>. Then another, <strong>essay_final_v2.docx</strong>. Then <strong>essay_final_v2_REALLY_final.docx</strong>. A week later you can’t remember which one is the good one.</p>
+        <p>Now picture ten people editing the same essay at the same time. Copies fly around by email, changes get overwritten, and nobody knows who changed what.</p>
+        <p>Code has exactly this problem, only worse, because one small mistake can break a whole app. So developers use a tool that remembers every version, and lets many people work together safely.</p>
+        <p>That tool is <strong>Git</strong>.</p>
+
+        <div class="oneline">
+          <span class="oneline__label">In one line</span>
+          <p>Git remembers every version of your work. GitHub is the website where you keep it online and share it with others.</p>
+        </div>
+      </section>
+
+      <!-- 02 -->
+      <section class="section" id="two">
+        <span class="section__num">02</span>
+        <h2>Git and GitHub are different</h2>
+        <p>People mix these up all the time. They’re two separate things that work well together.</p>
+
+        <div class="pair">
+          <div class="pair__item">
+            <h3>Git</h3>
+            <p>A tool that lives on <strong>your computer</strong>. It tracks changes and remembers every version. It works even with no internet.</p>
+          </div>
+          <div class="pair__item">
+            <h3>GitHub</h3>
+            <p>A website that stores your Git projects <strong>online</strong>. It makes sharing, backing up and teamwork easy.</p>
+          </div>
+        </div>
+
+        <div class="analogy">
+          <span class="analogy__label">Think of it as</span>
+          <p>Git is the camera that takes the photos. GitHub is the online album where you share them.</p>
+        </div>
+      </section>
+
+      <!-- 03 -->
+      <section class="section" id="words">
+        <span class="section__num">03</span>
+        <h2>The save-game idea</h2>
+        <p>The easiest way to understand Git is to think of saving a video game. You can save at any moment, and go back to any save if you lose a life. Here are the words you’ll meet.</p>
+
+        <div class="words" role="table" aria-label="Git words and their meaning">
+          <div class="words__row" role="row">
+            <div class="words__term" role="cell">Repository</div>
+            <p class="words__def" role="cell">Your project folder, plus its whole history. Often called a <em>repo</em>.</p>
+          </div>
+          <div class="words__row" role="row">
+            <div class="words__term" role="cell">Commit</div>
+            <p class="words__def" role="cell">One save point. A snapshot of your work, with a short note about what changed.</p>
+          </div>
+          <div class="words__row" role="row">
+            <div class="words__term" role="cell">Branch</div>
+            <p class="words__def" role="cell">A separate copy of the timeline where you can try things safely.</p>
+          </div>
+          <div class="words__row" role="row">
+            <div class="words__term" role="cell">Main</div>
+            <p class="words__def" role="cell">The official timeline. The version that everyone trusts.</p>
+          </div>
+          <div class="words__row" role="row">
+            <div class="words__term" role="cell">Clone</div>
+            <p class="words__def" role="cell">Download a copy of a project from GitHub onto your computer.</p>
+          </div>
+          <div class="words__row" role="row">
+            <div class="words__term" role="cell">Push</div>
+            <p class="words__def" role="cell">Send your saves from your computer up to GitHub.</p>
+          </div>
+          <div class="words__row" role="row">
+            <div class="words__term" role="cell">Pull</div>
+            <p class="words__def" role="cell">Bring other people’s latest saves from GitHub down to your computer.</p>
+          </div>
+          <div class="words__row" role="row">
+            <div class="words__term" role="cell">Pull request</div>
+            <p class="words__def" role="cell">A polite message saying “I made changes, please check them and add them to main.”</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 04 -->
+      <section class="section" id="commit">
+        <span class="section__num">04</span>
+        <h2>Commit</h2>
+        <p>A <strong>commit</strong> is a save point. When you finish a small piece of work, you commit it and write one short sentence about what you did, like <em>“Add login button”</em>.</p>
+        <p>Git keeps every commit forever. If something breaks next week, you can look back through the list and return to a time when it worked.</p>
+
+        <div class="analogy">
+          <span class="analogy__label">Think of it as</span>
+          <p>A save point in a game. Save often, with a clear name, and you can always go back.</p>
+        </div>
+
+        <p>There’s a small extra step you’ll see in the diagram. Before saving, you first choose which changes go into the save. That waiting area is called the <strong>staging area</strong>. It’s like putting items in a box before you seal and label it.</p>
+      </section>
+
+      <!-- 05 -->
+      <section class="section" id="branch">
+        <span class="section__num">05</span>
+        <h2>Branch</h2>
+        <p>Say your app works well and you want to try a new idea. If you experiment directly, you might break it for everyone.</p>
+        <p>So you make a <strong>branch</strong>. It’s your own side copy of the timeline. You can change anything, break anything, and the main version stays safe.</p>
+        <p>If the idea works, you merge it back into main. If it doesn’t, you throw the branch away and nothing is lost.</p>
+
+        <div class="analogy">
+          <span class="analogy__label">Think of it as</span>
+          <p>Writing in pencil on a photocopy. If you like the result, copy it onto the original. If not, bin the photocopy.</p>
+        </div>
+
+        <p>Teams usually make one branch per task: <strong>add-login</strong>, <strong>fix-payment-bug</strong>, <strong>new-homepage</strong>. Everyone works at the same time without getting in each other’s way.</p>
+      </section>
+
+      <!-- 06 -->
+      <section class="section" id="pr">
+        <span class="section__num">06</span>
+        <h2>Pull request</h2>
+        <p>When your work on a branch is ready, you don’t just push it into main. You open a <strong>pull request</strong> on GitHub.</p>
+        <p>It’s a message to your team saying: <em>“Here’s what I changed. Please take a look.”</em> Teammates read your changes, leave comments, and ask for fixes. When everyone is happy, the changes are added to main.</p>
+        <p>This is the biggest reason teams love GitHub. A second pair of eyes catches mistakes before they reach real users. Many companies also run automatic tests on every pull request, which is where DevOps comes in.</p>
+      </section>
+
+    </article>
+
+    <!-- 07 Diagram -->
+    <section class="diagram-section" id="diagram">
+      <div class="diagram-head">
+        <span class="section__num" style="font-size:14px;font-weight:600;color:var(--text-3);display:block;margin-bottom:12px;">07</span>
+        <h2 style="margin:0 0 20px;font-size:clamp(30px,4.4vw,40px);line-height:1.15;font-weight:700;letter-spacing:-0.028em;">The whole picture</h2>
+        <p style="margin:0;color:var(--text-2);">Your work moves left to right: from a folder on your computer, into a save point, up to GitHub, and finally into main through a pull request.</p>
+      </div>
+
+      <figure class="diagram" style="margin:0;">
+        <svg viewBox="0 0 960 420" role="img" aria-labelledby="gt gd">
+          <title id="gt">Diagram of the Git and GitHub workflow</title>
+          <desc id="gd">Files move from the working folder to the staging area to the local repository on your computer. Push sends them to the remote repository on GitHub. A branch becomes a pull request, which is merged into the main branch.</desc>
+
+          <defs>
+            <marker id="gah" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+              <path d="M0,1 L9,5 L0,9 z" class="d-arrow"/>
+            </marker>
+          </defs>
+
+          <!-- Your computer -->
+          <rect class="d-cloud" x="20" y="30" width="580" height="250" rx="20"/>
+          <text class="d-small" x="44" y="62">YOUR COMPUTER · where Git lives</text>
+
+          <rect class="d-node" x="40" y="100" width="140" height="110" rx="14"/>
+          <text class="d-title" x="110" y="150" text-anchor="middle">Working folder</text>
+          <text class="d-sub" x="110" y="172" text-anchor="middle">your files</text>
+
+          <rect class="d-node" x="240" y="100" width="140" height="110" rx="14"/>
+          <text class="d-title" x="310" y="150" text-anchor="middle">Staging area</text>
+          <text class="d-sub" x="310" y="172" text-anchor="middle">ready to save</text>
+
+          <rect class="d-pod" x="440" y="100" width="140" height="110" rx="14"/>
+          <text class="d-podtitle" x="510" y="150" text-anchor="middle">Local repo</text>
+          <text class="d-sub" x="510" y="172" text-anchor="middle">saved history</text>
+
+          <line class="d-line" x1="182" y1="155" x2="238" y2="155" marker-end="url(#gah)"/>
+          <line class="d-line" x1="382" y1="155" x2="438" y2="155" marker-end="url(#gah)"/>
+          <text class="d-sub" x="210" y="142" text-anchor="middle" style="font-family:var(--mono)">add</text>
+          <text class="d-sub" x="410" y="142" text-anchor="middle" style="font-family:var(--mono)">commit</text>
+
+          <!-- GitHub -->
+          <rect class="d-control" x="700" y="30" width="240" height="250" rx="20"/>
+          <text class="d-on-dark2" x="724" y="62" style="font-size:12px;font-weight:600;letter-spacing:0.02em">GITHUB · online</text>
+          <rect class="d-lb" x="725" y="100" width="190" height="110" rx="14"/>
+          <text class="d-title" x="820" y="150" text-anchor="middle">Remote repo</text>
+          <text class="d-sub" x="820" y="172" text-anchor="middle">shared with the team</text>
+
+          <!-- push / pull -->
+          <line class="d-line" x1="582" y1="135" x2="723" y2="135" marker-end="url(#gah)"/>
+          <line class="d-line" x1="723" y1="185" x2="582" y2="185" marker-end="url(#gah)"/>
+          <text class="d-sub" x="650" y="124" text-anchor="middle" style="font-family:var(--mono)">push</text>
+          <text class="d-sub" x="650" y="208" text-anchor="middle" style="font-family:var(--mono)">pull</text>
+
+          <!-- Pull request flow -->
+          <text class="d-small" x="44" y="326">ON GITHUB · getting changes into main</text>
+
+          <rect class="d-box" x="40" y="342" width="220" height="62" rx="12"/>
+          <text class="d-title" x="150" y="369" text-anchor="middle">Your branch</text>
+          <text class="d-sub" x="150" y="388" text-anchor="middle">add-login</text>
+
+          <rect class="d-lb" x="370" y="342" width="220" height="62" rx="12"/>
+          <text class="d-title" x="480" y="369" text-anchor="middle">Pull request</text>
+          <text class="d-sub" x="480" y="388" text-anchor="middle">team reviews</text>
+
+          <rect class="d-pod" x="700" y="342" width="220" height="62" rx="12"/>
+          <text class="d-podtitle" x="810" y="369" text-anchor="middle">Main branch</text>
+          <text class="d-sub" x="810" y="388" text-anchor="middle">the trusted version</text>
+
+          <line class="d-line" x1="262" y1="373" x2="368" y2="373" marker-end="url(#gah)"/>
+          <line class="d-line" x1="592" y1="373" x2="698" y2="373" marker-end="url(#gah)"/>
+          <text class="d-sub" x="315" y="362" text-anchor="middle">open</text>
+          <text class="d-sub" x="645" y="362" text-anchor="middle">merge</text>
+        </svg>
+
+        <ul class="legend">
+          <li><strong>Working folder</strong>The files you edit every day.</li>
+          <li><strong>Staging area</strong>Where you pick what goes into the next save.</li>
+          <li><strong>Local repo</strong>All your saves, kept on your computer.</li>
+          <li><strong>Remote repo</strong>The shared copy on GitHub that your team uses.</li>
+        </ul>
+      </figure>
+    </section>
+
+    <article class="article">
+
+      <!-- 08 -->
+      <section class="section" id="steps">
+        <span class="section__num">08</span>
+        <h2>Your first project, step by step</h2>
+        <p>Here is the whole journey, from nothing to your first change on GitHub. The commands look strange at first, but you only need a handful.</p>
+
+        <ol class="steps">
+          <li>
+            <h3>Make an account and a repository</h3>
+            <p>Sign up at github.com, then press <strong>New repository</strong> and give it a name. This is your online home for the project.</p>
+          </li>
+          <li>
+            <h3>Clone it to your computer</h3>
+            <p>This downloads the project so you can work on it locally.</p>
+<pre class="code"><span class="c"># download the project</span>
+git clone https://github.com/you/my-project.git
+cd my-project</pre>
+          </li>
+          <li>
+            <h3>Make a branch</h3>
+            <p>Give your task its own safe space.</p>
+<pre class="code"><span class="c"># create and switch to a new branch</span>
+git checkout -b add-login</pre>
+          </li>
+          <li>
+            <h3>Change files, then save</h3>
+            <p>Edit anything you like. When you’re happy, choose the changes and save them with a short note.</p>
+<pre class="code"><span class="c"># pick the changes, then save them</span>
+git add .
+git commit -m "Add login button"</pre>
+          </li>
+          <li>
+            <h3>Push to GitHub</h3>
+            <p>Send your branch online so others can see it.</p>
+<pre class="code"><span class="c"># upload your branch</span>
+git push origin add-login</pre>
+          </li>
+          <li>
+            <h3>Open a pull request</h3>
+            <p>On GitHub you’ll see a green <strong>Compare &amp; pull request</strong> button. Press it, write a sentence about your change, and send it. Once your team approves, press <strong>Merge</strong>. Your work is now in main.</p>
+          </li>
+        </ol>
+        <p style="margin-top:32px;">Later, when teammates have merged their work, run <strong>git pull</strong> to bring the latest version down to your computer.</p>
+      </section>
+
+      <!-- 09 -->
+      <section class="section" id="recap">
+        <span class="section__num">09</span>
+        <h2>Quick recap</h2>
+        <ul class="recap">
+          <li><span><strong>Git</strong> remembers every version of your work, on your computer.</span></li>
+          <li><span><strong>GitHub</strong> is the website where you store and share your Git projects.</span></li>
+          <li><span>A <strong>commit</strong> is a save point, with a short note.</span></li>
+          <li><span>A <strong>branch</strong> is a safe side copy for trying things out.</span></li>
+          <li><span><strong>Push</strong> sends your saves up. <strong>Pull</strong> brings others’ saves down.</span></li>
+          <li><span>A <strong>pull request</strong> asks the team to review your work before it joins main.</span></li>
+        </ul>
+
+        <div class="oneline" style="margin-top:40px;">
+          <span class="oneline__label">If you remember one thing</span>
+          <p>Save often, work on a branch, and ask for a review before you merge. That’s how almost every software team works.</p>
+        </div>
+      </section>
+
+    </article>
+  </main>
+
+  <footer class="footer">
+    A beginner’s guide to Git and GitHub. Simplified on purpose. Real projects have more moving parts, but these ideas are the foundation for all of them.
+  </footer>
+
+</body>
+</html>

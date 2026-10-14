@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Cloud, simply — The complete DevOps guide, from zero to deploy</title>
+  <meta name="description" content="A complete library of plain-English DevOps guides: Linux, Git, AWS, Docker, Kubernetes, EKS, CI/CD, Terraform, monitoring and security. Start with the live EKS guide.">
+  <meta name="color-scheme" content="dark">
+  <meta name="theme-color" content="#05060a">
+  <script>document.documentElement.classList.add('js');</script>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="landing.css">
+</head>
+<body class="home">
+
+  <header class="topbar">
+    <div class="topbar__inner">
+      <button class="menu-btn" id="menu-open" type="button" aria-controls="drawer" aria-expanded="false">
+        <span class="menu-btn__bars" aria-hidden="true"></span>
+        Menu
+      </button>
+      <a class="topbar__brand" href="index.html">Cloud, simply</a>
+      <span style="width:72px" aria-hidden="true"></span>
+    </div>
+  </header>
+
+  <!-- Off-canvas sidebar -->
+  <div class="scrim" id="scrim"></div>
+  <aside class="drawer" id="drawer" aria-label="Site menu">
+    <div class="drawer__head">
+      <a class="drawer__brand" href="index.html">Cloud, simply</a>
+      <button class="drawer__close" id="menu-close" type="button" aria-label="Hide sidebar">&times;</button>
+    </div>
+
+    <nav aria-label="Guides">
+      <ul class="drawer__list">
+        <li>
+          <a href="index.html" aria-current="page">
+            <span class="drawer__title">Home</span>
+          </a>
+        </li>
+        <li>
+          <a href="#roadmap" data-close>
+            <span class="drawer__title">Full roadmap</span>
+            <span class="drawer__desc">All 9 stages at a glance</span>
+          </a>
+        </li>
+      </ul>
+
+      <p class="drawer__label">Read now &middot; in this order</p>
+      <ul class="drawer__list">
+        <li>
+          <a href="github.html">
+            <span class="drawer__title"><span class="drawer__step">1</span>Git &amp; GitHub</span>
+            <span class="drawer__desc">Save, share and team up on code &middot; 8 min</span>
+          </a>
+        </li>
+        <li>
+          <a href="docker.html">
+            <span class="drawer__title"><span class="drawer__step">2</span>Docker</span>
+            <span class="drawer__desc">Images, containers and commands &middot; 12 min</span>
+          </a>
+        </li>
+        <li>
+          <a href="eks.html">
+            <span class="drawer__title"><span class="drawer__step">3</span>EKS</span>
+            <span class="drawer__desc">Kubernetes on AWS, explained &middot; 10 min</span>
+          </a>
+        </li>
+      </ul>
+
+      <p class="drawer__label">Coming soon</p>
+      <ul class="drawer__soon">
+        <li>Linux and networking</li>
+        <li>AWS essentials</li>
+        <li>CI/CD pipelines</li>
+        <li>Terraform and Ansible</li>
+        <li>Monitoring</li>
+        <li>Security</li>
+        <li>Reliability</li>
+      </ul>
+    </nav>
+
+    <p class="drawer__foot">Short guides in plain English, written for people who are just starting out.</p>
+  </aside>
+
+  <main>
+
+    <!-- ===== Hero ===== -->
+    <div class="stage-bg">
+      <div class="aurora" aria-hidden="true"><i></i><i></i><i></i></div>
+
+      <section class="hero2">
+        <span class="badge reveal"><b></b> New to DevOps? You’re in the right place</span>
+        <h1 class="reveal" data-d="1">Learn DevOps,<br><em>one simple guide at a time.</em></h1>
+        <p class="hero2__lead reveal" data-d="2">Plain English, real examples, no experience needed. Each guide takes about ten minutes to read.</p>
+        <div class="hero2__cta reveal" data-d="3">
+          <a class="btn btn--primary" href="github.html">Start with Git &amp; GitHub <span aria-hidden="true">&rarr;</span></a>
+          <a class="btn btn--ghost" href="#roadmap">See the roadmap</a>
+        </div>
+        <div class="quick reveal" data-d="3">
+          <p class="quick__label">Or jump straight to a guide</p>
+          <ul class="quick__list">
+            <li><a href="github.html"><strong>Git &amp; GitHub</strong><span>8 min read</span></a></li>
+            <li><a href="docker.html"><strong>Docker</strong><span>12 min read</span></a></li>
+            <li><a href="eks.html"><strong>EKS</strong><span>10 min read</span></a></li>
+          </ul>
+        </div>
+      </section>
+
+      <div class="stats reveal" aria-label="Library at a glance">
+        <div><strong>9</strong><span>stages</span></div>
+        <div><strong>52</strong><span>guides planned</span></div>
+        <div><strong>3</strong><span>live today</span></div>
+      </div>
+
+      <!-- Tool ribbon -->
+      <div class="marquee" aria-label="Tools you will learn">
+        <div class="marquee__track">
+          <div class="marquee__set">
+            <span>Linux</span><span>Git</span><span>AWS</span><span>Docker</span><span>Kubernetes</span><span>EKS</span><span>Helm</span><span>Terraform</span><span>Ansible</span><span>Jenkins</span><span>GitHub Actions</span><span>ArgoCD</span><span>Prometheus</span><span>Grafana</span><span>Vault</span><span>Trivy</span>
+          </div>
+          <div class="marquee__set" aria-hidden="true">
+            <span>Linux</span><span>Git</span><span>AWS</span><span>Docker</span><span>Kubernetes</span><span>EKS</span><span>Helm</span><span>Terraform</span><span>Ansible</span><span>Jenkins</span><span>GitHub Actions</span><span>ArgoCD</span><span>Prometheus</span><span>Grafana</span><span>Vault</span><span>Trivy</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== Live now ===== -->
+    <section class="live wrap" id="live" aria-labelledby="live-title">
+      <div class="sec-head reveal">
+        <p class="eyebrow">Available now</p>
+        <h2>Start with the ones that are ready.</h2>
+      </div>
+
+      <a class="live__card reveal" href="github.html" style="margin-bottom:24px">
+        <div>
+          <div class="live__top"><span class="pill">Live</span><span>Stage 01 · Foundations · 8 min read</span></div>
+          <h3 class="live__title">GitHub</h3>
+          <p class="live__sub">Save, share and team up on code.</p>
+          <p class="live__text">Repositories, commits, branches and pull requests. How teams keep every version of their work and build software together.</p>
+          <span class="btn btn--primary">Read the guide <span aria-hidden="true">&rarr;</span></span>
+        </div>
+
+        <div class="live__art" role="img" aria-label="Preview: a branch becomes a pull request, which is merged into main.">
+          <div class="layers">
+            <div class="layer layer--cluster">
+              <span class="layer__name">GITHUB · online</span>
+              <div class="layer layer--node">
+                <span class="layer__name">BRANCH · add-login</span>
+                <div class="layer layer--pod">
+                  <span class="layer__name">PULL REQUEST · team reviews</span>
+                  <div class="layer layer--container">
+                    <span class="layer__name">MAIN · the trusted version</span>
+                    Merge when approved
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </a>
+
+      <a class="live__card reveal" href="docker.html" style="margin-bottom:24px">
+        <div>
+          <div class="live__top"><span class="pill">Live</span><span>Stage 03 · Containers · 12 min read</span></div>
+          <h3 class="live__title">Docker</h3>
+          <p class="live__sub">Images, containers and every command.</p>
+          <p class="live__text">Pack your app into a box that runs the same everywhere. Build and run a real app step by step, with a full command cheat sheet.</p>
+          <span class="btn btn--primary">Read the guide <span aria-hidden="true">&rarr;</span></span>
+        </div>
+
+        <div class="live__art" role="img" aria-label="Preview: a Dockerfile becomes an image, which runs as a container.">
+          <div class="layers">
+            <div class="layer layer--cluster">
+              <span class="layer__name">DOCKERFILE · the recipe</span>
+              <div class="layer layer--node">
+                <span class="layer__name">IMAGE · the ready-made meal</span>
+                <div class="layer layer--pod">
+                  <span class="layer__name">CONTAINER · running now</span>
+                  <div class="layer layer--container">
+                    <span class="layer__name">YOUR APP</span>
+                    docker run hello-app
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </a>
+
+      <a class="live__card reveal" href="eks.html">
+        <div>
+          <div class="live__top"><span class="pill">Live</span><span>Stage 04 · Kubernetes · 10 min read</span></div>
+          <h3 class="live__title" id="live-title">EKS</h3>
+          <p class="live__sub">Kubernetes on AWS, explained simply.</p>
+          <p class="live__text">Pods, nodes, servers and the manager that runs them. See how your microservices get deployed, all tied together in one clear picture.</p>
+          <span class="btn btn--primary">Read the guide <span aria-hidden="true">&rarr;</span></span>
+        </div>
+
+        <div class="live__art" role="img" aria-label="Preview: a container sits inside a pod, inside a node, inside a cluster.">
+          <div class="layers">
+            <div class="layer layer--cluster">
+              <span class="layer__name">CLUSTER · the whole restaurant</span>
+              <div class="layer layer--node">
+                <span class="layer__name">NODE · a server</span>
+                <div class="layer layer--pod">
+                  <span class="layer__name">POD · a tray</span>
+                  <div class="layer layer--container">
+                    <span class="layer__name">CONTAINER · a lunch box</span>
+                    Your microservice
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </a>
+    </section>
+
+    <!-- ===== Roadmap ===== -->
+    <section class="roadmap wrap" id="roadmap" aria-labelledby="roadmap-title">
+      <div class="sec-head reveal">
+        <p class="eyebrow">The full roadmap</p>
+        <h2 id="roadmap-title">Everything in DevOps.<br>In the right order.</h2>
+        <p>Nine stages that take you from your first command to running real apps in the cloud. New guides are added to the menu as they go live.</p>
+      </div>
+
+      <div class="legend2 reveal" aria-hidden="true">
+        <span><i class="on"></i> Live now</span>
+        <span><i></i> Coming soon</span>
+      </div>
+
+      <div class="grid">
+
+        <article class="stage reveal">
+          <span class="stage__num">01</span>
+          <h3>Foundations</h3>
+          <p class="stage__desc">The basics everything else sits on.</p>
+          <ul class="stage__list">
+            <li>What is DevOps?</li>
+            <li>Linux for beginners</li>
+            <li>Networking basics</li>
+            <li class="is-live"><a href="github.html">Git and GitHub <span class="pill">Live</span></a></li>
+            <li>Shell scripting</li>
+            <li>YAML and JSON</li>
+          </ul>
+          <p class="stage__count">6 guides · 1 live</p>
+        </article>
+
+        <article class="stage reveal" data-d="1">
+          <span class="stage__num">02</span>
+          <h3>Cloud with AWS</h3>
+          <p class="stage__desc">Rent computers, storage and networks by the hour.</p>
+          <ul class="stage__list">
+            <li>AWS basics</li>
+            <li>IAM: who can do what</li>
+            <li>EC2 servers</li>
+            <li>S3 storage</li>
+            <li>VPC networking</li>
+            <li>Load balancers</li>
+            <li>Auto Scaling</li>
+            <li>Route 53 and DNS</li>
+          </ul>
+          <p class="stage__count">8 guides</p>
+        </article>
+
+        <article class="stage reveal" data-d="2">
+          <span class="stage__num">03</span>
+          <h3>Containers</h3>
+          <p class="stage__desc">Pack your app so it runs the same everywhere.</p>
+          <ul class="stage__list">
+            <li class="is-live"><a href="docker.html">Docker <span class="pill">Live</span></a></li>
+            <li>Docker Compose</li>
+            <li>Container registries and ECR</li>
+            <li>Building small, safe images</li>
+          </ul>
+          <p class="stage__count">4 guides · 1 live</p>
+        </article>
+
+        <article class="stage reveal">
+          <span class="stage__num">04</span>
+          <h3>Kubernetes</h3>
+          <p class="stage__desc">Run and look after many containers at once.</p>
+          <ul class="stage__list">
+            <li>Kubernetes basics</li>
+            <li class="is-live"><a href="eks.html">Amazon EKS <span class="pill">Live</span></a></li>
+            <li>Deployments and Services</li>
+            <li>Ingress</li>
+            <li>ConfigMaps and Secrets</li>
+            <li>Helm</li>
+            <li>Storage and volumes</li>
+            <li>Autoscaling</li>
+            <li>RBAC and access</li>
+          </ul>
+          <p class="stage__count">9 guides · 1 live</p>
+        </article>
+
+        <article class="stage reveal" data-d="1">
+          <span class="stage__num">05</span>
+          <h3>CI/CD</h3>
+          <p class="stage__desc">Test and ship your code automatically.</p>
+          <ul class="stage__list">
+            <li>What is CI/CD?</li>
+            <li>GitHub Actions</li>
+            <li>Jenkins</li>
+            <li>GitLab CI</li>
+            <li>ArgoCD and GitOps</li>
+            <li>AWS CodePipeline</li>
+          </ul>
+          <p class="stage__count">6 guides</p>
+        </article>
+
+        <article class="stage reveal" data-d="2">
+          <span class="stage__num">06</span>
+          <h3>Infrastructure as code</h3>
+          <p class="stage__desc">Build whole servers and networks from a text file.</p>
+          <ul class="stage__list">
+            <li>Terraform</li>
+            <li>Terraform modules and state</li>
+            <li>Ansible</li>
+            <li>AWS CloudFormation</li>
+          </ul>
+          <p class="stage__count">4 guides</p>
+        </article>
+
+        <article class="stage reveal">
+          <span class="stage__num">07</span>
+          <h3>Monitoring</h3>
+          <p class="stage__desc">See what your apps are doing, and know when they break.</p>
+          <ul class="stage__list">
+            <li>Prometheus</li>
+            <li>Grafana dashboards</li>
+            <li>Logging with ELK</li>
+            <li>Alerts and on-call</li>
+            <li>Tracing with OpenTelemetry</li>
+          </ul>
+          <p class="stage__count">5 guides</p>
+        </article>
+
+        <article class="stage reveal" data-d="1">
+          <span class="stage__num">08</span>
+          <h3>Security</h3>
+          <p class="stage__desc">Keep your code, secrets and servers safe.</p>
+          <ul class="stage__list">
+            <li>DevSecOps basics</li>
+            <li>Secrets with Vault</li>
+            <li>Image scanning with Trivy</li>
+            <li>Code quality with SonarQube</li>
+          </ul>
+          <p class="stage__count">4 guides</p>
+        </article>
+
+        <article class="stage reveal" data-d="2">
+          <span class="stage__num">09</span>
+          <h3>Reliability</h3>
+          <p class="stage__desc">Keep things running, and ship without fear.</p>
+          <ul class="stage__list">
+            <li>SRE basics</li>
+            <li>Deployment strategies</li>
+            <li>Microservices architecture</li>
+            <li>Saving money on AWS</li>
+            <li>Disaster recovery</li>
+            <li>Capstone: ship a full app</li>
+          </ul>
+          <p class="stage__count">6 guides</p>
+        </article>
+
+      </div>
+    </section>
+
+    <!-- ===== Closing call ===== -->
+    <section class="final reveal" aria-labelledby="final-title">
+      <div class="final__box">
+        <h2 id="final-title">Ready when you are.</h2>
+        <p>Pick up where the roadmap points you. The first guides are waiting.</p>
+        <a class="btn btn--primary" href="github.html">Start with GitHub <span aria-hidden="true">&rarr;</span></a>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="footer">
+    Simplified on purpose. Real systems have more moving parts, but these ideas are the foundation for all of them.
+  </footer>
+
+  <script>
+    (function () {
+      var body = document.body;
+      var openBtn = document.getElementById('menu-open');
+      var closeBtn = document.getElementById('menu-close');
+      var scrim = document.getElementById('scrim');
+      var drawer = document.getElementById('drawer');
+
+      // Sidebar: open by default on large screens, slide-in on small ones
+      var wide = window.matchMedia('(min-width: 1025px)');
+      var KEY = 'sidebar-closed';
+      var stored = null;
+      try { stored = localStorage.getItem(KEY); } catch (e) {}
+      if (stored === '1') body.classList.add('side-closed');
+
+      function syncAria() {
+        var visible = wide.matches ? !body.classList.contains('side-closed') : body.classList.contains('menu-open');
+        drawer.setAttribute('aria-hidden', String(!visible));
+        openBtn.setAttribute('aria-expanded', String(visible));
+      }
+      function setOpen(open) {
+        if (wide.matches) {
+          body.classList.toggle('side-closed', !open);
+          try { localStorage.setItem(KEY, open ? '0' : '1'); } catch (e) {}
+        } else {
+          body.classList.toggle('menu-open', open);
+          (open ? closeBtn : openBtn).focus();
+        }
+        syncAria();
+      }
+      function isOpen() {
+        return wide.matches ? !body.classList.contains('side-closed') : body.classList.contains('menu-open');
+      }
+      openBtn.addEventListener('click', function () { setOpen(!isOpen()); });
+      closeBtn.addEventListener('click', function () { setOpen(false); });
+      scrim.addEventListener('click', function () { setOpen(false); });
+      drawer.querySelectorAll('[data-close]').forEach(function (a) {
+        a.addEventListener('click', function () { if (!wide.matches) setOpen(false); });
+      });
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && !wide.matches && body.classList.contains('menu-open')) setOpen(false);
+      });
+      var onChange = function () { body.classList.remove('menu-open'); syncAria(); };
+      if (wide.addEventListener) wide.addEventListener('change', onChange); else wide.addListener(onChange);
+      syncAria();
+
+      // Fade sections in as they scroll into view
+      var items = document.querySelectorAll('.reveal');
+      if ('IntersectionObserver' in window) {
+        var io = new IntersectionObserver(function (entries) {
+          entries.forEach(function (en) {
+            if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); }
+          });
+        }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+        items.forEach(function (el) { io.observe(el); });
+      } else {
+        items.forEach(function (el) { el.classList.add('in'); });
+      }
+
+      // Soft light that follows the cursor over each stage card
+      document.querySelectorAll('.stage').forEach(function (card) {
+        card.addEventListener('pointermove', function (e) {
+          var r = card.getBoundingClientRect();
+          card.style.setProperty('--mx', (e.clientX - r.left) + 'px');
+          card.style.setProperty('--my', (e.clientY - r.top) + 'px');
+        });
+      });
+    })();
+  </script>
+</body>
+</html>

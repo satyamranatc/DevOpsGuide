@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Docker, Explained Simply — Images, Containers and Every Command You Need</title>
+  <meta name="description" content="A plain-English Docker guide for beginners: images, containers, Dockerfiles, the commands that matter, and a complete working example you can run in minutes.">
+  <meta name="color-scheme" content="dark">
+  <meta name="theme-color" content="#05060a">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="guide.css">
+</head>
+<body class="guide">
+
+  <header class="topbar">
+    <div class="topbar__inner">
+      <a class="topbar__brand" href="index.html">&larr;&nbsp; Cloud, simply</a>
+      <nav class="topbar__nav" aria-label="Jump to">
+        <a href="#words">The big picture</a>
+        <a href="#project">Build one</a>
+        <a href="#commands">Commands</a>
+        <a href="#diagram">Diagram</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="top">
+
+    <section class="hero">
+      <p class="eyebrow">Beginner’s guide</p>
+      <h1>Docker,<br>explained simply.</h1>
+      <p class="hero__lead">Images, containers and the handful of commands you really need. Then we build and run a real app, start to finish.</p>
+      <p class="hero__meta">12 minute read</p>
+    </section>
+
+    <article class="article">
+
+      <nav class="contents" aria-label="Contents">
+        <h2>In this guide</h2>
+        <ol>
+          <li><a href="#story">The problem we’re solving</a></li>
+          <li><a href="#words">The lunch box idea</a></li>
+          <li><a href="#install">Install and test</a></li>
+          <li><a href="#project">Build a real app</a></li>
+          <li><a href="#diagram">The whole picture</a></li>
+          <li><a href="#commands">Every command you need</a></li>
+          <li><a href="#compose">Docker Compose</a></li>
+          <li><a href="#data">Keeping your data</a></li>
+          <li><a href="#stuck">When things go wrong</a></li>
+          <li><a href="#recap">Quick recap</a></li>
+        </ol>
+      </nav>
+
+      <!-- 01 -->
+      <section class="section" id="story">
+        <span class="section__num">01</span>
+        <h2>The problem we’re solving</h2>
+        <p>You build an app on your laptop and it works perfectly. You send it to a friend, or a server, and it breaks. Different version of the language, a missing file, a different setting.</p>
+        <p>Every developer has said the same sentence: <strong>“But it works on my machine!”</strong></p>
+        <p><strong>Docker</strong> fixes this. It packs your app together with everything it needs into one sealed package. That package runs the same way on your laptop, your friend’s laptop, and any server in the world.</p>
+
+        <div class="oneline">
+          <span class="oneline__label">In one line</span>
+          <p>Docker packs your app and everything it needs into one box that runs the same everywhere.</p>
+        </div>
+      </section>
+
+      <!-- 02 -->
+      <section class="section" id="words">
+        <span class="section__num">02</span>
+        <h2>The lunch box idea</h2>
+        <p>Think of cooking a meal and packing it for a trip. These words fit together the same way.</p>
+
+        <div class="words" role="table" aria-label="Docker words and their meaning">
+          <div class="words__row" role="row">
+            <div class="words__term" role="cell">Dockerfile</div>
+            <p class="words__def" role="cell">The recipe. A short text file listing the steps to prepare your app.</p>
+          </div>
+          <div class="words__row" role="row">
+            <div class="words__term" role="cell">Image</div>
+            <p class="words__def" role="cell">The frozen, ready-made meal. Built from the recipe. It never changes, and you can make as many copies as you like.</p>
+          </div>
+          <div class="words__row" role="row">
+            <div class="words__term" role="cell">Container</div>
+            <p class="words__def" role="cell">A meal being eaten right now. A running copy of an image.</p>
+          </div>
+          <div class="words__row" role="row">
+            <div class="words__term" role="cell">Registry</div>
+            <p class="words__def" role="cell">A shop for ready-made meals. <em>Docker Hub</em> is the most popular one. You download images from it, or upload your own.</p>
+          </div>
+          <div class="words__row" role="row">
+            <div class="words__term" role="cell">Port</div>
+            <p class="words__def" role="cell">A door on the box. It lets traffic from outside reach the app inside.</p>
+          </div>
+          <div class="words__row" role="row">
+            <div class="words__term" role="cell">Volume</div>
+            <p class="words__def" role="cell">A shelf outside the box where data is kept, so it survives when the box is thrown away.</p>
+          </div>
+        </div>
+
+        <div class="analogy">
+          <span class="analogy__label">The key difference</span>
+          <p>An image is the recipe’s finished meal, sitting in the freezer. A container is that meal, heated up and being served. One image can run as many containers as you want.</p>
+        </div>
+      </section>
+
+      <!-- 03 -->
+      <section class="section" id="install">
+        <span class="section__num">03</span>
+        <h2>Install and test</h2>
+        <p>Download <strong>Docker Desktop</strong> from docker.com. It works on Mac, Windows and Linux. Open it once so it starts, then open a terminal and check that it’s working.</p>
+<pre class="code"><span class="c"># check Docker is installed</span>
+docker --version
+
+<span class="c"># run Docker's tiny test container</span>
+docker run hello-world</pre>
+        <p style="margin-top:16px;">If you see a “Hello from Docker!” message, everything is ready. Behind the scenes, Docker couldn’t find the <strong>hello-world</strong> image on your computer, so it downloaded it from Docker Hub, then ran it.</p>
+      </section>
+
+      <!-- 04 -->
+      <section class="section" id="project">
+        <span class="section__num">04</span>
+        <h2>Build a real app</h2>
+        <p>Let’s put a tiny website into a container. You’ll make three files in one new folder. Nothing else is needed, and you don’t even have to install Node on your computer, because Docker brings it along.</p>
+
+        <h3>Step 1 · Make the app</h3>
+        <p>Create a file called <strong>app.js</strong>. It’s a tiny web server that says hello.</p>
+<pre class="code"><span class="c">// app.js</span>
+const http = require('http');
+
+http.createServer((req, res) =&gt; {
+  res.end('Hello from my first container!\n');
+}).listen(3000);
+
+console.log('Listening on port 3000');</pre>
+
+        <h3>Step 2 · Write the recipe</h3>
+        <p>Create a file called exactly <strong>Dockerfile</strong>, with no file ending. Each line is one step.</p>
+<pre class="code"><span class="c"># Dockerfile</span>
+<span class="c"># 1. Start from a small ready-made box that has Node inside</span>
+FROM node:20-alpine
+
+<span class="c"># 2. Choose a folder inside the box to work in</span>
+WORKDIR /app
+
+<span class="c"># 3. Copy our app into the box</span>
+COPY app.js .
+
+<span class="c"># 4. Note that the app uses port 3000</span>
+EXPOSE 3000
+
+<span class="c"># 5. The command to run when the box starts</span>
+CMD ["node", "app.js"]</pre>
+
+        <h3>Step 3 · Build the image</h3>
+        <p>Open a terminal in that folder. This turns the recipe into an image and names it <strong>hello-app</strong>. The dot at the end means “use this folder”.</p>
+<pre class="code">docker build -t hello-app .</pre>
+
+        <h3>Step 4 · Run it</h3>
+        <p>Start a container from the image.</p>
+<pre class="code">docker run -d -p 8080:3000 --name hello hello-app</pre>
+        <p style="margin-top:16px;">Here’s what each piece means:</p>
+        <ul class="recap">
+          <li><span><strong>-d</strong> runs it in the background, so your terminal stays free.</span></li>
+          <li><span><strong>-p 8080:3000</strong> connects port 8080 on your computer to port 3000 inside the box. Read it as <em>outside:inside</em>.</span></li>
+          <li><span><strong>--name hello</strong> gives the container a friendly name.</span></li>
+          <li><span><strong>hello-app</strong> is the image to run.</span></li>
+        </ul>
+
+        <h3>Step 5 · See it working</h3>
+        <p>Open <strong>http://localhost:8080</strong> in your browser, or use this:</p>
+<pre class="code">curl http://localhost:8080
+<span class="c"># Hello from my first container!</span></pre>
+        <p style="margin-top:16px;">You just ran an app from a container. To look around, use these:</p>
+<pre class="code"><span class="c"># is it running?</span>
+docker ps
+
+<span class="c"># what has the app printed?</span>
+docker logs hello
+
+<span class="c"># step inside the box and look around</span>
+docker exec -it hello sh
+
+<span class="c"># stop it, then remove it</span>
+docker stop hello
+docker rm hello</pre>
+      </section>
+
+    </article>
+
+    <!-- 05 Diagram -->
+    <section class="diagram-section" id="diagram">
+      <div class="diagram-head">
+        <span class="section__num" style="font-size:14px;font-weight:600;color:var(--text-3);display:block;margin-bottom:12px;">05</span>
+        <h2 style="margin:0 0 20px;font-size:clamp(30px,4.4vw,40px);line-height:1.15;font-weight:700;letter-spacing:-0.028em;">The whole picture</h2>
+        <p style="margin:0;color:var(--text-2);">Follow the arrows: a recipe becomes an image, and an image becomes as many running containers as you like. Images can also be stored in a registry and shared.</p>
+      </div>
+
+      <figure class="diagram" style="margin:0;">
+        <svg viewBox="0 0 960 420" role="img" aria-labelledby="ddt ddd">
+          <title id="ddt">Diagram of the Docker workflow</title>
+          <desc id="ddd">A Dockerfile is turned into an image with docker build. The image runs as one or more containers with docker run. The image can be pushed to and pulled from a registry.</desc>
+
+          <defs>
+            <marker id="dah" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+              <path d="M0,1 L9,5 L0,9 z" class="d-arrow"/>
+            </marker>
+          </defs>
+
+          <!-- Dockerfile -->
+          <rect class="d-box" x="20" y="130" width="170" height="100" rx="14"/>
+          <text class="d-title" x="105" y="172" text-anchor="middle">Dockerfile</text>
+          <text class="d-sub" x="105" y="194" text-anchor="middle">the recipe</text>
+
+          <!-- Image -->
+          <rect class="d-lb" x="300" y="130" width="170" height="100" rx="14"/>
+          <text class="d-title" x="385" y="172" text-anchor="middle">Image</text>
+          <text class="d-sub" x="385" y="194" text-anchor="middle">the ready-made meal</text>
+
+          <!-- Containers -->
+          <rect class="d-cluster" x="580" y="70" width="350" height="220" rx="18"/>
+          <text class="d-small" x="602" y="98" style="fill:var(--accent-ink)">RUNNING ON YOUR COMPUTER</text>
+          <rect class="d-pod" x="602" y="120" width="145" height="140" rx="14"/>
+          <text class="d-podtitle" x="674" y="180" text-anchor="middle">Container 1</text>
+          <text class="d-sub" x="674" y="202" text-anchor="middle">port 8080</text>
+          <rect class="d-pod" x="763" y="120" width="145" height="140" rx="14"/>
+          <text class="d-podtitle" x="835" y="180" text-anchor="middle">Container 2</text>
+          <text class="d-sub" x="835" y="202" text-anchor="middle">port 8081</text>
+
+          <!-- Registry -->
+          <rect class="d-control" x="300" y="320" width="170" height="80" rx="14"/>
+          <text class="d-on-dark" x="385" y="355" text-anchor="middle">Registry</text>
+          <text class="d-on-dark2" x="385" y="377" text-anchor="middle">Docker Hub</text>
+
+          <!-- Arrows -->
+          <line class="d-line" x1="192" y1="180" x2="298" y2="180" marker-end="url(#dah)"/>
+          <text class="d-sub" x="245" y="166" text-anchor="middle" style="font-family:var(--mono)">build</text>
+
+          <line class="d-line" x1="472" y1="180" x2="578" y2="180" marker-end="url(#dah)"/>
+          <text class="d-sub" x="525" y="166" text-anchor="middle" style="font-family:var(--mono)">run</text>
+
+          <line class="d-line" x1="355" y1="232" x2="355" y2="318" marker-end="url(#dah)"/>
+          <line class="d-line" x1="415" y1="318" x2="415" y2="232" marker-end="url(#dah)"/>
+          <text class="d-sub" x="343" y="280" text-anchor="end" style="font-family:var(--mono)">push</text>
+          <text class="d-sub" x="427" y="280" style="font-family:var(--mono)">pull</text>
+        </svg>
+
+        <ul class="legend">
+          <li><strong>Dockerfile</strong>Steps written in a text file.</li>
+          <li><strong>Image</strong>Built once. Never changes.</li>
+          <li><strong>Containers</strong>Live copies. Start as many as you need.</li>
+          <li><strong>Registry</strong>Where images are stored and shared.</li>
+        </ul>
+      </figure>
+    </section>
+
+    <article class="article">
+
+      <!-- 06 -->
+      <section class="section" id="commands">
+        <span class="section__num">06</span>
+        <h2>Every command you need</h2>
+        <p>Docker has hundreds of options, but day to day you’ll use about fifteen. Here they are, grouped by what you’re trying to do.</p>
+
+        <h3>Images</h3>
+        <div class="words words--cmd">
+          <div class="words__row"><div class="words__term">docker build -t name .</div><p class="words__def">Build an image from the Dockerfile in this folder.</p></div>
+          <div class="words__row"><div class="words__term">docker images</div><p class="words__def">List the images on your computer.</p></div>
+          <div class="words__row"><div class="words__term">docker pull name</div><p class="words__def">Download an image from a registry.</p></div>
+          <div class="words__row"><div class="words__term">docker push name</div><p class="words__def">Upload your image to a registry.</p></div>
+          <div class="words__row"><div class="words__term">docker rmi name</div><p class="words__def">Delete an image.</p></div>
+          <div class="words__row"><div class="words__term">docker tag old new</div><p class="words__def">Give an image another name or version.</p></div>
+        </div>
+
+        <h3>Running containers</h3>
+        <div class="words words--cmd">
+          <div class="words__row"><div class="words__term">docker run image</div><p class="words__def">Create and start a container from an image.</p></div>
+          <div class="words__row"><div class="words__term">docker run -d image</div><p class="words__def">Same, but in the background.</p></div>
+          <div class="words__row"><div class="words__term">docker run -p 8080:3000 image</div><p class="words__def">Open a port: your computer’s 8080 to the container’s 3000.</p></div>
+          <div class="words__row"><div class="words__term">docker run --name x image</div><p class="words__def">Give the container a name.</p></div>
+          <div class="words__row"><div class="words__term">docker run -e KEY=value image</div><p class="words__def">Pass a setting into the container.</p></div>
+          <div class="words__row"><div class="words__term">docker run --rm image</div><p class="words__def">Delete the container automatically when it stops.</p></div>
+        </div>
+
+        <h3>Looking after containers</h3>
+        <div class="words words--cmd">
+          <div class="words__row"><div class="words__term">docker ps</div><p class="words__def">Show running containers. Add <em>-a</em> to see stopped ones too.</p></div>
+          <div class="words__row"><div class="words__term">docker logs name</div><p class="words__def">Show what the app has printed. Add <em>-f</em> to follow live.</p></div>
+          <div class="words__row"><div class="words__term">docker exec -it name sh</div><p class="words__def">Open a shell inside a running container.</p></div>
+          <div class="words__row"><div class="words__term">docker stop name</div><p class="words__def">Stop a container politely.</p></div>
+          <div class="words__row"><div class="words__term">docker start name</div><p class="words__def">Start a stopped container again.</p></div>
+          <div class="words__row"><div class="words__term">docker restart name</div><p class="words__def">Stop and start it again.</p></div>
+          <div class="words__row"><div class="words__term">docker rm name</div><p class="words__def">Delete a stopped container.</p></div>
+        </div>
+
+        <h3>Tidying up</h3>
+        <div class="words words--cmd">
+          <div class="words__row"><div class="words__term">docker system prune</div><p class="words__def">Delete stopped containers and unused leftovers.</p></div>
+          <div class="words__row"><div class="words__term">docker login</div><p class="words__def">Sign in to Docker Hub so you can push images.</p></div>
+        </div>
+
+        <div class="analogy">
+          <span class="analogy__label">A handy habit</span>
+          <p>Stuck on any command? Add <strong>--help</strong> to it, for example <strong>docker run --help</strong>. Docker will list every option.</p>
+        </div>
+      </section>
+
+      <!-- 07 -->
+      <section class="section" id="compose">
+        <span class="section__num">07</span>
+        <h2>Docker Compose</h2>
+        <p>Real apps often need more than one container, such as a website and a database. Typing a long <strong>docker run</strong> for each one gets tiring.</p>
+        <p><strong>Docker Compose</strong> lets you describe everything in one file and start it all with one command. Create <strong>compose.yaml</strong> in the same folder as before:</p>
+<pre class="code"><span class="c"># compose.yaml</span>
+services:
+  web:
+    build: .
+    ports:
+      - "8080:3000"</pre>
+        <p style="margin-top:16px;">This says: “Build the app from this folder, and open port 8080.” Now run it:</p>
+<pre class="code"><span class="c"># build and start everything in the background</span>
+docker compose up -d
+
+<span class="c"># see what's running</span>
+docker compose ps
+
+<span class="c"># watch the logs</span>
+docker compose logs -f
+
+<span class="c"># stop and remove everything</span>
+docker compose down</pre>
+        <p style="margin-top:16px;">When you add a database later, you’ll just add another block under <strong>services</strong>, and the same <strong>up</strong> command starts both.</p>
+      </section>
+
+      <!-- 08 -->
+      <section class="section" id="data">
+        <span class="section__num">08</span>
+        <h2>Keeping your data</h2>
+        <p>Here’s something that surprises beginners. When you delete a container, <strong>everything inside it is deleted too</strong>. That’s fine for an app, but not for a database.</p>
+        <p>The fix is a <strong>volume</strong>, a shelf outside the box. The container reads and writes to it, but the shelf stays even when the container is gone.</p>
+<pre class="code"><span class="c"># create a volume called mydata</span>
+docker volume create mydata
+
+<span class="c"># attach it to a container at /data</span>
+docker run -d -v mydata:/data --name keeper hello-app
+
+<span class="c"># list your volumes</span>
+docker volume ls</pre>
+        <p style="margin-top:16px;">Anything saved in <strong>/data</strong> inside that container now survives, even if you delete and recreate the container.</p>
+      </section>
+
+      <!-- 09 -->
+      <section class="section" id="stuck">
+        <span class="section__num">09</span>
+        <h2>When things go wrong</h2>
+        <p>These are the problems almost everyone meets in the first week.</p>
+
+        <div class="words">
+          <div class="words__row">
+            <div class="words__term">“Cannot connect to the Docker daemon”</div>
+            <p class="words__def">Docker Desktop isn’t running. Open it and wait until it says it’s started.</p>
+          </div>
+          <div class="words__row">
+            <div class="words__term">“Port is already allocated”</div>
+            <p class="words__def">Something else is using that port. Pick another, such as <strong>-p 8081:3000</strong>, or stop the old container.</p>
+          </div>
+          <div class="words__row">
+            <div class="words__term">“The name is already in use”</div>
+            <p class="words__def">An old container still has that name. Run <strong>docker rm hello</strong> first.</p>
+          </div>
+          <div class="words__row">
+            <div class="words__term">Container stops straight away</div>
+            <p class="words__def">The app inside crashed. Run <strong>docker logs name</strong> to see why.</p>
+          </div>
+          <div class="words__row">
+            <div class="words__term">Page won’t load</div>
+            <p class="words__def">Check the port order. It’s <em>outside:inside</em>, and the inside number must match what your app listens on.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 10 -->
+      <section class="section" id="recap">
+        <span class="section__num">10</span>
+        <h2>Quick recap</h2>
+        <ul class="recap">
+          <li><span>A <strong>Dockerfile</strong> is the recipe. <strong>docker build</strong> turns it into an <strong>image</strong>.</span></li>
+          <li><span>An <strong>image</strong> never changes. <strong>docker run</strong> starts a <strong>container</strong> from it.</span></li>
+          <li><span><strong>-p outside:inside</strong> opens a door so you can reach the app.</span></li>
+          <li><span><strong>docker ps</strong>, <strong>logs</strong>, <strong>exec</strong>, <strong>stop</strong> and <strong>rm</strong> cover most daily work.</span></li>
+          <li><span>A <strong>registry</strong> stores images so others can pull them.</span></li>
+          <li><span><strong>Compose</strong> runs many containers from one file.</span></li>
+          <li><span>A <strong>volume</strong> keeps data safe when a container is removed.</span></li>
+        </ul>
+
+        <div class="oneline" style="margin-top:40px;">
+          <span class="oneline__label">If you remember one thing</span>
+          <p>Write the recipe once, build the image once, then run it anywhere. That’s the whole point of Docker, and it’s exactly what Kubernetes and EKS do next, at a much bigger scale.</p>
+        </div>
+        <p style="margin-top:28px;"><a href="eks.html">Next: Kubernetes on AWS (EKS) &rarr;</a></p>
+      </section>
+
+    </article>
+  </main>
+
+  <footer class="footer">
+    A beginner’s guide to Docker. Simplified on purpose. Real projects have more moving parts, but these ideas are the foundation for all of them.
+  </footer>
+
+</body>
+</html>

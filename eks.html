@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Kubernetes on AWS (EKS), Explained Simply — Pods, Nodes and Servers</title>
+  <meta name="description" content="A plain-English guide to Kubernetes, Amazon EKS, pods, nodes and servers for beginners deploying microservices — with one clear diagram.">
+  <meta name="color-scheme" content="dark">
+  <meta name="theme-color" content="#05060a">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="guide.css">
+</head>
+<body class="guide">
+
+  <header class="topbar">
+    <div class="topbar__inner">
+      <a class="topbar__brand" href="index.html">&larr;&nbsp; Cloud, simply</a>
+      <nav class="topbar__nav" aria-label="Jump to">
+        <a href="#words">The big picture</a>
+        <a href="#eks">AWS &amp; EKS</a>
+        <a href="#diagram">Diagram</a>
+        <a href="#steps">Steps</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="top">
+
+    <!-- ===== Hero ===== -->
+    <section class="hero">
+      <p class="eyebrow">Beginner’s guide</p>
+      <h1>Kubernetes on AWS,<br>explained simply.</h1>
+      <p class="hero__lead">Pods, nodes, servers and EKS. What they are, how they fit together, and how your microservices end up running on them. No jargon, one picture.</p>
+      <p class="hero__meta">10 minute read</p>
+    </section>
+
+    <article class="article">
+
+      <nav class="contents" aria-label="Contents">
+        <h2>In this guide</h2>
+        <ol>
+          <li><a href="#story">The problem we’re solving</a></li>
+          <li><a href="#words">The restaurant idea</a></li>
+          <li><a href="#container">Container</a></li>
+          <li><a href="#pod">Pod</a></li>
+          <li><a href="#node">Node and server</a></li>
+          <li><a href="#cluster">Cluster and the manager</a></li>
+          <li><a href="#deployment">Deployment and Service</a></li>
+          <li><a href="#eks">Where AWS and EKS fit</a></li>
+          <li><a href="#diagram">The whole picture</a></li>
+          <li><a href="#steps">Deploying, step by step</a></li>
+          <li><a href="#recap">Quick recap</a></li>
+        </ol>
+      </nav>
+
+      <!-- ===== 01 ===== -->
+      <section class="section" id="story">
+        <span class="section__num">01</span>
+        <h2>The problem we’re solving</h2>
+        <p>Imagine you’ve built a food delivery app. At first it’s one program that does everything: shows the menu, takes orders, handles payments.</p>
+        <p>As the app grows, that one big program becomes hard to change. A small fix to payments might break the menu. So you split it into small programs, each with one job. One for the menu. One for orders. One for payments.</p>
+        <p>These small programs are called <strong>microservices</strong>.</p>
+        <p>Now you have a new problem. Lots of little programs need to run on lots of computers. They need to stay online, talk to each other, and handle more visitors on busy evenings. Doing that by hand is exhausting.</p>
+        <p>That’s where <strong>Kubernetes</strong> comes in.</p>
+
+        <div class="oneline">
+          <span class="oneline__label">In one line</span>
+          <p>Kubernetes is a free tool that looks after your programs for you: it starts them, keeps them running, and adds more when you get busy.</p>
+        </div>
+      </section>
+
+      <!-- ===== 02 ===== -->
+      <section class="section" id="words">
+        <span class="section__num">02</span>
+        <h2>The restaurant idea</h2>
+        <p>The new words are easier when you picture a restaurant. Keep this table in mind. We’ll go through each word properly next.</p>
+
+        <div class="words" role="table" aria-label="Kubernetes words and their restaurant meaning">
+          <div class="words__row" role="row">
+            <div class="words__term" role="cell">Microservice</div>
+            <p class="words__def" role="cell">One dish on the menu. A small program with one job.</p>
+          </div>
+          <div class="words__row" role="row">
+            <div class="words__term" role="cell">Container</div>
+            <p class="words__def" role="cell">A sealed lunch box. Your program plus everything it needs, packed together.</p>
+          </div>
+          <div class="words__row" role="row">
+            <div class="words__term" role="cell">Pod</div>
+            <p class="words__def" role="cell">A tray that carries a lunch box to the table. The smallest thing Kubernetes moves around.</p>
+          </div>
+          <div class="words__row" role="row">
+            <div class="words__term" role="cell">Node</div>
+            <p class="words__def" role="cell">One kitchen. A real computer where trays get prepared. <em>Another word for it: server.</em></p>
+          </div>
+          <div class="words__row" role="row">
+            <div class="words__term" role="cell">Cluster</div>
+            <p class="words__def" role="cell">The whole restaurant: all the kitchens together, plus the manager.</p>
+          </div>
+          <div class="words__row" role="row">
+            <div class="words__term" role="cell">Control plane</div>
+            <p class="words__def" role="cell">The manager. Decides which kitchen makes what, and replaces anything that goes wrong.</p>
+          </div>
+          <div class="words__row" role="row">
+            <div class="words__term" role="cell">AWS</div>
+            <p class="words__def" role="cell">The landlord. Rents you kitchens (computers) so you don’t have to buy any.</p>
+          </div>
+          <div class="words__row" role="row">
+            <div class="words__term" role="cell">EKS</div>
+            <p class="words__def" role="cell">A manager hired through AWS, so you don’t have to run one yourself.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== 03 ===== -->
+      <section class="section" id="container">
+        <span class="section__num">03</span>
+        <h2>Container</h2>
+        <p>Your program needs certain things to work: the right version of its language, some files, some settings. On your laptop it works. On another computer it breaks because something is missing.</p>
+        <p>A <strong>container</strong> fixes this by packing your program together with everything it needs. Wherever it goes, it behaves the same.</p>
+
+        <div class="analogy">
+          <span class="analogy__label">Think of it as</span>
+          <p>A sealed lunch box. Whoever opens it, anywhere, finds the same meal inside.</p>
+        </div>
+
+        <p>Most people make containers with a tool called <strong>Docker</strong>. You don’t need to learn it today. Just remember: <strong>one microservice, one container.</strong></p>
+      </section>
+
+      <!-- ===== 04 ===== -->
+      <section class="section" id="pod">
+        <span class="section__num">04</span>
+        <h2>Pod</h2>
+        <p>Kubernetes doesn’t move containers around directly. It wraps them in a <strong>pod</strong>.</p>
+        <p>Most of the time a pod holds just one container. So for a beginner it’s fine to think: <strong>a pod is your running microservice.</strong></p>
+
+        <div class="analogy">
+          <span class="analogy__label">Think of it as</span>
+          <p>A tray carrying the lunch box. The kitchen doesn’t handle loose lunch boxes, only trays.</p>
+        </div>
+
+        <p>Pods are <strong>disposable</strong>. If one crashes, Kubernetes doesn’t fix it. It throws it away and starts a fresh one. That’s normal, and it’s a good thing, because your app heals itself.</p>
+      </section>
+
+      <!-- ===== 05 ===== -->
+      <section class="section" id="node">
+        <span class="section__num">05</span>
+        <h2>Node and server</h2>
+        <p>A <strong>server</strong> is just a computer that lives in a big data centre and stays on all day. It has no screen. Other computers connect to it.</p>
+        <p>In Kubernetes, a server that runs your pods is called a <strong>node</strong>. They’re the same thing. “Server” is the everyday word. “Node” is the Kubernetes word.</p>
+
+        <div class="analogy">
+          <span class="analogy__label">Think of it as</span>
+          <p>A kitchen. It has a limited amount of space and power, so it can only prepare so many trays at once.</p>
+        </div>
+
+        <p>When one node is full, Kubernetes puts new pods on another. This is how you grow without rewriting anything.</p>
+
+        <h3>How the pieces nest</h3>
+        <p>This is the most useful mental picture. Each thing sits inside the next.</p>
+
+        <div class="layers" role="img" aria-label="A container sits inside a pod, a pod sits inside a node, and nodes sit inside a cluster.">
+          <div class="layer layer--cluster">
+            <span class="layer__name">CLUSTER · the whole restaurant</span>
+            <div class="layer layer--node">
+              <span class="layer__name">NODE · a kitchen (server)</span>
+              <div class="layer layer--pod">
+                <span class="layer__name">POD · a tray</span>
+                <div class="layer layer--container">
+                  <span class="layer__name">CONTAINER · a lunch box</span>
+                  Your microservice, for example “orders”
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <p class="layers__caption">Container → Pod → Node → Cluster</p>
+      </section>
+
+      <!-- ===== 06 ===== -->
+      <section class="section" id="cluster">
+        <span class="section__num">06</span>
+        <h2>Cluster and the manager</h2>
+        <p>A group of nodes working together is a <strong>cluster</strong>. It’s your whole restaurant.</p>
+        <p>Someone has to decide which kitchen prepares which tray. That’s the job of the <strong>control plane</strong>, the manager of the restaurant.</p>
+        <p>The manager does three things all day:</p>
+        <ul class="recap">
+          <li><span><strong>Decides.</strong> “The orders tray goes to kitchen 2, it has space.”</span></li>
+          <li><span><strong>Watches.</strong> It keeps checking that everything is still running.</span></li>
+          <li><span><strong>Fixes.</strong> If a tray falls on the floor, it sends out a new one.</span></li>
+        </ul>
+        <p>You don’t cook anything yourself. You just tell the manager what you want, and it makes it happen.</p>
+      </section>
+
+      <!-- ===== 07 ===== -->
+      <section class="section" id="deployment">
+        <span class="section__num">07</span>
+        <h2>Deployment and Service</h2>
+        <p>Two more words and you’ll know the basics.</p>
+
+        <div class="pair">
+          <div class="pair__item">
+            <h3>Deployment</h3>
+            <p>A standing order. “Always keep <strong>3 trays</strong> of orders ready.” If one disappears, the manager makes another to get back to 3.</p>
+          </div>
+          <div class="pair__item">
+            <h3>Service</h3>
+            <p>The front counter. Trays come and go, but customers always use the same counter. It hands each request to a tray that’s ready.</p>
+          </div>
+        </div>
+
+        <p>Why do you need a Service? Because pods keep being replaced, and each new one gets a new address. The Service gives other programs <strong>one steady name</strong> to use, so nothing breaks when pods change.</p>
+      </section>
+
+      <!-- ===== 08 ===== -->
+      <section class="section" id="eks">
+        <span class="section__num">08</span>
+        <h2>Where AWS and EKS fit</h2>
+        <p><strong>AWS</strong> (Amazon Web Services) is a company that rents out computers over the internet. Instead of buying servers and keeping them in a cupboard, you rent them by the hour and hand them back when you’re done.</p>
+        <p>You <em>can</em> install Kubernetes yourself on rented computers, but running the manager is hard work. It has to be set up carefully, kept up to date, and never allowed to go down.</p>
+        <p><strong>EKS</strong> (Elastic Kubernetes Service) is AWS saying: <em>“We’ll run the manager for you.”</em></p>
+
+        <div class="pair">
+          <div class="pair__item">
+            <h3>AWS looks after</h3>
+            <p>The control plane. Setting it up, keeping it healthy, updating it, and making sure it doesn’t fail.</p>
+          </div>
+          <div class="pair__item">
+            <h3>You look after</h3>
+            <p>Your microservices, and how many servers you want for them to run on.</p>
+          </div>
+        </div>
+
+        <h3>Where do the servers come from?</h3>
+        <p>You have two easy choices. You can rent servers from AWS (they’re called <strong>EC2</strong>) and let EKS manage them for you. Or you can pick <strong>Fargate</strong>, where AWS handles the servers completely and you only think about pods.</p>
+        <p>Heads-up on cost: EKS charges a small hourly fee for the manager, plus the cost of the servers you use. Remember to delete a practice cluster when you’re finished.</p>
+      </section>
+
+    </article>
+
+    <!-- ===== 09 Diagram ===== -->
+    <section class="diagram-section" id="diagram">
+      <div class="diagram-head">
+        <span class="section__num" style="font-size:14px;font-weight:600;color:var(--text-3);display:block;margin-bottom:12px;">09</span>
+        <h2 style="margin:0 0 20px;font-size:clamp(30px,4.4vw,40px);line-height:1.15;font-weight:700;letter-spacing:-0.028em;">The whole picture</h2>
+        <p style="margin:0;color:var(--text-2);">Here’s everything together. Read it from the left: a visitor arrives, goes through the front door, and reaches a pod running on one of your servers.</p>
+      </div>
+
+      <figure class="diagram" style="margin:0;">
+        <svg viewBox="0 0 960 610" role="img" aria-labelledby="dt dd">
+          <title id="dt">Diagram of an EKS cluster on AWS</title>
+          <desc id="dd">Users reach a load balancer, which sends traffic into an EKS cluster inside AWS. The cluster has a control plane that manages two nodes. Each node runs pods, and each pod holds a container.</desc>
+
+          <defs>
+            <marker id="ah" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+              <path d="M0,1 L9,5 L0,9 z" class="d-arrow"/>
+            </marker>
+          </defs>
+
+          <!-- AWS cloud -->
+          <rect class="d-cloud" x="150" y="20" width="800" height="570" rx="22"/>
+          <text class="d-small" x="174" y="50">AWS CLOUD</text>
+
+          <!-- Users -->
+          <rect class="d-box" x="10" y="280" width="110" height="70" rx="14"/>
+          <text class="d-title" x="65" y="311" text-anchor="middle">Users</text>
+          <text class="d-sub" x="65" y="332" text-anchor="middle">on the internet</text>
+
+          <!-- Load balancer -->
+          <rect class="d-lb" x="175" y="280" width="110" height="70" rx="14"/>
+          <text class="d-title" x="230" y="311" text-anchor="middle">Front door</text>
+          <text class="d-sub" x="230" y="332" text-anchor="middle">load balancer</text>
+
+          <!-- Arrows in -->
+          <line class="d-line" x1="122" y1="315" x2="173" y2="315" marker-end="url(#ah)"/>
+          <line class="d-line" x1="287" y1="315" x2="353" y2="315" marker-end="url(#ah)"/>
+
+          <!-- EKS cluster -->
+          <rect class="d-cluster" x="330" y="60" width="600" height="510" rx="20"/>
+          <text class="d-small" x="355" y="85" style="fill:var(--accent-ink)">EKS CLUSTER · the whole restaurant</text>
+
+          <!-- Control plane -->
+          <rect class="d-control" x="355" y="100" width="550" height="80" rx="14"/>
+          <text class="d-on-dark" x="380" y="132">Control plane · the manager</text>
+          <text class="d-on-dark2" x="380" y="156">Run by AWS. Decides where each pod goes and replaces broken ones.</text>
+
+          <!-- Instructions -->
+          <line class="d-line" x1="485" y1="182" x2="485" y2="233" marker-end="url(#ah)"/>
+          <line class="d-line" x1="775" y1="182" x2="775" y2="233" marker-end="url(#ah)"/>
+          <text class="d-sub" x="497" y="213">gives instructions</text>
+          <text class="d-sub" x="787" y="213">gives instructions</text>
+
+          <!-- Node 1 -->
+          <rect class="d-node" x="355" y="235" width="260" height="310" rx="16"/>
+          <text class="d-small" x="375" y="262">NODE 1 · a server</text>
+
+          <rect class="d-pod" x="375" y="285" width="220" height="110" rx="12"/>
+          <text class="d-podtitle" x="391" y="311">Pod · Orders</text>
+          <rect class="d-box" x="391" y="327" width="188" height="50" rx="8"/>
+          <text class="d-sub" x="485" y="357" text-anchor="middle">container: orders app</text>
+
+          <rect class="d-pod" x="375" y="415" width="220" height="110" rx="12"/>
+          <text class="d-podtitle" x="391" y="441">Pod · Payments</text>
+          <rect class="d-box" x="391" y="457" width="188" height="50" rx="8"/>
+          <text class="d-sub" x="485" y="487" text-anchor="middle">container: payments app</text>
+
+          <!-- Node 2 -->
+          <rect class="d-node" x="645" y="235" width="260" height="310" rx="16"/>
+          <text class="d-small" x="665" y="262">NODE 2 · a server</text>
+
+          <rect class="d-pod" x="665" y="285" width="220" height="110" rx="12"/>
+          <text class="d-podtitle" x="681" y="311">Pod · Orders (copy)</text>
+          <rect class="d-box" x="681" y="327" width="188" height="50" rx="8"/>
+          <text class="d-sub" x="775" y="357" text-anchor="middle">container: orders app</text>
+
+          <rect class="d-pod" x="665" y="415" width="220" height="110" rx="12"/>
+          <text class="d-podtitle" x="681" y="441">Pod · Menu</text>
+          <rect class="d-box" x="681" y="457" width="188" height="50" rx="8"/>
+          <text class="d-sub" x="775" y="487" text-anchor="middle">container: menu app</text>
+        </svg>
+
+        <ul class="legend">
+          <li><strong>Front door</strong>Receives visitors and passes each one to a pod that’s ready.</li>
+          <li><strong>Control plane</strong>The manager. AWS runs it for you.</li>
+          <li><strong>Nodes</strong>The servers. They do the actual work.</li>
+          <li><strong>Pods</strong>Your microservices, each wrapped around a container. Orders has two copies so it can handle more visitors.</li>
+        </ul>
+      </figure>
+    </section>
+
+    <article class="article">
+
+      <!-- ===== 10 ===== -->
+      <section class="section" id="steps">
+        <span class="section__num">10</span>
+        <h2>Deploying, step by step</h2>
+        <p>Here is the journey from “it works on my laptop” to “it’s running on EKS”.</p>
+
+        <ol class="steps">
+          <li>
+            <h3>Put each microservice in a container</h3>
+            <p>Use Docker to pack your menu, orders and payments programs into their own lunch boxes. These are called <strong>images</strong>.</p>
+          </li>
+          <li>
+            <h3>Store the images on AWS</h3>
+            <p>AWS has a storage place just for them, called <strong>ECR</strong>. Think of it as the pantry where all your lunch boxes wait until they’re needed.</p>
+          </li>
+          <li>
+            <h3>Create your EKS cluster</h3>
+            <p>Ask AWS for a cluster. It builds the manager, and you pick the servers. A tool called <strong>eksctl</strong> does this with a single command.</p>
+          </li>
+          <li>
+            <h3>Tell Kubernetes what you want</h3>
+            <p>You write a short note saying which image to run and how many copies you want. Here’s what one looks like, so you’ve seen it once:</p>
+<pre class="code"><span class="c"># "Keep 3 copies of my orders app running"</span>
+name: orders
+copies: 3
+image: my-pantry/orders:1.0</pre>
+            <p style="margin-top:16px;">The real file uses slightly different words, but the idea is exactly this. Kubernetes reads your note and makes it true.</p>
+          </li>
+          <li>
+            <h3>Open the front door</h3>
+            <p>Add a <strong>load balancer</strong> so people on the internet can reach your app. It shares visitors across your pods, so no single one gets overwhelmed.</p>
+          </li>
+        </ol>
+      </section>
+
+      <!-- ===== 11 ===== -->
+      <section class="section" id="recap">
+        <span class="section__num">11</span>
+        <h2>Quick recap</h2>
+        <ul class="recap">
+          <li><span><strong>Microservices</strong> are small programs, each with one job.</span></li>
+          <li><span>A <strong>container</strong> packs one program with everything it needs.</span></li>
+          <li><span>A <strong>pod</strong> wraps the container so Kubernetes can run it.</span></li>
+          <li><span>A <strong>node</strong> is a server where pods run.</span></li>
+          <li><span>A <strong>cluster</strong> is all your nodes plus the manager (the control plane).</span></li>
+          <li><span>A <strong>Deployment</strong> keeps the right number of pods alive. A <strong>Service</strong> gives them one steady address.</span></li>
+          <li><span><strong>AWS</strong> rents you the servers. <strong>EKS</strong> runs the manager for you.</span></li>
+        </ul>
+
+        <div class="oneline" style="margin-top:40px;">
+          <span class="oneline__label">If you remember one thing</span>
+          <p>You describe what you want. Kubernetes keeps it that way. EKS means AWS looks after the part that does the keeping.</p>
+        </div>
+      </section>
+
+    </article>
+  </main>
+
+  <nav class="more" aria-label="More guides">
+    <p class="more__label">Keep learning</p>
+    <div class="more__grid">
+      <a href="github.html"><strong>Git &amp; GitHub</strong><span>Save, share and team up on code.</span><em>8 min read &rarr;</em></a>
+      <a href="docker.html"><strong>Docker</strong><span>Images, containers and every command.</span><em>12 min read &rarr;</em></a>
+      <a href="index.html"><strong>All guides</strong><span>See the full roadmap from zero to deploy.</span><em>Back to home &rarr;</em></a>
+    </div>
+  </nav>
+
+  <footer class="footer">
+    A beginner’s guide to Kubernetes on AWS. Simplified on purpose. Real systems have more moving parts, but these ideas are the foundation for all of them.
+  </footer>
+
+</body>
+</html>

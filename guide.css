@@ -1,0 +1,183 @@
+/* ==========================================================
+   Guide pages · shares the landing page's dark, polished look
+   Loaded after style.css. Reading comfort is unchanged:
+   same column width, type size and line height.
+   ========================================================== */
+
+html:has(body.guide) { color-scheme: dark; background: #05060a; }
+
+body.guide {
+  --bg: #05060a;
+  --surface: #0e1017;
+  --surface-2: #0a0c11;
+  --text: #f5f5f7;
+  --text-2: #b4b8c5;
+  --text-3: #7a8094;
+  --line: rgba(255, 255, 255, 0.09);
+  --accent: #5b9dff;
+  --accent-soft: rgba(91, 157, 255, 0.12);
+  --accent-ink: #a5c8ff;
+  --warm: #ffb340;
+  --warm-soft: rgba(255, 179, 64, 0.1);
+  --dark: #1a1f30;
+  --on-dark: #f5f5f7;
+  --grad: linear-gradient(100deg, #6fb1ff 0%, #9b7bff 55%, #4fd8e8 100%);
+}
+
+body.guide a { color: var(--accent-ink); }
+body.guide ::selection { background: rgba(91, 157, 255, 0.35); }
+
+/* ---------- Top bar ---------- */
+.guide .topbar { background: rgba(5, 6, 10, 0.6); border-bottom-color: var(--line); }
+.guide .topbar__brand { color: var(--text); transition: color 0.2s ease; }
+.guide .topbar__brand:hover { text-decoration: none; color: var(--accent-ink); }
+.guide .topbar__nav a { transition: color 0.2s ease; }
+
+/* ---------- Hero ---------- */
+.guide .hero { position: relative; isolation: isolate; padding-top: 128px; padding-bottom: 80px; }
+.guide .hero::before, .guide .hero::after {
+  content: ""; position: absolute; z-index: -1; pointer-events: none;
+}
+.guide .hero::before {
+  inset: -60px -20vw auto; height: 520px;
+  background:
+    radial-gradient(420px 260px at 25% 30%, rgba(47, 107, 255, 0.42), transparent 70%),
+    radial-gradient(420px 260px at 75% 20%, rgba(123, 77, 255, 0.34), transparent 70%),
+    radial-gradient(320px 200px at 50% 60%, rgba(30, 201, 224, 0.2), transparent 70%);
+  filter: blur(30px);
+}
+.guide .hero::after {
+  inset: -60px -20vw auto; height: 520px;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px);
+  background-size: 56px 56px;
+  -webkit-mask-image: radial-gradient(ellipse 60% 70% at 50% 35%, #000, transparent 75%);
+  mask-image: radial-gradient(ellipse 60% 70% at 50% 35%, #000, transparent 75%);
+}
+.guide .eyebrow {
+  display: inline-block; padding: 6px 14px; margin-bottom: 24px;
+  background: rgba(255, 255, 255, 0.06); border: 1px solid var(--line); border-radius: 980px;
+  font-size: 13px; color: var(--accent-ink);
+}
+.guide .hero h1 {
+  background: linear-gradient(180deg, #ffffff 35%, #9aa0b2 100%);
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent; color: transparent;
+}
+.guide .hero__lead { color: var(--text-2); }
+.guide .hero__meta {
+  display: inline-block; margin-top: 32px; padding: 6px 14px;
+  background: rgba(255, 255, 255, 0.05); border: 1px solid var(--line); border-radius: 980px;
+  font-size: 13px; color: var(--text-3);
+}
+@keyframes rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+.guide .hero > * { animation: rise 0.8s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
+.guide .hero > *:nth-child(2) { animation-delay: 0.08s; }
+.guide .hero > *:nth-child(3) { animation-delay: 0.16s; }
+.guide .hero > *:nth-child(4) { animation-delay: 0.24s; }
+
+/* ---------- Text ---------- */
+.guide .article h2, .guide .diagram-head h2 { color: var(--text); }
+.guide .article p strong, .guide .article li strong { color: var(--text); }
+.guide .article p em { font-style: normal; color: var(--accent-ink); }
+.guide .section__num {
+  display: inline-block;
+  background: var(--grad); -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent; color: transparent;
+  font-size: 15px;
+}
+.guide .section { padding-top: 88px; }
+
+/* ---------- Surfaces ---------- */
+.guide .contents { background: var(--surface); border: 1px solid var(--line); }
+.guide .contents a:hover { color: var(--accent-ink); }
+
+.guide .oneline {
+  background: linear-gradient(135deg, rgba(91, 157, 255, 0.16), rgba(155, 123, 255, 0.1));
+  border: 1px solid rgba(120, 160, 255, 0.28);
+}
+.guide .oneline__label { color: var(--accent-ink); }
+.guide .oneline p { color: var(--text); }
+
+.guide .analogy { border: 1px solid rgba(255, 179, 64, 0.26); }
+.guide .analogy p { color: var(--text); }
+
+.guide .pair__item {
+  background: var(--surface); border: 1px solid var(--line);
+  transition: border-color 0.3s ease, transform 0.3s ease;
+}
+.guide .pair__item:hover { border-color: rgba(140, 170, 255, 0.35); transform: translateY(-2px); }
+
+.guide .words { border-top-color: var(--line); }
+.guide .words__row { border-bottom-color: var(--line); transition: background 0.2s ease; }
+.guide .words__row:hover { background: rgba(255, 255, 255, 0.025); }
+.guide .words--cmd .words__term { color: var(--accent-ink); }
+
+/* ---------- Layers ---------- */
+.guide .layer { border-color: var(--line); }
+.guide .layer--cluster { background: rgba(255, 255, 255, 0.04); }
+.guide .layer--node { background: rgba(0, 0, 0, 0.35); }
+.guide .layer--pod { background: var(--accent-soft); border-color: rgba(120, 160, 255, 0.25); }
+.guide .layer--container { background: #0b0d12; border-color: var(--line); }
+
+/* ---------- Diagram ---------- */
+.guide .diagram {
+  background: var(--surface); border: 1px solid var(--line);
+  box-shadow: 0 0 80px rgba(70, 100, 255, 0.07);
+}
+.guide .d-cloud   { fill: rgba(255, 255, 255, 0.025); stroke: rgba(255, 255, 255, 0.12); }
+.guide .d-cluster { fill: rgba(91, 157, 255, 0.04); stroke: rgba(120, 160, 255, 0.55); }
+.guide .d-node    { fill: #151927; stroke: rgba(255, 255, 255, 0.12); }
+.guide .d-box     { fill: #0b0d14; stroke: rgba(255, 255, 255, 0.14); }
+.guide .d-pod     { fill: rgba(91, 157, 255, 0.16); }
+.guide .d-lb      { fill: rgba(255, 179, 64, 0.1); stroke: rgba(255, 179, 64, 0.7); }
+.guide .d-control { fill: #1a1f30; stroke: rgba(255, 255, 255, 0.1); stroke-width: 1.5; }
+.guide .d-line    { stroke: #8890a6; }
+.guide .d-arrow   { fill: #8890a6; }
+.guide .legend    { border-top-color: var(--line); }
+
+/* ---------- Steps ---------- */
+.guide .steps li::before {
+  background: linear-gradient(135deg, #3b7bff, #7b5cff);
+  box-shadow: 0 0 0 4px rgba(91, 130, 255, 0.15), 0 6px 20px rgba(80, 110, 255, 0.4);
+}
+.guide .steps li::after { background: var(--line); }
+
+/* ---------- Code ---------- */
+.guide .code {
+  background: #080a10; border: 1px solid var(--line); color: #e6e8f0;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+.guide .code .c { color: #6f7690; }
+
+.guide .recap li::before { background: var(--grad); }
+
+/* ---------- Keep learning ---------- */
+.more { max-width: 1080px; margin: 120px auto 0; padding: 0 24px; }
+.more__label { margin: 0 0 20px; font-size: 14px; font-weight: 600; color: var(--text-3); text-align: center; }
+.more__grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.more__grid a {
+  display: flex; flex-direction: column; gap: 4px; padding: 24px 24px 22px;
+  background: var(--surface); border: 1px solid var(--line); border-radius: 20px;
+  color: var(--text);
+  transition: border-color 0.3s ease, transform 0.3s cubic-bezier(0.32, 0.72, 0, 1), background 0.3s ease;
+}
+.more__grid a:hover { text-decoration: none; border-color: rgba(140, 170, 255, 0.4); transform: translateY(-3px); background: #12151f; }
+.more__grid a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.more__grid strong { font-size: 20px; font-weight: 600; letter-spacing: -0.015em; }
+.more__grid span { font-size: 14px; line-height: 1.5; color: var(--text-3); }
+.more__grid em { margin-top: 12px; font-style: normal; font-size: 14px; font-weight: 600; color: var(--accent-ink); }
+
+.guide .footer { margin-top: 72px; border-top-color: var(--line); }
+
+@media (max-width: 720px) {
+  .guide .hero { padding-top: 88px; padding-bottom: 56px; }
+  .more { margin-top: 88px; }
+  .more__grid { grid-template-columns: 1fr; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .guide .hero > * { animation: none; }
+  .guide .pair__item, .more__grid a { transition: none; }
+}
