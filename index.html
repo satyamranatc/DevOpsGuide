@@ -10,6 +10,7 @@
   <script>document.documentElement.classList.add('js');</script>
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="landing.css">
+  <link rel="stylesheet" href="sidebar.css">
 </head>
 <body class="home">
 
@@ -47,7 +48,7 @@
         </li>
       </ul>
 
-      <p class="drawer__label">Read now &middot; in this order</p>
+      <p class="drawer__label">Read in this order</p>
       <ul class="drawer__list">
         <li>
           <a href="github.html">
@@ -68,15 +69,15 @@
           </a>
         </li>
         <li>
-          <a href="nginx.html">
-            <span class="drawer__title"><span class="drawer__step">4</span>Nginx</span>
-            <span class="drawer__desc">Web server, proxy and HTTPS &middot; 14 min</span>
+          <a href="docker.html">
+            <span class="drawer__title"><span class="drawer__step">4</span>Docker</span>
+            <span class="drawer__desc">Images, containers and commands &middot; 12 min</span>
           </a>
         </li>
         <li>
-          <a href="docker.html">
-            <span class="drawer__title"><span class="drawer__step">5</span>Docker</span>
-            <span class="drawer__desc">Images, containers and commands &middot; 12 min</span>
+          <a href="nginx.html">
+            <span class="drawer__title"><span class="drawer__step">5</span>Nginx</span>
+            <span class="drawer__desc">Web server, proxy and HTTPS &middot; 14 min</span>
           </a>
         </li>
         <li>
@@ -96,7 +97,6 @@
       <p class="drawer__label">Coming soon</p>
       <ul class="drawer__soon">
         <li>Linux and networking</li>
-        <li>CI/CD pipelines</li>
         <li>Terraform and Ansible</li>
         <li>Monitoring</li>
         <li>Security</li>
@@ -127,8 +127,8 @@
             <li><a href="github.html"><strong>Git &amp; GitHub</strong><span>8 min read</span></a></li>
             <li><a href="aws.html"><strong>AWS essentials</strong><span>14 min read</span></a></li>
             <li><a href="ec2.html"><strong>EC2 servers</strong><span>15 min read</span></a></li>
-            <li><a href="nginx.html"><strong>Nginx</strong><span>14 min read</span></a></li>
             <li><a href="docker.html"><strong>Docker</strong><span>12 min read</span></a></li>
+            <li><a href="nginx.html"><strong>Nginx</strong><span>14 min read</span></a></li>
             <li><a href="cicd.html"><strong>CI/CD</strong><span>20 min read</span></a></li>
             <li><a href="eks.html"><strong>EKS</strong><span>10 min read</span></a></li>
           </ul>
@@ -245,34 +245,6 @@
         </div>
       </a>
 
-      <a class="live__card reveal" href="nginx.html" style="margin-bottom:24px">
-        <div>
-          <div class="live__top"><span class="pill">Live</span><span>Stage 02 · Cloud with AWS · 14 min read</span></div>
-          <h3 class="live__title">Nginx</h3>
-          <p class="live__sub">The front door for your website.</p>
-          <p class="live__text">Serve pages, pass visitors to your app, share the load between copies, and add free HTTPS, all from one small config file.</p>
-          <span class="btn btn--primary">Read the guide <span aria-hidden="true">&rarr;</span></span>
-        </div>
-
-        <div class="live__art" role="img" aria-label="Preview: Nginx receives visitors and passes them to apps.">
-          <div class="layers">
-            <div class="layer layer--cluster">
-              <span class="layer__name">VISITORS · ports 80 and 443</span>
-              <div class="layer layer--node">
-                <span class="layer__name">NGINX · the host at the door</span>
-                <div class="layer layer--pod">
-                  <span class="layer__name">LOCATION /api · a rule</span>
-                  <div class="layer layer--container">
-                    <span class="layer__name">YOUR APP · port 3000</span>
-                    proxy_pass http://127.0.0.1:3000;
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </a>
-
       <a class="live__card reveal" href="docker.html" style="margin-bottom:24px">
         <div>
           <div class="live__top"><span class="pill">Live</span><span>Stage 03 · Containers · 12 min read</span></div>
@@ -293,6 +265,34 @@
                   <div class="layer layer--container">
                     <span class="layer__name">YOUR APP</span>
                     docker run hello-app
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </a>
+
+      <a class="live__card reveal" href="nginx.html" style="margin-bottom:24px">
+        <div>
+          <div class="live__top"><span class="pill">Live</span><span>Stage 02 · Cloud with AWS · 14 min read</span></div>
+          <h3 class="live__title">Nginx</h3>
+          <p class="live__sub">The front door for your website.</p>
+          <p class="live__text">Serve pages, pass visitors to your app, share the load between copies, and add free HTTPS, all from one small config file.</p>
+          <span class="btn btn--primary">Read the guide <span aria-hidden="true">&rarr;</span></span>
+        </div>
+
+        <div class="live__art" role="img" aria-label="Preview: Nginx receives visitors and passes them to apps.">
+          <div class="layers">
+            <div class="layer layer--cluster">
+              <span class="layer__name">VISITORS · ports 80 and 443</span>
+              <div class="layer layer--node">
+                <span class="layer__name">NGINX · the host at the door</span>
+                <div class="layer layer--pod">
+                  <span class="layer__name">LOCATION /api · a rule</span>
+                  <div class="layer layer--container">
+                    <span class="layer__name">YOUR APP · port 3000</span>
+                    proxy_pass http://127.0.0.1:3000;
                   </div>
                 </div>
               </div>
@@ -521,8 +521,27 @@
 
   </main>
 
-  <footer class="footer">
-    Simplified on purpose. Real systems have more moving parts, but these ideas are the foundation for all of them.
+  <footer class="footer sitefoot">
+    <div class="sitefoot__inner">
+      <div class="sitefoot__brand">
+        <a href="index.html">Deploybook</a>
+        <p>Plain-English DevOps guides, from your first commit to a live app.</p>
+        <a class="sitefoot__home" href="index.html#roadmap">See the full roadmap &rarr;</a>
+      </div>
+      <nav aria-label="All guides">
+        <p class="sitefoot__label">All guides, in reading order</p>
+        <ol>
+          <li><a href="github.html">Git &amp; GitHub</a></li>
+          <li><a href="aws.html">AWS essentials</a></li>
+          <li><a href="ec2.html">EC2 servers</a></li>
+          <li><a href="docker.html">Docker</a></li>
+          <li><a href="nginx.html">Nginx</a></li>
+          <li><a href="cicd.html">CI/CD with GitHub Actions</a></li>
+          <li><a href="eks.html">EKS</a></li>
+        </ol>
+      </nav>
+    </div>
+    <p class="sitefoot__fine">Simplified on purpose. Real systems have more moving parts, but these ideas are the foundation for all of them.</p>
   </footer>
 
   <script>

@@ -9,12 +9,19 @@
   <meta name="theme-color" content="#05060a">
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="guide.css">
+  <link rel="stylesheet" href="sidebar.css">
 </head>
 <body class="guide">
 
   <header class="topbar">
     <div class="topbar__inner">
-      <a class="topbar__brand" href="index.html">&larr;&nbsp; Deploybook</a>
+      <div class="topbar__left">
+        <button class="menu-btn" id="menu-open" type="button" aria-controls="drawer" aria-expanded="false">
+          <span class="menu-btn__bars" aria-hidden="true"></span>
+          Menu
+        </button>
+        <a class="topbar__brand" href="index.html">Deploybook</a>
+      </div>
       <nav class="topbar__nav" aria-label="Jump to">
         <a href="#words">The big picture</a>
         <a href="#diagram">Diagram</a>
@@ -23,6 +30,87 @@
       </nav>
     </div>
   </header>
+
+  <div class="scrim" id="scrim"></div>
+  <aside class="drawer" id="drawer" aria-label="Site menu">
+    <div class="drawer__head">
+      <a class="drawer__brand" href="index.html">Deploybook</a>
+      <button class="drawer__close" id="menu-close" type="button" aria-label="Hide sidebar">&times;</button>
+    </div>
+
+    <nav aria-label="Guides">
+      <ul class="drawer__list">
+        <li>
+          <a href="index.html">
+            <span class="drawer__title">Home</span>
+          </a>
+        </li>
+        <li>
+          <a href="index.html#roadmap">
+            <span class="drawer__title">Full roadmap</span>
+            <span class="drawer__desc">All 9 stages at a glance</span>
+          </a>
+        </li>
+      </ul>
+
+      <p class="drawer__label">Read in this order</p>
+      <ul class="drawer__list">
+        <li>
+          <a href="github.html">
+            <span class="drawer__title"><span class="drawer__step">1</span>Git &amp; GitHub</span>
+            <span class="drawer__desc">Save, share and team up on code &middot; 8 min</span>
+          </a>
+        </li>
+        <li>
+          <a href="aws.html">
+            <span class="drawer__title"><span class="drawer__step">2</span>AWS essentials</span>
+            <span class="drawer__desc">Servers, storage and security &middot; 14 min</span>
+          </a>
+        </li>
+        <li>
+          <a href="ec2.html" aria-current="page">
+            <span class="drawer__title"><span class="drawer__step">3</span>EC2 servers</span>
+            <span class="drawer__desc">Launch and connect to your first server &middot; 15 min</span>
+          </a>
+        </li>
+        <li>
+          <a href="docker.html">
+            <span class="drawer__title"><span class="drawer__step">4</span>Docker</span>
+            <span class="drawer__desc">Images, containers and commands &middot; 12 min</span>
+          </a>
+        </li>
+        <li>
+          <a href="nginx.html">
+            <span class="drawer__title"><span class="drawer__step">5</span>Nginx</span>
+            <span class="drawer__desc">Web server, proxy and HTTPS &middot; 14 min</span>
+          </a>
+        </li>
+        <li>
+          <a href="cicd.html">
+            <span class="drawer__title"><span class="drawer__step">6</span>CI/CD with GitHub Actions</span>
+            <span class="drawer__desc">Auto-deploy React + Express &middot; 20 min</span>
+          </a>
+        </li>
+        <li>
+          <a href="eks.html">
+            <span class="drawer__title"><span class="drawer__step">7</span>EKS</span>
+            <span class="drawer__desc">Kubernetes on AWS, explained &middot; 10 min</span>
+          </a>
+        </li>
+      </ul>
+
+      <p class="drawer__label">Coming soon</p>
+      <ul class="drawer__soon">
+        <li>Linux and networking</li>
+        <li>Terraform and Ansible</li>
+        <li>Monitoring</li>
+        <li>Security</li>
+        <li>Reliability</li>
+      </ul>
+    </nav>
+
+    <p class="drawer__foot">Short guides in plain English, written for people who are just starting out.</p>
+  </aside>
 
   <main id="top">
 
@@ -510,24 +598,87 @@ aws ec2 terminate-instances --instance-ids i-0123456789abcdef0</pre>
           <span class="oneline__label">If you remember one thing</span>
           <p>An EC2 instance is just a computer you’re borrowing. Open only the doors you need, keep the key safe, and give it back when you’re done.</p>
         </div>
-        <p style="margin-top:28px;"><a href="nginx.html">Next: Nginx, the front door for your website &rarr;</a></p>
+        <p style="margin-top:28px;"><a href="docker.html">Next: Docker, pack your app into a box that runs anywhere &rarr;</a></p>
       </section>
 
     </article>
   </main>
 
-  <nav class="more" aria-label="More guides">
+  <nav class="more" aria-label="Previous and next guides">
     <p class="more__label">Keep learning</p>
     <div class="more__grid">
-      <a href="aws.html"><strong>AWS essentials</strong><span>Regions, IAM, S3, VPC and costs.</span><em>14 min read &rarr;</em></a>
-      <a href="nginx.html"><strong>Nginx</strong><span>Web server, proxy and HTTPS.</span><em>14 min read &rarr;</em></a>
+      <a href="aws.html"><strong>AWS essentials</strong><span>Servers, storage and security.</span><em>&larr; Previous guide</em></a>
+      <a href="docker.html"><strong>Docker</strong><span>Images, containers and commands.</span><em>Next guide &rarr;</em></a>
       <a href="index.html"><strong>All guides</strong><span>See the full roadmap from zero to deploy.</span><em>Back to home &rarr;</em></a>
     </div>
   </nav>
 
-  <footer class="footer">
-    A beginner’s guide to Amazon EC2. Simplified on purpose. Real setups have more moving parts, but these ideas are the foundation for all of them.
+  <footer class="footer sitefoot">
+    <div class="sitefoot__inner">
+      <div class="sitefoot__brand">
+        <a href="index.html">Deploybook</a>
+        <p>Plain-English DevOps guides, from your first commit to a live app.</p>
+        <a class="sitefoot__home" href="index.html#roadmap">See the full roadmap &rarr;</a>
+      </div>
+      <nav aria-label="All guides">
+        <p class="sitefoot__label">All guides, in reading order</p>
+        <ol>
+          <li><a href="github.html">Git &amp; GitHub</a></li>
+          <li><a href="aws.html">AWS essentials</a></li>
+          <li><a href="ec2.html" aria-current="page">EC2 servers</a></li>
+          <li><a href="docker.html">Docker</a></li>
+          <li><a href="nginx.html">Nginx</a></li>
+          <li><a href="cicd.html">CI/CD with GitHub Actions</a></li>
+          <li><a href="eks.html">EKS</a></li>
+        </ol>
+      </nav>
+    </div>
+    <p class="sitefoot__fine">A beginner’s guide to Amazon EC2. Simplified on purpose. Real setups have more moving parts, but these ideas are the foundation for all of them.</p>
   </footer>
 
+  <script>
+    (function () {
+      var body = document.body;
+      var openBtn = document.getElementById('menu-open');
+      var closeBtn = document.getElementById('menu-close');
+      var scrim = document.getElementById('scrim');
+      var drawer = document.getElementById('drawer');
+
+      // Sidebar: open by default on large screens, slide-in on small ones
+      var wide = window.matchMedia('(min-width: 1025px)');
+      var KEY = 'sidebar-closed';
+      var stored = null;
+      try { stored = localStorage.getItem(KEY); } catch (e) {}
+      if (stored === '1') body.classList.add('side-closed');
+
+      function isOpen() {
+        return wide.matches ? !body.classList.contains('side-closed') : body.classList.contains('menu-open');
+      }
+      function syncAria() {
+        var visible = isOpen();
+        drawer.setAttribute('aria-hidden', String(!visible));
+        openBtn.setAttribute('aria-expanded', String(visible));
+      }
+      function setOpen(open) {
+        if (wide.matches) {
+          body.classList.toggle('side-closed', !open);
+          try { localStorage.setItem(KEY, open ? '0' : '1'); } catch (e) {}
+        } else {
+          body.classList.toggle('menu-open', open);
+          (open ? closeBtn : openBtn).focus();
+        }
+        syncAria();
+      }
+      openBtn.addEventListener('click', function () { setOpen(!isOpen()); });
+      closeBtn.addEventListener('click', function () { setOpen(false); });
+      scrim.addEventListener('click', function () { setOpen(false); });
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && !wide.matches && body.classList.contains('menu-open')) setOpen(false);
+      });
+      var onChange = function () { body.classList.remove('menu-open'); syncAria(); };
+      if (wide.addEventListener) wide.addEventListener('change', onChange); else wide.addListener(onChange);
+      syncAria();
+    })();
+  </script>
 </body>
 </html>
