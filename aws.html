@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AWS Essentials, Explained Simply — Regions, IAM, EC2, S3, VPC and Costs</title>
+  <meta name="description" content="A plain-English guide to the AWS services every beginner needs: regions, IAM, EC2, S3, VPC, databases, load balancers and how not to get a surprise bill.">
+  <meta name="color-scheme" content="dark">
+  <meta name="theme-color" content="#05060a">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="guide.css">
+</head>
+<body class="guide">
+
+  <header class="topbar">
+    <div class="topbar__inner">
+      <a class="topbar__brand" href="index.html">&larr;&nbsp; Cloud, simply</a>
+      <nav class="topbar__nav" aria-label="Jump to">
+        <a href="#words">The big picture</a>
+        <a href="#iam">IAM</a>
+        <a href="#diagram">Diagram</a>
+        <a href="#money">Costs</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="top">
+
+    <section class="hero">
+      <p class="eyebrow">Beginner’s guide</p>
+      <h1>AWS essentials,<br>explained simply.</h1>
+      <p class="hero__lead">The handful of AWS services you’ll meet on day one: what each does, how they fit together, and how to avoid a surprise bill.</p>
+      <p class="hero__meta">14 minute read</p>
+    </section>
+
+    <article class="article">
+
+      <nav class="contents" aria-label="Contents">
+        <h2>In this guide</h2>
+        <ol>
+          <li><a href="#story">What AWS actually is</a></li>
+          <li><a href="#map">Regions and zones</a></li>
+          <li><a href="#words">The city idea</a></li>
+          <li><a href="#iam">IAM: who can do what</a></li>
+          <li><a href="#ec2">EC2: your servers</a></li>
+          <li><a href="#s3">S3: your storage</a></li>
+          <li><a href="#vpc">VPC: your private network</a></li>
+          <li><a href="#grow">Databases, load balancers, scaling</a></li>
+          <li><a href="#diagram">The whole picture</a></li>
+          <li><a href="#money">Costs and staying safe</a></li>
+          <li><a href="#cli">Try it: the AWS CLI</a></li>
+          <li><a href="#recap">Quick recap</a></li>
+        </ol>
+      </nav>
+
+      <!-- 01 -->
+      <section class="section" id="story">
+        <span class="section__num">01</span>
+        <h2>What AWS actually is</h2>
+        <p>Say you want to put a website online. The old way: buy a computer, plug it in, keep it running day and night, and hope it never breaks. If your site suddenly gets popular, you’d need to buy more computers and wait for them to arrive.</p>
+        <p><strong>AWS</strong> (Amazon Web Services) is the other way. Amazon owns enormous buildings full of computers, and it <strong>rents them out</strong> by the hour. You ask for what you need, it’s ready in minutes, and you hand it back when you’re done.</p>
+        <p>You only pay for what you use, like electricity. Nothing to buy, nothing to store.</p>
+
+        <div class="oneline">
+          <span class="oneline__label">In one line</span>
+          <p>AWS lets you rent computers, storage and networks over the internet, and pay only for what you use.</p>
+        </div>
+      </section>
+
+      <!-- 02 -->
+      <section class="section" id="map">
+        <span class="section__num">02</span>
+        <h2>Regions and zones</h2>
+        <p>AWS’s buildings are spread across the world. Two words describe where they are.</p>
+
+        <div class="pair">
+          <div class="pair__item">
+            <h3>Region</h3>
+            <p>A part of the world, like <strong>Mumbai</strong>, <strong>Frankfurt</strong> or <strong>Virginia</strong>. You pick one close to your users, so your site feels fast.</p>
+          </div>
+          <div class="pair__item">
+            <h3>Availability Zone</h3>
+            <p>A separate building (or group of them) inside a region, with its own power and network. Often called an <strong>AZ</strong>.</p>
+          </div>
+        </div>
+
+        <p>Why do zones matter? Buildings have bad days: a power cut, a fire, a flood. If your app lives in <strong>two zones</strong> at once, one going down doesn’t take you offline.</p>
+
+        <div class="analogy">
+          <span class="analogy__label">Think of it as</span>
+          <p>A region is a city. Zones are separate neighbourhoods in that city. If one neighbourhood loses power, the others carry on.</p>
+        </div>
+      </section>
+
+      <!-- 03 -->
+      <section class="section" id="words">
+        <span class="section__num">03</span>
+        <h2>The city idea</h2>
+        <p>AWS has over two hundred services, which sounds scary. Don’t worry. Nearly every beginner project uses the same few. Picture them as parts of a city.</p>
+
+        <div class="words" role="table" aria-label="AWS services and their city meaning">
+          <div class="words__row" role="row">
+            <div class="words__term" role="cell">IAM</div>
+            <p class="words__def" role="cell">The security office. Decides who gets a key, and which doors that key opens.</p>
+          </div>
+          <div class="words__row" role="row">
+            <div class="words__term" role="cell">EC2</div>
+            <p class="words__def" role="cell">Rented computers. The workers who actually run your app.</p>
+          </div>
+          <div class="words__row" role="row">
+            <div class="words__term" role="cell">S3</div>
+            <p class="words__def" role="cell">A giant warehouse for files: photos, videos, backups, anything.</p>
+          </div>
+          <div class="words__row" role="row">
+            <div class="words__term" role="cell">VPC</div>
+            <p class="words__def" role="cell">Your own fenced-off land inside the city, with your own roads and gates.</p>
+          </div>
+          <div class="words__row" role="row">
+            <div class="words__term" role="cell">RDS</div>
+            <p class="words__def" role="cell">A managed filing room for your data (a database), cared for by AWS.</p>
+          </div>
+          <div class="words__row" role="row">
+            <div class="words__term" role="cell">Load balancer</div>
+            <p class="words__def" role="cell">The receptionist. Greets every visitor and sends each to a free worker.</p>
+          </div>
+          <div class="words__row" role="row">
+            <div class="words__term" role="cell">Auto Scaling</div>
+            <p class="words__def" role="cell">The hiring manager. Adds workers when it’s busy, sends them home when it’s quiet.</p>
+          </div>
+          <div class="words__row" role="row">
+            <div class="words__term" role="cell">CloudWatch</div>
+            <p class="words__def" role="cell">The CCTV and alarm system. Watches everything and warns you when something’s wrong.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 04 -->
+      <section class="section" id="iam">
+        <span class="section__num">04</span>
+        <h2>IAM: who can do what</h2>
+        <p>Before you create anything, learn <strong>IAM</strong> (Identity and Access Management). It controls who can enter your AWS account and what they’re allowed to do.</p>
+        <p>When you sign up, you get a <strong>root user</strong>. It’s the master key. It can do everything, including deleting your whole account.</p>
+
+        <div class="analogy">
+          <span class="analogy__label">The golden rule</span>
+          <p>Lock the master key away. Use it once to set up, then give yourself a normal key for everyday work.</p>
+        </div>
+
+        <h3>The four IAM words</h3>
+        <div class="words">
+          <div class="words__row"><div class="words__term">User</div><p class="words__def">One person (or program) with their own login.</p></div>
+          <div class="words__row"><div class="words__term">Group</div><p class="words__def">A team of users who share the same permissions, like “developers”.</p></div>
+          <div class="words__row"><div class="words__term">Policy</div><p class="words__def">A short rulebook: “allowed to read files in this bucket, nothing more.”</p></div>
+          <div class="words__row"><div class="words__term">Role</div><p class="words__def">A temporary hat. A server or service puts it on to get permissions, with no passwords involved.</p></div>
+        </div>
+
+        <h3>Do these three things on day one</h3>
+        <ul class="recap">
+          <li><span><strong>Turn on MFA</strong> for the root user. That’s the code from an app on your phone, on top of your password.</span></li>
+          <li><span><strong>Create your own IAM user</strong> and use that for daily work, never the root user.</span></li>
+          <li><span><strong>Give the smallest permissions that work.</strong> This is called <em>least privilege</em>. Start with little and add more when you need it.</span></li>
+        </ul>
+      </section>
+
+      <!-- 05 -->
+      <section class="section" id="ec2">
+        <span class="section__num">05</span>
+        <h2>EC2: your servers</h2>
+        <p><strong>EC2</strong> (Elastic Compute Cloud) gives you a computer in the cloud. AWS calls each one an <strong>instance</strong>. It’s a real server where you can install and run anything.</p>
+        <p>When you launch one, you choose a few things:</p>
+        <ul class="recap">
+          <li><span><strong>An image (AMI).</strong> The starting software, such as Ubuntu or Amazon Linux.</span></li>
+          <li><span><strong>A size.</strong> How much power. A <em>t3.micro</em> is small and cheap. Bigger names mean more power and a bigger price.</span></li>
+          <li><span><strong>A key pair.</strong> A secret file that lets you log in. Keep it safe, because you can’t download it twice.</span></li>
+          <li><span><strong>A security group.</strong> A list of which doors are open, such as port 22 for logging in or port 80 for a website.</span></li>
+        </ul>
+        <p>Instances are billed while they’re running. <strong>Stop</strong> one and you stop paying for the computer. <strong>Terminate</strong> it and it’s gone for good. <a href="ec2.html">Read the full EC2 guide &rarr;</a></p>
+      </section>
+
+      <!-- 06 -->
+      <section class="section" id="s3">
+        <span class="section__num">06</span>
+        <h2>S3: your storage</h2>
+        <p><strong>S3</strong> (Simple Storage Service) stores files. Any number of them, any size, and AWS keeps copies so they’re very hard to lose.</p>
+        <p>Files go into a <strong>bucket</strong>, which is like a top-level folder. Each file inside is called an <strong>object</strong>.</p>
+
+        <div class="pair">
+          <div class="pair__item">
+            <h3>Great for</h3>
+            <p>Images and videos for your app, backups, log files, and even simple static websites.</p>
+          </div>
+          <div class="pair__item">
+            <h3>Remember</h3>
+            <p>Bucket names must be <strong>unique across all of AWS</strong>, and buckets are <strong>private by default</strong>. Keep them that way unless you truly need otherwise.</p>
+          </div>
+        </div>
+
+        <p>S3 is also very cheap, and you pay only for what you store. That’s why almost every AWS project ends up using it.</p>
+      </section>
+
+      <!-- 07 -->
+      <section class="section" id="vpc">
+        <span class="section__num">07</span>
+        <h2>VPC: your private network</h2>
+        <p>A <strong>VPC</strong> (Virtual Private Cloud) is your own private section of AWS. Your servers and databases live inside it, cut off from everyone else’s.</p>
+        <p>Inside a VPC you split things into two kinds of areas, called <strong>subnets</strong>:</p>
+
+        <div class="pair">
+          <div class="pair__item">
+            <h3>Public subnet</h3>
+            <p>Can talk to the internet. Put things here that visitors need to reach, like a load balancer.</p>
+          </div>
+          <div class="pair__item">
+            <h3>Private subnet</h3>
+            <p>Hidden from the internet. Put your databases here. Only your own servers can reach them.</p>
+          </div>
+        </div>
+
+        <div class="analogy">
+          <span class="analogy__label">Think of it as</span>
+          <p>A shop with a front room and a back room. Customers come into the front. The safe is kept in the back, where only staff can go.</p>
+        </div>
+      </section>
+
+      <!-- 08 -->
+      <section class="section" id="grow">
+        <span class="section__num">08</span>
+        <h2>Databases, load balancers, scaling</h2>
+        <p>Three more services turn “one server” into a proper, dependable app.</p>
+
+        <h3>RDS · a database AWS looks after</h3>
+        <p>Apps need to remember things: users, orders, messages. That’s a database. <strong>RDS</strong> (Relational Database Service) runs one for you. AWS handles the backups, updates and fixing. You can ask it to keep a spare copy in a second zone, so a failure doesn’t lose anything.</p>
+
+        <h3>Load balancer · one front door</h3>
+        <p>When you have several servers, visitors need a single address to use. The <strong>load balancer</strong> gives you that. It spreads visitors across your servers, and it stops sending anyone to a server that has crashed.</p>
+
+        <h3>Auto Scaling · the right number of servers</h3>
+        <p>Traffic isn’t steady. <strong>Auto Scaling</strong> watches how busy you are. Busy evening? It adds servers. Quiet night? It removes them, so you stop paying for idle ones. It also replaces any server that dies.</p>
+
+        <div class="oneline">
+          <span class="oneline__label">Put together</span>
+          <p>Load balancer in front, a few servers behind it in two zones, a database in the back, and Auto Scaling keeping the count right.</p>
+        </div>
+      </section>
+
+    </article>
+
+    <!-- 09 Diagram -->
+    <section class="diagram-section" id="diagram">
+      <div class="diagram-head">
+        <span class="section__num" style="font-size:15px;font-weight:600;display:inline-block;margin-bottom:12px;">09</span>
+        <h2 style="margin:0 0 20px;font-size:clamp(30px,4.4vw,40px);line-height:1.15;font-weight:700;letter-spacing:-0.028em;">The whole picture</h2>
+        <p style="margin:0;color:var(--text-2);">A typical small app on AWS. Visitors arrive at the load balancer, which shares them across two servers in different zones. Both read from the database, and files live in S3.</p>
+      </div>
+
+      <figure class="diagram" style="margin:0;">
+        <svg viewBox="0 0 960 450" role="img" aria-labelledby="at ad">
+          <title id="at">Diagram of a typical AWS app</title>
+          <desc id="ad">Users reach a load balancer inside a VPC. The load balancer sends traffic to two EC2 servers in two availability zones. Each zone has a database. The servers also use S3 for files. IAM controls access to everything.</desc>
+
+          <defs>
+            <marker id="aah" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+              <path d="M0,1 L9,5 L0,9 z" class="d-arrow"/>
+            </marker>
+          </defs>
+
+          <!-- Region -->
+          <rect class="d-cloud" x="150" y="10" width="800" height="430" rx="22"/>
+          <text class="d-small" x="174" y="38">AWS REGION · one part of the world</text>
+
+          <!-- Users -->
+          <rect class="d-box" x="10" y="85" width="110" height="70" rx="14"/>
+          <text class="d-title" x="65" y="116" text-anchor="middle">Users</text>
+          <text class="d-sub" x="65" y="137" text-anchor="middle">on the internet</text>
+
+          <!-- VPC -->
+          <rect class="d-cluster" x="170" y="56" width="560" height="372" rx="18"/>
+          <text class="d-small" x="190" y="84" style="fill:var(--accent-ink)">VPC</text>
+          <text class="d-sub" x="190" y="104">your private network</text>
+
+          <!-- Load balancer -->
+          <rect class="d-lb" x="360" y="80" width="360" height="62" rx="12"/>
+          <text class="d-title" x="540" y="108" text-anchor="middle">Load balancer</text>
+          <text class="d-sub" x="540" y="127" text-anchor="middle">one front door for everyone</text>
+
+          <line class="d-line" x1="122" y1="120" x2="358" y2="115" marker-end="url(#aah)"/>
+
+          <!-- AZ A -->
+          <rect class="d-node" x="360" y="170" width="170" height="245" rx="14"/>
+          <text class="d-small" x="378" y="194">ZONE A</text>
+          <rect class="d-pod" x="375" y="208" width="140" height="80" rx="10"/>
+          <text class="d-podtitle" x="445" y="243" text-anchor="middle">EC2 server</text>
+          <text class="d-sub" x="445" y="262" text-anchor="middle">runs your app</text>
+          <rect class="d-box" x="375" y="318" width="140" height="80" rx="10"/>
+          <text class="d-title" x="445" y="353" text-anchor="middle">Database</text>
+          <text class="d-sub" x="445" y="372" text-anchor="middle">main copy</text>
+
+          <!-- AZ B -->
+          <rect class="d-node" x="550" y="170" width="170" height="245" rx="14"/>
+          <text class="d-small" x="568" y="194">ZONE B</text>
+          <rect class="d-pod" x="565" y="208" width="140" height="80" rx="10"/>
+          <text class="d-podtitle" x="635" y="243" text-anchor="middle">EC2 server</text>
+          <text class="d-sub" x="635" y="262" text-anchor="middle">runs your app</text>
+          <rect class="d-box" x="565" y="318" width="140" height="80" rx="10"/>
+          <text class="d-title" x="635" y="353" text-anchor="middle">Database</text>
+          <text class="d-sub" x="635" y="372" text-anchor="middle">spare copy</text>
+
+          <!-- LB to servers -->
+          <line class="d-line" x1="445" y1="144" x2="445" y2="206" marker-end="url(#aah)"/>
+          <line class="d-line" x1="635" y1="144" x2="635" y2="206" marker-end="url(#aah)"/>
+          <!-- server to db -->
+          <line class="d-line" x1="445" y1="290" x2="445" y2="316" marker-end="url(#aah)"/>
+          <line class="d-line" x1="635" y1="290" x2="635" y2="316" marker-end="url(#aah)"/>
+          <!-- replication -->
+          <line class="d-line" x1="517" y1="358" x2="563" y2="358" marker-end="url(#aah)"/>
+          <text class="d-sub" x="540" y="348" text-anchor="middle" style="font-size:11px">copy</text>
+
+          <!-- S3 -->
+          <rect class="d-lb" x="770" y="90" width="165" height="86" rx="14"/>
+          <text class="d-title" x="852" y="127" text-anchor="middle">S3</text>
+          <text class="d-sub" x="852" y="148" text-anchor="middle">files and backups</text>
+          <path class="d-line" d="M707,248 L745,248 L745,133 L768,133" marker-end="url(#aah)"/>
+
+          <!-- IAM -->
+          <rect class="d-control" x="770" y="250" width="165" height="86" rx="14"/>
+          <text class="d-on-dark" x="852" y="287" text-anchor="middle">IAM</text>
+          <text class="d-on-dark2" x="852" y="308" text-anchor="middle">who can do what</text>
+          <line class="d-line" x1="768" y1="293" x2="732" y2="293" marker-end="url(#aah)" style="stroke-dasharray:5 5"/>
+        </svg>
+
+        <ul class="legend">
+          <li><strong>Load balancer</strong>The single front door. Skips any server that’s down.</li>
+          <li><strong>Two zones</strong>If one building has a problem, the other keeps going.</li>
+          <li><strong>Database</strong>Kept in the private area, with a spare copy in the other zone.</li>
+          <li><strong>S3 and IAM</strong>S3 stores files. IAM decides who may touch what.</li>
+        </ul>
+      </figure>
+    </section>
+
+    <article class="article">
+
+      <!-- 10 -->
+      <section class="section" id="money">
+        <span class="section__num">10</span>
+        <h2>Costs and staying safe</h2>
+        <p>AWS is pay-as-you-go, which is great, until you forget to turn something off. Most horror stories come from a forgotten server running for a month. A few habits prevent that.</p>
+
+        <ol class="steps">
+          <li>
+            <h3>Set a budget alert first</h3>
+            <p>Before creating anything, open <strong>Billing → Budgets</strong> and make a small budget, for example $5. AWS will email you if you’re about to go over it.</p>
+          </li>
+          <li>
+            <h3>Use the Free Tier</h3>
+            <p>New accounts get a limited amount of free usage, such as small servers, storage and databases. Check the current limits on the AWS Free Tier page, because they change.</p>
+          </li>
+          <li>
+            <h3>Pick one region and stay in it</h3>
+            <p>Resources you forgot in another region still cost money, and they’re easy to miss. Look at the region name in the top-right corner of the console.</p>
+          </li>
+          <li>
+            <h3>Clean up when you’re done</h3>
+            <p>Terminate practice servers, delete test databases and empty buckets. If you don’t need it, delete it.</p>
+          </li>
+        </ol>
+
+        <div class="analogy">
+          <span class="analogy__label">Watch out</span>
+          <p>Never put your access keys in code or on GitHub. Bots scan for them within minutes and can run up a huge bill on your account.</p>
+        </div>
+      </section>
+
+      <!-- 11 -->
+      <section class="section" id="cli">
+        <span class="section__num">11</span>
+        <h2>Try it: the AWS CLI</h2>
+        <p>You can do everything with clicks in the console, but the <strong>AWS CLI</strong> lets you type commands instead, which is faster and can be saved in scripts. Install it from the AWS website, then connect it to your account.</p>
+
+        <h3>Step 1 · Connect</h3>
+        <p>Create an access key for your IAM user (not root), then run this and paste the values when asked.</p>
+<pre class="code"><span class="c"># one-time setup</span>
+aws configure
+<span class="c"># asks for: Access Key ID, Secret Access Key,
+#          region (e.g. ap-south-1), output format (json)</span>
+
+<span class="c"># check who you're logged in as</span>
+aws sts get-caller-identity</pre>
+
+        <h3>Step 2 · Use S3</h3>
+        <p>Make a bucket, upload a file and look inside it. Bucket names must be unique everywhere, so add something personal to yours.</p>
+<pre class="code"><span class="c"># make a bucket</span>
+aws s3 mb s3://my-first-bucket-12345
+
+<span class="c"># upload a file</span>
+aws s3 cp hello.txt s3://my-first-bucket-12345/
+
+<span class="c"># list what's inside</span>
+aws s3 ls s3://my-first-bucket-12345/
+
+<span class="c"># download it again</span>
+aws s3 cp s3://my-first-bucket-12345/hello.txt copy.txt
+
+<span class="c"># clean up: delete the bucket and everything in it</span>
+aws s3 rb s3://my-first-bucket-12345 --force</pre>
+
+        <h3>Step 3 · Look at your servers</h3>
+<pre class="code"><span class="c"># list your EC2 servers and their state</span>
+aws ec2 describe-instances \
+  --query "Reservations[].Instances[].[InstanceId,State.Name]" \
+  --output table
+
+<span class="c"># stop a server (replace with your own ID)</span>
+aws ec2 stop-instances --instance-ids i-0123456789abcdef0
+
+<span class="c"># start it again</span>
+aws ec2 start-instances --instance-ids i-0123456789abcdef0</pre>
+
+        <h3>A few more worth knowing</h3>
+        <div class="words words--cmd">
+          <div class="words__row"><div class="words__term">aws iam list-users</div><p class="words__def">See who has a login in your account.</p></div>
+          <div class="words__row"><div class="words__term">aws s3 ls</div><p class="words__def">List all your buckets.</p></div>
+          <div class="words__row"><div class="words__term">aws ec2 describe-regions</div><p class="words__def">List the regions you can use.</p></div>
+          <div class="words__row"><div class="words__term">aws &lt;service&gt; help</div><p class="words__def">Show help for any service, for example <em>aws s3 help</em>.</p></div>
+        </div>
+      </section>
+
+      <!-- 12 -->
+      <section class="section" id="recap">
+        <span class="section__num">12</span>
+        <h2>Quick recap</h2>
+        <ul class="recap">
+          <li><span><strong>AWS</strong> rents you computers, storage and networks, and you pay for what you use.</span></li>
+          <li><span>A <strong>region</strong> is a place in the world. <strong>Zones</strong> are separate buildings inside it.</span></li>
+          <li><span><strong>IAM</strong> controls access. Protect the root user, use MFA, give the least permissions.</span></li>
+          <li><span><strong>EC2</strong> gives you servers. <strong>S3</strong> stores files.</span></li>
+          <li><span>A <strong>VPC</strong> is your private network, with public and private areas.</span></li>
+          <li><span><strong>RDS</strong>, a <strong>load balancer</strong> and <strong>Auto Scaling</strong> make an app dependable.</span></li>
+          <li><span>Set a <strong>budget alert</strong> first, and delete what you don’t use.</span></li>
+        </ul>
+
+        <div class="oneline" style="margin-top:40px;">
+          <span class="oneline__label">If you remember one thing</span>
+          <p>Secure your account first, set a budget alert, then build small. Everything else in AWS is a variation of these same few building blocks.</p>
+        </div>
+        <p style="margin-top:28px;"><a href="ec2.html">Next: EC2, launch your first server &rarr;</a></p>
+      </section>
+
+    </article>
+  </main>
+
+  <nav class="more" aria-label="More guides">
+    <p class="more__label">Keep learning</p>
+    <div class="more__grid">
+      <a href="ec2.html"><strong>EC2 servers</strong><span>Launch and connect to your first server.</span><em>15 min read &rarr;</em></a>
+      <a href="eks.html"><strong>EKS</strong><span>Kubernetes on AWS, explained simply.</span><em>10 min read &rarr;</em></a>
+      <a href="index.html"><strong>All guides</strong><span>See the full roadmap from zero to deploy.</span><em>Back to home &rarr;</em></a>
+    </div>
+  </nav>
+
+  <footer class="footer">
+    A beginner’s guide to AWS. Simplified on purpose. Real setups have more moving parts, but these ideas are the foundation for all of them.
+  </footer>
+
+</body>
+</html>

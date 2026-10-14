@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Amazon EC2, Explained Simply — Instances, AMIs, Key Pairs and Launching Your First Server</title>
+  <meta name="description" content="A plain-English guide to Amazon EC2 for beginners: instance types, AMIs, key pairs, security groups, storage, pricing, and how to launch and connect to your first server.">
+  <meta name="color-scheme" content="dark">
+  <meta name="theme-color" content="#05060a">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="guide.css">
+</head>
+<body class="guide">
+
+  <header class="topbar">
+    <div class="topbar__inner">
+      <a class="topbar__brand" href="index.html">&larr;&nbsp; Cloud, simply</a>
+      <nav class="topbar__nav" aria-label="Jump to">
+        <a href="#words">The big picture</a>
+        <a href="#diagram">Diagram</a>
+        <a href="#launch">Launch one</a>
+        <a href="#money">Costs</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="top">
+
+    <section class="hero">
+      <p class="eyebrow">Beginner’s guide</p>
+      <h1>Amazon EC2,<br>explained simply.</h1>
+      <p class="hero__lead">Rent a computer in the cloud, log in, and put something on it. Every choice you’ll make along the way, in plain English.</p>
+      <p class="hero__meta">15 minute read</p>
+    </section>
+
+    <article class="article">
+
+      <nav class="contents" aria-label="Contents">
+        <h2>In this guide</h2>
+        <ol>
+          <li><a href="#story">What EC2 is</a></li>
+          <li><a href="#words">The hotel room idea</a></li>
+          <li><a href="#types">Choosing a size</a></li>
+          <li><a href="#diagram">The whole picture</a></li>
+          <li><a href="#launch">Launch your first server</a></li>
+          <li><a href="#connect">Connect to it</a></li>
+          <li><a href="#web">Put a website on it</a></li>
+          <li><a href="#lifecycle">Start, stop, terminate</a></li>
+          <li><a href="#storage">Storage and addresses</a></li>
+          <li><a href="#money">What it costs</a></li>
+          <li><a href="#cli">The same thing from the CLI</a></li>
+          <li><a href="#stuck">When things go wrong</a></li>
+          <li><a href="#recap">Quick recap</a></li>
+        </ol>
+      </nav>
+
+      <!-- 01 -->
+      <section class="section" id="story">
+        <span class="section__num">01</span>
+        <h2>What EC2 is</h2>
+        <p>A website, an app, or a script needs a computer to run on. That computer has to be switched on all day, have a steady internet connection, and be looked after.</p>
+        <p><strong>EC2</strong> (Elastic Compute Cloud) is how you rent one from AWS. You choose how powerful it is, press a button, and in about a minute you have a real server you can log into. It’s yours until you give it back.</p>
+        <p>AWS calls each rented server an <strong>instance</strong>. If you hear “spin up an instance”, it just means “start a server”.</p>
+
+        <div class="oneline">
+          <span class="oneline__label">In one line</span>
+          <p>EC2 is a computer you rent from AWS by the hour, with full control over what runs on it.</p>
+        </div>
+      </section>
+
+      <!-- 02 -->
+      <section class="section" id="words">
+        <span class="section__num">02</span>
+        <h2>The hotel room idea</h2>
+        <p>Renting an instance is a lot like booking a hotel room. These words map across neatly.</p>
+
+        <div class="words" role="table" aria-label="EC2 words and their hotel meaning">
+          <div class="words__row" role="row">
+            <div class="words__term" role="cell">Instance</div>
+            <p class="words__def" role="cell">Your room. One rented server, ready to use.</p>
+          </div>
+          <div class="words__row" role="row">
+            <div class="words__term" role="cell">AMI</div>
+            <p class="words__def" role="cell">How the room is furnished when you arrive. The starting software, such as Amazon Linux, Ubuntu or Windows.</p>
+          </div>
+          <div class="words__row" role="row">
+            <div class="words__term" role="cell">Instance type</div>
+            <p class="words__def" role="cell">The room size. A cosy single or a big suite. It sets how much power and memory you get.</p>
+          </div>
+          <div class="words__row" role="row">
+            <div class="words__term" role="cell">Key pair</div>
+            <p class="words__def" role="cell">Your room key. A secret file that proves you’re allowed in.</p>
+          </div>
+          <div class="words__row" role="row">
+            <div class="words__term" role="cell">Security group</div>
+            <p class="words__def" role="cell">The front desk rules. Decides who may knock, and on which doors.</p>
+          </div>
+          <div class="words__row" role="row">
+            <div class="words__term" role="cell">EBS volume</div>
+            <p class="words__def" role="cell">The wardrobe. The disk that stores your files and the operating system.</p>
+          </div>
+          <div class="words__row" role="row">
+            <div class="words__term" role="cell">Public IP</div>
+            <p class="words__def" role="cell">The room’s street address, so people on the internet can reach it.</p>
+          </div>
+          <div class="words__row" role="row">
+            <div class="words__term" role="cell">Region and zone</div>
+            <p class="words__def" role="cell">Which city, and which building, the hotel is in.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 03 -->
+      <section class="section" id="types">
+        <span class="section__num">03</span>
+        <h2>Choosing a size</h2>
+        <p>Instance type names look cryptic, but they follow a simple pattern. Take <strong>t3.micro</strong>:</p>
+
+        <div class="words">
+          <div class="words__row"><div class="words__term">t</div><p class="words__def">The <strong>family</strong>: what the server is good at. “t” is a cheap all-rounder for light work.</p></div>
+          <div class="words__row"><div class="words__term">3</div><p class="words__def">The <strong>generation</strong>. Higher is newer, usually a bit faster and better value.</p></div>
+          <div class="words__row"><div class="words__term">micro</div><p class="words__def">The <strong>size</strong>. From nano and micro up through small, medium, large, xlarge and beyond.</p></div>
+        </div>
+
+        <p style="margin-top:24px;">Each step up in size roughly doubles the power, and the price. A t3.micro has 2 virtual CPUs and 1 GB of memory, which is plenty for learning and small sites.</p>
+
+        <h3>The families you’ll meet most</h3>
+        <div class="words">
+          <div class="words__row"><div class="words__term">T and M</div><p class="words__def">General purpose. Balanced CPU and memory. Start here for most apps.</p></div>
+          <div class="words__row"><div class="words__term">C</div><p class="words__def">Compute heavy. More CPU power, for things like video encoding.</p></div>
+          <div class="words__row"><div class="words__term">R</div><p class="words__def">Memory heavy. Lots of RAM, for big databases and caches.</p></div>
+          <div class="words__row"><div class="words__term">G and P</div><p class="words__def">Graphics cards. For machine learning and AI work.</p></div>
+        </div>
+
+        <div class="analogy">
+          <span class="analogy__label">A helpful habit</span>
+          <p>Start small. You can stop an instance and change its size later in a couple of minutes. It’s much cheaper than starting too big.</p>
+        </div>
+      </section>
+
+    </article>
+
+    <!-- 04 Diagram -->
+    <section class="diagram-section" id="diagram">
+      <div class="diagram-head">
+        <span class="section__num" style="font-size:15px;font-weight:600;display:inline-block;margin-bottom:12px;">04</span>
+        <h2 style="margin:0 0 20px;font-size:clamp(30px,4.4vw,40px);line-height:1.15;font-weight:700;letter-spacing:-0.028em;">The whole picture</h2>
+        <p style="margin:0;color:var(--text-2);">Here’s everything one instance is made of. You reach it through the security group’s doors, and prove who you are with your key.</p>
+      </div>
+
+      <figure class="diagram" style="margin:0;">
+        <svg viewBox="0 0 960 420" role="img" aria-labelledby="et ed">
+          <title id="et">Diagram of an EC2 instance</title>
+          <desc id="ed">You connect to an EC2 instance through a security group. The instance is made of an AMI, an instance type, an EBS disk and a public IP. A key pair is used to log in and CloudWatch watches the instance.</desc>
+
+          <defs>
+            <marker id="eah" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+              <path d="M0,1 L9,5 L0,9 z" class="d-arrow"/>
+            </marker>
+          </defs>
+
+          <!-- You -->
+          <rect class="d-box" x="10" y="170" width="110" height="70" rx="14"/>
+          <text class="d-title" x="65" y="201" text-anchor="middle">You</text>
+          <text class="d-sub" x="65" y="222" text-anchor="middle">your laptop</text>
+
+          <!-- Security group -->
+          <rect class="d-cluster" x="190" y="30" width="500" height="360" rx="20"/>
+          <text class="d-small" x="212" y="58" style="fill:var(--accent-ink)">SECURITY GROUP · the door rules</text>
+
+          <line class="d-line" x1="122" y1="205" x2="188" y2="205" marker-end="url(#eah)"/>
+          <text class="d-sub" x="155" y="190" text-anchor="middle" style="font-size:11px">SSH or web</text>
+
+          <!-- Instance -->
+          <rect class="d-node" x="215" y="75" width="450" height="290" rx="16"/>
+          <text class="d-small" x="237" y="102">EC2 INSTANCE · your rented server</text>
+
+          <rect class="d-pod" x="237" y="122" width="195" height="95" rx="12"/>
+          <text class="d-podtitle" x="334" y="160" text-anchor="middle">AMI</text>
+          <text class="d-sub" x="334" y="181" text-anchor="middle">the software on it</text>
+
+          <rect class="d-pod" x="448" y="122" width="195" height="95" rx="12"/>
+          <text class="d-podtitle" x="545" y="160" text-anchor="middle">Instance type</text>
+          <text class="d-sub" x="545" y="181" text-anchor="middle">t3.micro · 2 CPU, 1 GB</text>
+
+          <rect class="d-lb" x="237" y="237" width="195" height="95" rx="12"/>
+          <text class="d-title" x="334" y="275" text-anchor="middle">EBS volume</text>
+          <text class="d-sub" x="334" y="296" text-anchor="middle">the hard drive</text>
+
+          <rect class="d-box" x="448" y="237" width="195" height="95" rx="12"/>
+          <text class="d-title" x="545" y="275" text-anchor="middle">Public IP</text>
+          <text class="d-sub" x="545" y="296" text-anchor="middle">its internet address</text>
+
+          <!-- Key pair -->
+          <rect class="d-control" x="740" y="95" width="195" height="86" rx="14"/>
+          <text class="d-on-dark" x="837" y="133" text-anchor="middle">Key pair</text>
+          <text class="d-on-dark2" x="837" y="154" text-anchor="middle">your login key</text>
+          <line class="d-line" x1="738" y1="138" x2="667" y2="138" marker-end="url(#eah)" style="stroke-dasharray:5 5"/>
+
+          <!-- CloudWatch -->
+          <rect class="d-box" x="740" y="245" width="195" height="86" rx="14"/>
+          <text class="d-title" x="837" y="283" text-anchor="middle">CloudWatch</text>
+          <text class="d-sub" x="837" y="304" text-anchor="middle">watches CPU and health</text>
+          <line class="d-line" x1="738" y1="288" x2="667" y2="288" marker-end="url(#eah)" style="stroke-dasharray:5 5"/>
+        </svg>
+
+        <ul class="legend">
+          <li><strong>Security group</strong>A firewall around the server. Only the doors you open can be used.</li>
+          <li><strong>AMI + type</strong>What’s installed, and how much power it has.</li>
+          <li><strong>EBS volume</strong>The disk. Your files live here.</li>
+          <li><strong>Key pair</strong>Needed to log in. Keep the private file safe.</li>
+        </ul>
+      </figure>
+    </section>
+
+    <article class="article">
+
+      <!-- 05 -->
+      <section class="section" id="launch">
+        <span class="section__num">05</span>
+        <h2>Launch your first server</h2>
+        <p>Let’s make one. Sign in to the AWS console, set a <strong>budget alert</strong> first if you haven’t, and check the region in the top-right corner. Then open <strong>EC2</strong> and press <strong>Launch instance</strong>.</p>
+
+        <ol class="steps">
+          <li>
+            <h3>Name it</h3>
+            <p>Type something you’ll recognise later, like <strong>my-first-server</strong>. This is just a label.</p>
+          </li>
+          <li>
+            <h3>Pick the software (AMI)</h3>
+            <p>Choose <strong>Amazon Linux</strong>. It’s free to use, made by AWS, and works well on EC2. The username you’ll log in with is <strong>ec2-user</strong>.</p>
+          </li>
+          <li>
+            <h3>Pick the size</h3>
+            <p>Choose <strong>t3.micro</strong> (or whichever is marked <em>Free tier eligible</em> in your region). It’s plenty for this guide.</p>
+          </li>
+          <li>
+            <h3>Create a key pair</h3>
+            <p>Press <strong>Create new key pair</strong>, name it <strong>my-key</strong>, keep RSA and <strong>.pem</strong>, and download it. <strong>You can’t download it again</strong>, so put it somewhere safe.</p>
+          </li>
+          <li>
+            <h3>Set the network rules</h3>
+            <p>Under network settings, allow <strong>SSH</strong> (so you can log in) and <strong>HTTP</strong> (so a website can be seen). For SSH, change the source from “Anywhere” to <strong>My IP</strong>, so only you can knock on that door.</p>
+          </li>
+          <li>
+            <h3>Check the disk, then launch</h3>
+            <p>The default 8 GB disk is fine. Press <strong>Launch instance</strong>. After a minute the state turns to <strong>Running</strong>.</p>
+          </li>
+        </ol>
+      </section>
+
+      <!-- 06 -->
+      <section class="section" id="connect">
+        <span class="section__num">06</span>
+        <h2>Connect to it</h2>
+        <p>Click your instance and copy its <strong>Public IPv4 address</strong>. Then open a terminal on your own computer, in the folder where you saved the key.</p>
+<pre class="code"><span class="c"># the key must be private, or SSH will refuse it</span>
+chmod 400 my-key.pem
+
+<span class="c"># log in (replace with your server's address)</span>
+ssh -i my-key.pem ec2-user@203.0.113.25</pre>
+        <p style="margin-top:16px;">The first time, it asks whether you trust this server. Type <strong>yes</strong>. When the prompt changes to something like <strong>[ec2-user@ip-172-31-...]$</strong>, you’re inside your server.</p>
+        <p>Try a few commands, and type <strong>exit</strong> to leave.</p>
+<pre class="code"><span class="c"># who am I, and where?</span>
+whoami
+hostname
+
+<span class="c"># how much disk and memory do I have?</span>
+df -h
+free -h</pre>
+
+        <div class="analogy">
+          <span class="analogy__label">Different software, different username</span>
+          <p>Amazon Linux uses <strong>ec2-user</strong>. Ubuntu uses <strong>ubuntu</strong>. Using the wrong one is the number one reason a login fails.</p>
+        </div>
+      </section>
+
+      <!-- 07 -->
+      <section class="section" id="web">
+        <span class="section__num">07</span>
+        <h2>Put a website on it</h2>
+        <p>A server isn’t much use until it does something. Let’s install a web server and show a page. While logged in, run these:</p>
+<pre class="code"><span class="c"># install the nginx web server</span>
+sudo dnf install -y nginx
+
+<span class="c"># start it now, and every time the server boots</span>
+sudo systemctl enable --now nginx
+
+<span class="c"># write our own page</span>
+echo "&lt;h1&gt;Hello from my EC2 server!&lt;/h1&gt;" | sudo tee /usr/share/nginx/html/index.html</pre>
+        <p style="margin-top:16px;">Now open <strong>http://</strong> followed by your public IP in a browser. You should see your message. You just hosted a website.</p>
+        <p>If the page doesn’t load, the cause is almost always the security group. Make sure <strong>HTTP (port 80)</strong> is allowed.</p>
+
+        <h3>The shortcut: user data</h3>
+        <p>Typing commands by hand doesn’t scale. When launching, open <strong>Advanced details</strong> and paste a script into <strong>User data</strong>. EC2 runs it automatically the first time the server starts, so it comes up already set up.</p>
+<pre class="code"><span class="c">#!/bin/bash</span>
+dnf install -y nginx
+systemctl enable --now nginx
+echo "&lt;h1&gt;Hello from user data!&lt;/h1&gt;" &gt; /usr/share/nginx/html/index.html</pre>
+      </section>
+
+    </article>
+
+    <!-- 08 Lifecycle diagram -->
+    <section class="diagram-section" id="lifecycle">
+      <div class="diagram-head">
+        <span class="section__num" style="font-size:15px;font-weight:600;display:inline-block;margin-bottom:12px;">08</span>
+        <h2 style="margin:0 0 20px;font-size:clamp(30px,4.4vw,40px);line-height:1.15;font-weight:700;letter-spacing:-0.028em;">Start, stop, terminate</h2>
+        <p style="margin:0;color:var(--text-2);">An instance moves through a few states. The two that people mix up are <strong style="color:var(--text)">stop</strong> and <strong style="color:var(--text)">terminate</strong>, so here they are side by side.</p>
+      </div>
+
+      <figure class="diagram" style="margin:0;">
+        <svg viewBox="0 0 960 300" role="img" aria-labelledby="lt ld">
+          <title id="lt">EC2 instance lifecycle</title>
+          <desc id="ld">An instance starts as pending, then becomes running. A running instance can be stopped and started again. A running or stopped instance can be terminated, which deletes it.</desc>
+
+          <defs>
+            <marker id="lah" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+              <path d="M0,1 L9,5 L0,9 z" class="d-arrow"/>
+            </marker>
+          </defs>
+
+          <rect class="d-box" x="20" y="110" width="150" height="80" rx="14"/>
+          <text class="d-title" x="95" y="148" text-anchor="middle">Pending</text>
+          <text class="d-sub" x="95" y="168" text-anchor="middle">starting up</text>
+
+          <rect class="d-pod" x="260" y="110" width="170" height="80" rx="14"/>
+          <text class="d-podtitle" x="345" y="148" text-anchor="middle">Running</text>
+          <text class="d-sub" x="345" y="168" text-anchor="middle">ready to use</text>
+          <text class="d-sub" x="345" y="214" text-anchor="middle" style="font-size:12px">you pay while it runs</text>
+
+          <rect class="d-node" x="560" y="30" width="170" height="80" rx="14"/>
+          <text class="d-title" x="645" y="68" text-anchor="middle">Stopped</text>
+          <text class="d-sub" x="645" y="88" text-anchor="middle">switched off</text>
+
+          <rect class="d-lb" x="560" y="190" width="170" height="80" rx="14"/>
+          <text class="d-title" x="645" y="228" text-anchor="middle">Terminated</text>
+          <text class="d-sub" x="645" y="248" text-anchor="middle">gone for good</text>
+
+          <line class="d-line" x1="172" y1="150" x2="258" y2="150" marker-end="url(#lah)"/>
+
+          <line class="d-line" x1="432" y1="125" x2="558" y2="62" marker-end="url(#lah)"/>
+          <text class="d-sub" x="470" y="84" text-anchor="middle" style="font-family:var(--mono);font-size:12px">stop</text>
+          <line class="d-line" x1="558" y1="95" x2="432" y2="145" marker-end="url(#lah)"/>
+          <text class="d-sub" x="510" y="146" text-anchor="middle" style="font-family:var(--mono);font-size:12px">start</text>
+
+          <line class="d-line" x1="432" y1="176" x2="558" y2="226" marker-end="url(#lah)"/>
+          <text class="d-sub" x="470" y="226" text-anchor="middle" style="font-family:var(--mono);font-size:12px">terminate</text>
+          <line class="d-line" x1="645" y1="112" x2="645" y2="188" marker-end="url(#lah)"/>
+          <text class="d-sub" x="658" y="155" style="font-family:var(--mono);font-size:12px">terminate</text>
+
+          <text class="d-sub" x="760" y="64">No server charge.</text>
+          <text class="d-sub" x="760" y="82">The disk is still billed.</text>
+          <text class="d-sub" x="760" y="224">Server deleted. The disk</text>
+          <text class="d-sub" x="760" y="242">goes too, by default.</text>
+        </svg>
+
+        <ul class="legend">
+          <li><strong>Stop</strong>Like switching a computer off. Keep it for later.</li>
+          <li><strong>Start</strong>Switch it back on. Your files are still there.</li>
+          <li><strong>Terminate</strong>Throw it away. You can’t undo this.</li>
+          <li><strong>Reboot</strong>Restart without changing anything. Safe.</li>
+        </ul>
+      </figure>
+    </section>
+
+    <article class="article">
+
+      <!-- 09 -->
+      <section class="section" id="storage">
+        <span class="section__num">09</span>
+        <h2>Storage and addresses</h2>
+
+        <h3>Disks: EBS</h3>
+        <p>An instance’s main disk is an <strong>EBS volume</strong>. It lives separately from the server, so a stopped instance keeps its files. You’re billed for the disk’s size the whole time it exists, even when the server is stopped.</p>
+        <p>You can add more volumes, and you can take a <strong>snapshot</strong>, which is a saved copy of a disk. Snapshots are your backups.</p>
+
+        <h3>Addresses: why your IP keeps changing</h3>
+        <p>Here’s a surprise many beginners hit. The public IP is <strong>not permanent</strong>. Stop and start the instance, and it gets a new one. Rebooting keeps it, but stopping doesn’t.</p>
+        <p>If you need an address that never changes, ask for an <strong>Elastic IP</strong>. It’s a fixed address you hold onto and attach to your server. You pay a small hourly fee for every public IPv4 address, so release it if you’re not using it.</p>
+
+        <div class="pair">
+          <div class="pair__item">
+            <h3>Public IP</h3>
+            <p>Free-ish and automatic, but <strong>changes</strong> when you stop and start.</p>
+          </div>
+          <div class="pair__item">
+            <h3>Elastic IP</h3>
+            <p>Stays <strong>the same</strong> until you let it go. Use it for something people rely on.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 10 -->
+      <section class="section" id="money">
+        <span class="section__num">10</span>
+        <h2>What it costs</h2>
+        <p>You pay for an instance for the time it’s running. There are three main ways to pay, and they suit different jobs.</p>
+
+        <div class="words">
+          <div class="words__row"><div class="words__term">On-Demand</div><p class="words__def">Pay by the second (for Linux) with no commitment. The default. Best for learning and unpredictable work.</p></div>
+          <div class="words__row"><div class="words__term">Savings Plans</div><p class="words__def">Promise to spend a set amount for one or three years, and get a big discount. Best for steady, always-on apps.</p></div>
+          <div class="words__row"><div class="words__term">Spot</div><p class="words__def">Use AWS’s spare capacity at a deep discount, but AWS can take it back with a two-minute warning. Best for jobs that can be interrupted.</p></div>
+        </div>
+
+        <h3>Five habits that keep the bill small</h3>
+        <ul class="recap">
+          <li><span><strong>Set a budget alert</strong> before you launch anything.</span></li>
+          <li><span><strong>Stop or terminate</strong> servers you aren’t using. A forgotten instance bills all month.</span></li>
+          <li><span><strong>Start small</strong> and only size up when you actually need to.</span></li>
+          <li><span><strong>Release unused Elastic IPs</strong> and delete old volumes and snapshots.</span></li>
+          <li><span><strong>Tag your servers</strong> with a name, so you can spot strays at a glance.</span></li>
+        </ul>
+        <p style="margin-top:20px;">Free Tier offers change over time, so check the AWS Free Tier page for what applies to your account.</p>
+      </section>
+
+      <!-- 11 -->
+      <section class="section" id="cli">
+        <span class="section__num">11</span>
+        <h2>The same thing from the CLI</h2>
+        <p>Everything above can be done with commands, which makes servers easy to create and delete in seconds. This assumes you’ve run <strong>aws configure</strong> (see the <a href="aws.html#cli">AWS essentials guide</a>).</p>
+
+        <h3>Create a key and a security group</h3>
+<pre class="code"><span class="c"># make a key pair and save the private half</span>
+aws ec2 create-key-pair --key-name my-key \
+  --query KeyMaterial --output text &gt; my-key.pem
+chmod 400 my-key.pem
+
+<span class="c"># make a security group</span>
+aws ec2 create-security-group --group-name web-sg \
+  --description "Web and SSH"
+
+<span class="c"># open web traffic to everyone, SSH only to you
+# (use your own IP instead of 203.0.113.10)</span>
+aws ec2 authorize-security-group-ingress --group-name web-sg \
+  --protocol tcp --port 80 --cidr 0.0.0.0/0
+aws ec2 authorize-security-group-ingress --group-name web-sg \
+  --protocol tcp --port 22 --cidr 203.0.113.10/32</pre>
+
+        <h3>Launch a server</h3>
+<pre class="code"><span class="c"># launch one t3.micro with the latest Amazon Linux</span>
+aws ec2 run-instances \
+  --image-id resolve:ssm:/aws/service/ami-amazon-linux-latest/al2023-ami-kernel-default-x86_64 \
+  --instance-type t3.micro \
+  --key-name my-key \
+  --security-groups web-sg \
+  --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value=my-first-server}]'</pre>
+
+        <h3>Look after it</h3>
+<pre class="code"><span class="c"># list servers, their state and public IP</span>
+aws ec2 describe-instances \
+  --query "Reservations[].Instances[].[InstanceId,State.Name,PublicIpAddress]" \
+  --output table
+
+<span class="c"># stop, start, and finally delete (use your own ID)</span>
+aws ec2 stop-instances      --instance-ids i-0123456789abcdef0
+aws ec2 start-instances     --instance-ids i-0123456789abcdef0
+aws ec2 terminate-instances --instance-ids i-0123456789abcdef0</pre>
+        <p style="margin-top:16px;">These commands use your default network, which every new account has, so they work without any extra setup.</p>
+      </section>
+
+      <!-- 12 -->
+      <section class="section" id="stuck">
+        <span class="section__num">12</span>
+        <h2>When things go wrong</h2>
+
+        <div class="words">
+          <div class="words__row">
+            <div class="words__term">SSH says “Permission denied (publickey)”</div>
+            <p class="words__def">Wrong username or wrong key. Amazon Linux is <strong>ec2-user</strong>, Ubuntu is <strong>ubuntu</strong>. Check you’re using the key you launched with.</p>
+          </div>
+          <div class="words__row">
+            <div class="words__term">“Unprotected private key file”</div>
+            <p class="words__def">The key file is readable by others. Run <strong>chmod 400 my-key.pem</strong>.</p>
+          </div>
+          <div class="words__row">
+            <div class="words__term">SSH just hangs and times out</div>
+            <p class="words__def">The door is closed. Check the security group allows <strong>port 22</strong> from your current IP. Home IPs change.</p>
+          </div>
+          <div class="words__row">
+            <div class="words__term">The website won’t load</div>
+            <p class="words__def">Allow <strong>port 80</strong> in the security group, and check nginx is running with <strong>sudo systemctl status nginx</strong>. Use <em>http://</em>, not https.</p>
+          </div>
+          <div class="words__row">
+            <div class="words__term">My IP address changed</div>
+            <p class="words__def">You stopped and started the instance. Use an Elastic IP if you need a fixed address.</p>
+          </div>
+          <div class="words__row">
+            <div class="words__term">I lost my key file</div>
+            <p class="words__def">It can’t be downloaded again. Launch a new instance with a new key, and copy your data across from a snapshot.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 13 -->
+      <section class="section" id="recap">
+        <span class="section__num">13</span>
+        <h2>Quick recap</h2>
+        <ul class="recap">
+          <li><span>An <strong>instance</strong> is a server you rent from AWS by the hour.</span></li>
+          <li><span>The <strong>AMI</strong> is the software. The <strong>instance type</strong> is the power. <em>t3.micro</em> is a great start.</span></li>
+          <li><span>A <strong>key pair</strong> lets you log in. A <strong>security group</strong> decides which doors are open.</span></li>
+          <li><span>Log in with <strong>ssh -i key.pem ec2-user@ip</strong>.</span></li>
+          <li><span><strong>Stop</strong> pauses a server. <strong>Terminate</strong> deletes it.</span></li>
+          <li><span>The <strong>public IP changes</strong> on stop and start. Use an <strong>Elastic IP</strong> to keep it.</span></li>
+          <li><span>Set a <strong>budget alert</strong> and delete what you’re not using.</span></li>
+        </ul>
+
+        <div class="oneline" style="margin-top:40px;">
+          <span class="oneline__label">If you remember one thing</span>
+          <p>An EC2 instance is just a computer you’re borrowing. Open only the doors you need, keep the key safe, and give it back when you’re done.</p>
+        </div>
+        <p style="margin-top:28px;"><a href="docker.html">Next: Docker, to package your app &rarr;</a></p>
+      </section>
+
+    </article>
+  </main>
+
+  <nav class="more" aria-label="More guides">
+    <p class="more__label">Keep learning</p>
+    <div class="more__grid">
+      <a href="aws.html"><strong>AWS essentials</strong><span>Regions, IAM, S3, VPC and costs.</span><em>14 min read &rarr;</em></a>
+      <a href="docker.html"><strong>Docker</strong><span>Images, containers and every command.</span><em>12 min read &rarr;</em></a>
+      <a href="index.html"><strong>All guides</strong><span>See the full roadmap from zero to deploy.</span><em>Back to home &rarr;</em></a>
+    </div>
+  </nav>
+
+  <footer class="footer">
+    A beginner’s guide to Amazon EC2. Simplified on purpose. Real setups have more moving parts, but these ideas are the foundation for all of them.
+  </footer>
+
+</body>
+</html>

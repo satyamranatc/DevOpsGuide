@@ -56,14 +56,26 @@
           </a>
         </li>
         <li>
+          <a href="aws.html">
+            <span class="drawer__title"><span class="drawer__step">2</span>AWS essentials</span>
+            <span class="drawer__desc">Servers, storage and security &middot; 14 min</span>
+          </a>
+        </li>
+        <li>
+          <a href="ec2.html">
+            <span class="drawer__title"><span class="drawer__step">3</span>EC2 servers</span>
+            <span class="drawer__desc">Launch and connect to your first server &middot; 15 min</span>
+          </a>
+        </li>
+        <li>
           <a href="docker.html">
-            <span class="drawer__title"><span class="drawer__step">2</span>Docker</span>
+            <span class="drawer__title"><span class="drawer__step">4</span>Docker</span>
             <span class="drawer__desc">Images, containers and commands &middot; 12 min</span>
           </a>
         </li>
         <li>
           <a href="eks.html">
-            <span class="drawer__title"><span class="drawer__step">3</span>EKS</span>
+            <span class="drawer__title"><span class="drawer__step">5</span>EKS</span>
             <span class="drawer__desc">Kubernetes on AWS, explained &middot; 10 min</span>
           </a>
         </li>
@@ -72,7 +84,6 @@
       <p class="drawer__label">Coming soon</p>
       <ul class="drawer__soon">
         <li>Linux and networking</li>
-        <li>AWS essentials</li>
         <li>CI/CD pipelines</li>
         <li>Terraform and Ansible</li>
         <li>Monitoring</li>
@@ -102,6 +113,8 @@
           <p class="quick__label">Or jump straight to a guide</p>
           <ul class="quick__list">
             <li><a href="github.html"><strong>Git &amp; GitHub</strong><span>8 min read</span></a></li>
+            <li><a href="aws.html"><strong>AWS essentials</strong><span>14 min read</span></a></li>
+            <li><a href="ec2.html"><strong>EC2 servers</strong><span>15 min read</span></a></li>
             <li><a href="docker.html"><strong>Docker</strong><span>12 min read</span></a></li>
             <li><a href="eks.html"><strong>EKS</strong><span>10 min read</span></a></li>
           </ul>
@@ -111,7 +124,7 @@
       <div class="stats reveal" aria-label="Library at a glance">
         <div><strong>9</strong><span>stages</span></div>
         <div><strong>52</strong><span>guides planned</span></div>
-        <div><strong>3</strong><span>live today</span></div>
+        <div><strong>5</strong><span>live today</span></div>
       </div>
 
       <!-- Tool ribbon -->
@@ -154,6 +167,62 @@
                   <div class="layer layer--container">
                     <span class="layer__name">MAIN · the trusted version</span>
                     Merge when approved
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </a>
+
+      <a class="live__card reveal" href="aws.html" style="margin-bottom:24px">
+        <div>
+          <div class="live__top"><span class="pill">Live</span><span>Stage 02 · Cloud with AWS · 14 min read</span></div>
+          <h3 class="live__title">AWS</h3>
+          <p class="live__sub">The essentials, in plain English.</p>
+          <p class="live__text">Regions, IAM, servers, storage and networks. The few services every beginner meets first, plus how to keep your bill under control.</p>
+          <span class="btn btn--primary">Read the guide <span aria-hidden="true">&rarr;</span></span>
+        </div>
+
+        <div class="live__art" role="img" aria-label="Preview: a region contains a private network, which contains your servers.">
+          <div class="layers">
+            <div class="layer layer--cluster">
+              <span class="layer__name">REGION · a city</span>
+              <div class="layer layer--node">
+                <span class="layer__name">VPC · your private land</span>
+                <div class="layer layer--pod">
+                  <span class="layer__name">ZONE · a neighbourhood</span>
+                  <div class="layer layer--container">
+                    <span class="layer__name">EC2 · a rented server</span>
+                    Your app runs here
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </a>
+
+      <a class="live__card reveal" href="ec2.html" style="margin-bottom:24px">
+        <div>
+          <div class="live__top"><span class="pill">Live</span><span>Stage 02 · Cloud with AWS · 15 min read</span></div>
+          <h3 class="live__title">EC2</h3>
+          <p class="live__sub">Rent a server and put something on it.</p>
+          <p class="live__text">Instance types, keys, security groups and storage. Launch your first server, log in, host a web page, and keep the cost down.</p>
+          <span class="btn btn--primary">Read the guide <span aria-hidden="true">&rarr;</span></span>
+        </div>
+
+        <div class="live__art" role="img" aria-label="Preview: a security group wraps an instance, which holds the software and a disk.">
+          <div class="layers">
+            <div class="layer layer--cluster">
+              <span class="layer__name">SECURITY GROUP · the door rules</span>
+              <div class="layer layer--node">
+                <span class="layer__name">INSTANCE · your server</span>
+                <div class="layer layer--pod">
+                  <span class="layer__name">AMI · the software</span>
+                  <div class="layer layer--container">
+                    <span class="layer__name">EBS · the hard drive</span>
+                    ssh -i my-key.pem ec2-user@ip
                   </div>
                 </div>
               </div>
@@ -254,16 +323,16 @@
           <h3>Cloud with AWS</h3>
           <p class="stage__desc">Rent computers, storage and networks by the hour.</p>
           <ul class="stage__list">
-            <li>AWS basics</li>
+            <li class="is-live"><a href="aws.html">AWS essentials <span class="pill">Live</span></a></li>
             <li>IAM: who can do what</li>
-            <li>EC2 servers</li>
+            <li class="is-live"><a href="ec2.html">EC2 servers <span class="pill">Live</span></a></li>
             <li>S3 storage</li>
             <li>VPC networking</li>
             <li>Load balancers</li>
             <li>Auto Scaling</li>
             <li>Route 53 and DNS</li>
           </ul>
-          <p class="stage__count">8 guides</p>
+          <p class="stage__count">8 guides · 2 live</p>
         </article>
 
         <article class="stage reveal" data-d="2">
