@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DevOps Architecture Diagrams — Docker, EC2, Nginx, and Auto Scaling (ASG)</title>
+  <meta name="description" content="Visual DevOps cheat sheet: interactive, crystal-clear architectural diagrams for Docker containers, EC2 + Docker, EC2 + Nginx reverse proxy, and AWS Auto Scaling Groups (ASG).">
+  <meta name="color-scheme" content="dark">
+  <meta name="theme-color" content="#05060a">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="guide.css">
+  <link rel="stylesheet" href="sidebar.css">
+  <style>
+    /* Specific styles for the visual diagrams gallery */
+    .diag-pills {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      margin: 32px auto 0;
+      max-width: 820px;
+    }
+    .diag-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      border-radius: 980px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--line);
+      color: var(--text);
+      font-size: 14px;
+      font-weight: 500;
+      text-decoration: none;
+      transition: all 0.25s ease;
+    }
+    .diag-pill:hover {
+      background: rgba(91, 157, 255, 0.15);
+      border-color: rgba(91, 157, 255, 0.4);
+      color: var(--accent-ink);
+      transform: translateY(-2px);
+      text-decoration: none;
+    }
+    .diag-pill__num {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--accent-ink);
+      padding: 2px 6px;
+      background: rgba(91, 157, 255, 0.12);
+      border-radius: 6px;
+    }
+    .diag-card {
+      margin-top: 72px;
+      scroll-margin-top: 72px;
+    }
+    .diag-card__wrap {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+    .diag-header {
+      max-width: 720px;
+      margin: 0 auto 28px;
+      text-align: center;
+    }
+    .diag-header h2 {
+      margin: 10px 0 14px;
+      font-size: clamp(28px, 4vw, 36px);
+      font-weight: 700;
+      letter-spacing: -0.025em;
+      color: var(--text);
+    }
+    .diag-header p {
+      margin: 0;
+      font-size: 16px;
+      line-height: 1.6;
+      color: var(--text-2);
+    }
+    .diag-takeaway {
+      max-width: 960px;
+      margin: 20px auto 0;
+    }
+    .status-dot {
+      display: inline-block;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #4ade80;
+      margin-right: 4px;
+    }
+    .status-dot--warn {
+      background: #fbbf24;
+    }
+    .status-dot--info {
+      background: #60a5fa;
+    }
+    .diag-badge {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 4px 10px;
+      border-radius: 6px;
+      display: inline-block;
+    }
+    .diag-badge--docker { background: rgba(56, 189, 248, 0.15); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.3); }
+    .diag-badge--aws { background: rgba(251, 146, 60, 0.15); color: #fb923c; border: 1px solid rgba(251, 146, 60, 0.3); }
+    .diag-badge--nginx { background: rgba(74, 222, 128, 0.15); color: #4ade80; border: 1px solid rgba(74, 222, 128, 0.3); }
+    .diag-badge--asg { background: rgba(168, 85, 247, 0.15); color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.3); }
+  </style>
+</head>
+<body class="guide">
+
+  <!-- Top bar -->
+  <header class="topbar">
+    <div class="topbar__inner">
+      <div class="topbar__left">
+        <button class="menu-btn" id="menu-open" type="button" aria-controls="drawer" aria-expanded="false">
+          <span class="menu-btn__bars" aria-hidden="true"></span>
+          Menu
+        </button>
+        <a class="topbar__brand" href="index.html">Deploybook</a>
+      </div>
+      <nav class="topbar__nav" aria-label="Jump to diagram">
+        <a href="#docker">Docker</a>
+        <a href="#ec2-docker">EC2 + Docker</a>
+        <a href="#ec2-nginx">EC2 + Nginx</a>
+        <a href="#asg">ASG (Scale)</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Sidebar -->
+  <div class="scrim" id="scrim"></div>
+  <aside class="drawer" id="drawer" aria-label="Site menu">
+    <div class="drawer__head">
+      <a class="drawer__brand" href="index.html">Deploybook</a>
+      <button class="drawer__close" id="menu-close" type="button" aria-label="Hide sidebar">&times;</button>
+    </div>
+
+    <nav aria-label="Guides">
+      <ul class="drawer__list">
+        <li>
+          <a href="index.html">
+            <span class="drawer__title">Home</span>
+          </a>
+        </li>
+        <li>
+          <a href="index.html#roadmap">
+            <span class="drawer__title">Full roadmap</span>
+            <span class="drawer__desc">All 9 stages at a glance</span>
+          </a>
+        </li>
+        <li>
+          <a href="diagrams.html" aria-current="page">
+            <span class="drawer__title">Architecture Diagrams</span>
+            <span class="drawer__desc">Docker, EC2, Nginx, ASG &middot; Visual Gallery</span>
+          </a>
+        </li>
+      </ul>
+
+      <p class="drawer__label">Guides in order</p>
+      <ul class="drawer__list">
+        <li>
+          <a href="github.html">
+            <span class="drawer__title"><span class="drawer__step">1</span>Git &amp; GitHub</span>
+            <span class="drawer__desc">Save, share and team up &middot; 8 min</span>
+          </a>
+        </li>
+        <li>
+          <a href="aws.html">
+            <span class="drawer__title"><span class="drawer__step">2</span>AWS essentials</span>
+            <span class="drawer__desc">Cloud fundamentals &middot; 14 min</span>
+          </a>
+        </li>
+        <li>
+          <a href="ec2.html">
+            <span class="drawer__title"><span class="drawer__step">3</span>EC2 servers</span>
+            <span class="drawer__desc">Virtual servers in the cloud &middot; 15 min</span>
+          </a>
+        </li>
+        <li>
+          <a href="docker.html">
+            <span class="drawer__title"><span class="drawer__step">4</span>Docker</span>
+            <span class="drawer__desc">Images, containers and commands &middot; 12 min</span>
+          </a>
+        </li>
+        <li>
+          <a href="nginx.html">
+            <span class="drawer__title"><span class="drawer__step">5</span>Nginx</span>
+            <span class="drawer__desc">Reverse proxy and SSL &middot; 14 min</span>
+          </a>
+        </li>
+        <li>
+          <a href="cicd.html">
+            <span class="drawer__title"><span class="drawer__step">6</span>CI/CD with GitHub Actions</span>
+            <span class="drawer__desc">Automated deployments &middot; 20 min</span>
+          </a>
+        </li>
+        <li>
+          <a href="eks.html">
+            <span class="drawer__title"><span class="drawer__step">7</span>EKS</span>
+            <span class="drawer__desc">Kubernetes on AWS &middot; 14 min</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
+    <p class="drawer__foot">Short guides &amp; diagrams in plain English, written for people who are just starting out.</p>
+  </aside>
+
+  <main id="top">
+
+    <!-- Hero -->
+    <section class="hero" style="text-align: center;">
+      <p class="eyebrow">Visual Architecture Reference</p>
+      <h1>DevOps architectures,<br>drawn simply.</h1>
+      <p class="hero__lead" style="max-width: 640px; margin: 0 auto;">No walls of text. Clean, high-resolution architectural diagrams showing how Docker, cloud servers, reverse proxies, and auto-scaling fleets fit together in real life.</p>
+
+      <nav class="diag-pills" aria-label="Jump to specific diagram">
+        <a href="#docker" class="diag-pill"><span class="diag-pill__num">01</span> Docker Workflow</a>
+        <a href="#ec2-docker" class="diag-pill"><span class="diag-pill__num">02</span> EC2 + Docker</a>
+        <a href="#ec2-nginx" class="diag-pill"><span class="diag-pill__num">03</span> EC2 + Nginx</a>
+        <a href="#asg" class="diag-pill"><span class="diag-pill__num">04</span> Auto Scaling Group (ASG)</a>
+      </nav>
+    </section>
+
+    <!-- ========================================================
+         DIAGRAM 01: DOCKER
+         ======================================================== -->
+    <section class="diag-card" id="docker">
+      <div class="diag-card__wrap">
+        <div class="diag-header">
+          <span class="diag-badge diag-badge--docker">Diagram 01 · Containerization</span>
+          <h2>The Docker Lifecycle</h2>
+          <p>From written code to frozen snapshot to running containers. Follow the path: your text recipe builds an image, the image is stored in a registry, and the Docker engine runs multiple isolated containers with mapped ports and mounted storage.</p>
+        </div>
+
+        <figure class="diagram" style="margin:0;">
+          <svg viewBox="0 0 960 480" role="img" aria-labelledby="d1-t d1-d">
+            <title id="d1-t">Complete Docker Architecture and Lifecycle</title>
+            <desc id="d1-d">A Dockerfile is built into an immutable Docker Image. The image is stored in a registry and run by the Docker Engine into isolated running containers connected to host ports and persistent volumes.</desc>
+
+            <defs>
+              <marker id="d1-ah" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+                <path d="M0,1 L9,5 L0,9 z" class="d-arrow"/>
+              </marker>
+            </defs>
+
+            <!-- 1. Dockerfile -->
+            <rect class="d-box" x="18" y="110" width="160" height="150" rx="14"/>
+            <text class="d-small" x="34" y="136">SOURCE CODE</text>
+            <text class="d-title" x="98" y="165" text-anchor="middle">Dockerfile</text>
+            <text class="d-sub" x="98" y="187" text-anchor="middle">The text recipe</text>
+            <rect x="32" y="200" width="132" height="42" rx="6" fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.08)"/>
+            <text x="42" y="217" font-family="var(--mono)" font-size="11" fill="var(--text-3)">FROM node:20</text>
+            <text x="42" y="232" font-family="var(--mono)" font-size="11" fill="var(--text-3)">CMD ["node", "app"]</text>
+
+            <!-- Arrow: Build -->
+            <line class="d-line" x1="180" y1="185" x2="246" y2="185" marker-end="url(#d1-ah)"/>
+            <text class="d-sub" x="213" y="172" text-anchor="middle" style="font-family:var(--mono);font-size:12px">build</text>
+
+            <!-- 2. Docker Image -->
+            <rect class="d-lb" x="248" y="110" width="168" height="150" rx="14"/>
+            <text class="d-small" x="264" y="136" style="fill:#ffb340">FROZEN SNAPSHOT</text>
+            <text class="d-title" x="332" y="165" text-anchor="middle">Docker Image</text>
+            <text class="d-sub" x="332" y="187" text-anchor="middle">my-app:v1.0</text>
+            <rect x="264" y="202" width="136" height="38" rx="6" fill="rgba(255,179,64,0.08)"/>
+            <text class="d-sub" x="332" y="226" text-anchor="middle" style="font-size:12px;fill:#ffcf70">Never changes once built</text>
+
+            <!-- 3. Registry -->
+            <rect class="d-control" x="248" y="330" width="168" height="110" rx="14"/>
+            <text class="d-small" x="264" y="356" style="fill:#a5c8ff">CLOUD WAREHOUSE</text>
+            <text class="d-on-dark" x="332" y="385" text-anchor="middle">Docker Registry</text>
+            <text class="d-on-dark2" x="332" y="407" text-anchor="middle">Docker Hub / AWS ECR</text>
+
+            <!-- Arrows: Push & Pull -->
+            <line class="d-line" x1="302" y1="262" x2="302" y2="326" marker-end="url(#d1-ah)"/>
+            <line class="d-line" x1="362" y1="326" x2="362" y2="262" marker-end="url(#d1-ah)"/>
+            <text class="d-sub" x="290" y="296" text-anchor="end" style="font-family:var(--mono);font-size:11px">push</text>
+            <text class="d-sub" x="374" y="296" text-anchor="start" style="font-family:var(--mono);font-size:11px">pull</text>
+
+            <!-- Arrow: Run -->
+            <line class="d-line" x1="418" y1="185" x2="488" y2="185" marker-end="url(#d1-ah)"/>
+            <text class="d-sub" x="453" y="172" text-anchor="middle" style="font-family:var(--mono);font-size:12px">run</text>
+
+            <!-- 4. Host Environment & Containers -->
+            <rect class="d-cluster" x="490" y="40" width="452" height="400" rx="20"/>
+            <text class="d-small" x="512" y="68" style="fill:var(--accent-ink)">HOST SYSTEM · DOCKER ENGINE RUNTIME</text>
+
+            <!-- Container 1 -->
+            <rect class="d-pod" x="512" y="86" width="200" height="150" rx="14"/>
+            <text class="d-podtitle" x="530" y="114">Container 1 · Web</text>
+            <text class="d-sub" x="530" y="134" style="font-size:12px"><tspan fill="#4ade80">●</tspan> Running</text>
+            <rect class="d-box" x="526" y="148" width="172" height="74" rx="8"/>
+            <text class="d-sub" x="612" y="174" text-anchor="middle" style="font-size:12px">Node.js App Process</text>
+            <text class="d-sub" x="612" y="196" text-anchor="middle" style="font-family:var(--mono);font-size:11px;fill:var(--accent-ink)">Port 8080 &rarr; :3000</text>
+
+            <!-- Container 2 -->
+            <rect class="d-pod" x="726" y="86" width="200" height="150" rx="14"/>
+            <text class="d-podtitle" x="744" y="114">Container 2 · Redis</text>
+            <text class="d-sub" x="744" y="134" style="font-size:12px"><tspan fill="#4ade80">●</tspan> Running</text>
+            <rect class="d-box" x="740" y="148" width="172" height="74" rx="8"/>
+            <text class="d-sub" x="826" y="174" text-anchor="middle" style="font-size:12px">In-Memory Cache</text>
+            <text class="d-sub" x="826" y="196" text-anchor="middle" style="font-family:var(--mono);font-size:11px;fill:var(--accent-ink)">Port 6379 &rarr; :6379</text>
+
+            <!-- Volume -->
+            <rect class="d-node" x="512" y="260" width="414" height="156" rx="14"/>
+            <text class="d-small" x="532" y="286" style="fill:#a5c8ff">DOCKER STORAGE VOLUME</text>
+            <text class="d-title" x="532" y="314">Persistent Disk Volume (/data)</text>
+            <text class="d-sub" x="532" y="336">Lives on the host machine. If containers crash or update, data remains safe.</text>
+
+            <!-- Mount arrow -->
+            <line class="d-line" x1="612" y1="238" x2="612" y2="258" marker-end="url(#d1-ah)" style="stroke-dasharray:4 4"/>
+            <line class="d-line" x1="826" y1="238" x2="826" y2="258" marker-end="url(#d1-ah)" style="stroke-dasharray:4 4"/>
+            <text class="d-sub" x="620" y="252" style="font-size:10px">mounts /data</text>
+            <text class="d-sub" x="834" y="252" style="font-size:10px">mounts /data</text>
+
+            <!-- Host port indicator -->
+            <rect x="526" y="360" width="386" height="38" rx="6" fill="rgba(255,255,255,0.03)" stroke="rgba(255,255,255,0.08)"/>
+            <text class="d-sub" x="719" y="384" text-anchor="middle" style="font-family:var(--mono);font-size:12px">Traffic on localhost:8080 is forwarded straight into Container 1</text>
+          </svg>
+
+          <ul class="legend">
+            <li><strong>Dockerfile</strong>The written instructions. You edit this in your code editor.</li>
+            <li><strong>Image</strong>The frozen package containing your code, runtime, and files.</li>
+            <li><strong>Registry</strong>The cloud warehouse (like Docker Hub or ECR) storing images.</li>
+            <li><strong>Containers</strong>Running, live instances of your image executing in isolated memory.</li>
+            <li><strong>Volume</strong>A folder on the real host computer that preserves database files when containers restart.</li>
+          </ul>
+        </figure>
+
+        <div class="oneline diag-takeaway">
+          <span class="oneline__label">In one line</span>
+          <p>A Dockerfile is the recipe; an image is the frozen meal; containers are heated up meals being eaten right now.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================
+         DIAGRAM 02: EC2 AND DOCKER
+         ======================================================== -->
+    <section class="diag-card" id="ec2-docker">
+      <div class="diag-card__wrap">
+        <div class="diag-header">
+          <span class="diag-badge diag-badge--aws">Diagram 02 · Cloud Virtual Machine</span>
+          <h2>EC2 and Docker in AWS</h2>
+          <p>What it actually looks like when you run Docker inside an Amazon EC2 virtual server. Incoming traffic passes through AWS firewalls (Security Groups), hits the EC2 host, and gets forwarded into isolated containers running on an internal Docker bridge network.</p>
+        </div>
+
+        <figure class="diagram" style="margin:0;">
+          <svg viewBox="0 0 960 500" role="img" aria-labelledby="d2-t d2-d">
+            <title id="d2-t">Architecture of Docker running on an AWS EC2 instance</title>
+            <desc id="d2-d">Internet users send requests to an AWS EC2 instance via a Public IP. The AWS Security Group filters ports. Inside EC2, Docker Engine routes port 80 to an App Container and connects to a private Database Container backed by EBS storage.</desc>
+
+            <defs>
+              <marker id="d2-ah" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+                <path d="M0,1 L9,5 L0,9 z" class="d-arrow"/>
+              </marker>
+            </defs>
+
+            <!-- Users -->
+            <rect class="d-box" x="14" y="215" width="115" height="80" rx="14"/>
+            <text class="d-title" x="71" y="247" text-anchor="middle">Users &amp; Devs</text>
+            <text class="d-sub" x="71" y="269" text-anchor="middle">browsers &amp; SSH</text>
+
+            <line class="d-line" x1="130" y1="255" x2="192" y2="255" marker-end="url(#d2-ah)"/>
+            <text class="d-sub" x="160" y="242" text-anchor="middle" style="font-size:11px">public IP</text>
+
+            <!-- AWS Cloud Perimeter -->
+            <rect class="d-cloud" x="194" y="30" width="750" height="440" rx="22"/>
+            <text class="d-small" x="218" y="58">AWS CLOUD · REGION us-east-1 · VPC (10.0.0.0/16)</text>
+
+            <!-- Security Group -->
+            <rect class="d-cluster" x="218" y="72" width="704" height="378" rx="18"/>
+            <text class="d-small" x="238" y="98" style="fill:var(--accent-ink)">SECURITY GROUP (FIREWALL RULES) · Inbound: Port 80 (HTTP), 443 (HTTPS), 22 (SSH)</text>
+
+            <!-- EC2 Server -->
+            <rect class="d-node" x="242" y="112" width="656" height="318" rx="16"/>
+            <text class="d-small" x="264" y="138">EC2 INSTANCE (UBUNTU LINUX) · Public IP: 54.210.82.14 · Private IP: 10.0.1.45</text>
+
+            <!-- Docker Engine Boundary inside EC2 -->
+            <rect x="264" y="152" width="370" height="258" rx="14" fill="#0b0d14" stroke="rgba(91,157,255,0.3)" stroke-width="1.5"/>
+            <text class="d-small" x="282" y="176" style="fill:#38bdf8">DOCKER ENGINE RUNTIME</text>
+
+            <!-- Container 1: Web App -->
+            <rect class="d-pod" x="282" y="190" width="334" height="88" rx="10"/>
+            <text class="d-podtitle" x="300" y="216">Container: web-app (Node.js)</text>
+            <text class="d-sub" x="300" y="238">Listens on container port 3000</text>
+            <text class="d-sub" x="300" y="260" style="font-family:var(--mono);font-size:11px;fill:var(--accent-ink)">Mapped: EC2 :80 &rarr; Container :3000</text>
+
+            <!-- Internal bridge arrow -->
+            <line class="d-line" x1="449" y1="280" x2="449" y2="302" marker-end="url(#d2-ah)"/>
+            <text class="d-sub" x="457" y="294" style="font-size:10px">internal bridge network</text>
+
+            <!-- Container 2: Database -->
+            <rect class="d-pod" x="282" y="304" width="334" height="88" rx="10"/>
+            <text class="d-podtitle" x="300" y="330">Container: postgres-db</text>
+            <text class="d-sub" x="300" y="352">Private port 5432 (Hidden from internet!)</text>
+            <text class="d-sub" x="300" y="374" style="font-family:var(--mono);font-size:11px;fill:#4ade80">Only accessible by web-app container</text>
+
+            <!-- EBS Volume right side -->
+            <rect class="d-lb" x="654" y="152" width="224" height="160" rx="14"/>
+            <text class="d-small" x="672" y="178" style="fill:#ffb340">AWS BLOCK STORAGE</text>
+            <text class="d-title" x="672" y="206">AWS EBS Volume</text>
+            <text class="d-sub" x="672" y="228">/dev/xvdf &rarr; /var/lib/docker</text>
+            <text class="d-sub" x="672" y="254" style="font-size:12px;fill:var(--text)">All database files and container state persist here safely.</text>
+            <rect x="672" y="270" width="188" height="28" rx="4" fill="rgba(255,179,64,0.1)"/>
+            <text class="d-sub" x="766" y="289" text-anchor="middle" style="font-size:11px;fill:#ffcf70">Survives server reboot</text>
+
+            <!-- Mount arrow from EBS to Docker -->
+            <line class="d-line" x1="652" y1="348" x2="618" y2="348" marker-end="url(#d2-ah)" style="stroke-dasharray:4 4"/>
+            <text class="d-sub" x="635" y="338" text-anchor="middle" style="font-size:10px">mount</text>
+
+            <!-- CloudWatch Monitor -->
+            <rect class="d-control" x="654" y="326" width="224" height="84" rx="12"/>
+            <text class="d-on-dark" x="766" y="358" text-anchor="middle">AWS CloudWatch</text>
+            <text class="d-on-dark2" x="766" y="380" text-anchor="middle">Monitors CPU, Memory &amp; Health</text>
+          </svg>
+
+          <ul class="legend">
+            <li><strong>Public IP</strong>The internet address where visitors connect.</li>
+            <li><strong>Security Group</strong>The virtual gatekeeper. Blocks port 5432 so hackers cannot touch your database.</li>
+            <li><strong>Port Forwarding (-p 80:3000)</strong>EC2 takes incoming HTTP port 80 and passes it to the container's port 3000.</li>
+            <li><strong>Internal Docker Bridge</strong>Lets your web container communicate directly with your database container via private DNS.</li>
+            <li><strong>AWS EBS</strong>The attached virtual hard drive storing database data safely outside the container.</li>
+          </ul>
+        </figure>
+
+        <div class="oneline diag-takeaway">
+          <span class="oneline__label">Why run Docker on EC2?</span>
+          <p>You get the isolation and convenience of Docker without needing to install Node, Python, or PostgreSQL directly onto the host server.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================
+         DIAGRAM 03: EC2 + NGINX
+         ======================================================== -->
+    <section class="diag-card" id="ec2-nginx">
+      <div class="diag-card__wrap">
+        <div class="diag-header">
+          <span class="diag-badge diag-badge--nginx">Diagram 03 · Reverse Proxy &amp; Web Server</span>
+          <h2>EC2 with Nginx Reverse Proxy</h2>
+          <p>Why production systems put Nginx at the very front of an EC2 server. Nginx handles SSL encryption (HTTPS), serves static frontend files directly from disk at microsecond speed, and securely routes API requests to your backend application.</p>
+        </div>
+
+        <figure class="diagram" style="margin:0;">
+          <svg viewBox="0 0 960 500" role="img" aria-labelledby="d3-t d3-d">
+            <title id="d3-t">EC2 Instance running Nginx Reverse Proxy</title>
+            <desc id="d3-d">Visitors on ports 80 and 443 hit Nginx on an EC2 instance. Nginx decrypts SSL, serves static HTML and JS from disk, and reverse-proxies /api requests to an internal Node.js app on port 4000.</desc>
+
+            <defs>
+              <marker id="d3-ah" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+                <path d="M0,1 L9,5 L0,9 z" class="d-arrow"/>
+              </marker>
+            </defs>
+
+            <!-- Visitors -->
+            <rect class="d-box" x="14" y="210" width="115" height="80" rx="14"/>
+            <text class="d-title" x="71" y="242" text-anchor="middle">Visitors</text>
+            <text class="d-sub" x="71" y="264" text-anchor="middle">HTTPS :443</text>
+
+            <line class="d-line" x1="130" y1="250" x2="190" y2="250" marker-end="url(#d3-ah)"/>
+
+            <!-- EC2 Server -->
+            <rect class="d-node" x="192" y="30" width="752" height="440" rx="22"/>
+            <text class="d-small" x="216" y="58">EC2 INSTANCE · Ubuntu Linux · Public IP: 34.201.12.9</text>
+
+            <!-- Nginx block -->
+            <rect class="d-cluster" x="216" y="74" width="320" height="376" rx="18"/>
+            <text class="d-small" x="238" y="100" style="fill:var(--accent-ink)">NGINX · FRONT DOOR · PORTS 80 &amp; 443</text>
+
+            <!-- SSL termination sub-box -->
+            <rect class="d-control" x="236" y="114" width="280" height="66" rx="10"/>
+            <text class="d-on-dark" x="376" y="141" text-anchor="middle">SSL / TLS Termination</text>
+            <text class="d-on-dark2" x="376" y="161" text-anchor="middle">Certbot &amp; Let's Encrypt (Auto-renews)</text>
+
+            <!-- Route 1: static -->
+            <rect class="d-pod" x="236" y="194" width="280" height="72" rx="10"/>
+            <text class="d-podtitle" x="254" y="222" style="font-family:var(--mono)">location /</text>
+            <text class="d-sub" x="254" y="244">Serve static frontend files directly</text>
+
+            <!-- Route 2: api proxy -->
+            <rect class="d-pod" x="236" y="278" width="280" height="72" rx="10"/>
+            <text class="d-podtitle" x="254" y="306" style="font-family:var(--mono)">location /api</text>
+            <text class="d-sub" x="254" y="328">proxy_pass &rarr; localhost:4000</text>
+
+            <!-- Route 3: auth proxy -->
+            <rect class="d-pod" x="236" y="362" width="280" height="72" rx="10"/>
+            <text class="d-podtitle" x="254" y="390" style="font-family:var(--mono)">location /auth</text>
+            <text class="d-sub" x="254" y="412">proxy_pass &rarr; localhost:5000</text>
+
+            <!-- Target 1: Static Files -->
+            <rect class="d-box" x="590" y="190" width="330" height="78" rx="12"/>
+            <text class="d-small" x="610" y="214" style="fill:#4ade80">STATIC ASSET FOLDER</text>
+            <text class="d-title" x="610" y="238">/var/www/my-site/dist</text>
+            <text class="d-sub" x="610" y="256">index.html, CSS, bundle.js (No app server needed!)</text>
+
+            <line class="d-line" x1="518" y1="230" x2="588" y2="230" marker-end="url(#d3-ah)"/>
+
+            <!-- Target 2: Node.js Backend -->
+            <rect class="d-lb" x="590" y="276" width="330" height="78" rx="12"/>
+            <text class="d-small" x="610" y="300" style="fill:#ffb340">BACKEND API SERVICE</text>
+            <text class="d-title" x="610" y="324">Node.js Express (Port 4000)</text>
+            <text class="d-sub" x="610" y="342">Listens only on 127.0.0.1 (Never exposed to public)</text>
+
+            <line class="d-line" x1="518" y1="314" x2="588" y2="314" marker-end="url(#d3-ah)"/>
+
+            <!-- Target 3: Auth microservice -->
+            <rect class="d-lb" x="590" y="360" width="330" height="78" rx="12"/>
+            <text class="d-small" x="610" y="384" style="fill:#c084fc">MICROSERVICE</text>
+            <text class="d-title" x="610" y="408">Python / Go Auth (Port 5000)</text>
+            <text class="d-sub" x="610" y="426">Handles user logins, JWTs, and passwords</text>
+
+            <line class="d-line" x1="518" y1="398" x2="588" y2="398" marker-end="url(#d3-ah)"/>
+          </svg>
+
+          <ul class="legend">
+            <li><strong>Single Port 443</strong>Visitors only connect to Nginx over secure HTTPS.</li>
+            <li><strong>SSL Termination</strong>Nginx takes care of encrypting and decrypting. Your app code never needs certificate logic.</li>
+            <li><strong>Direct File Serving</strong>Static files (React, images, CSS) are served in under 2ms without touching your Node/Python app.</li>
+            <li><strong>Reverse Proxy (proxy_pass)</strong>Nginx forwards API traffic to internal ports (4000, 5000) that are completely blocked from public access.</li>
+          </ul>
+        </figure>
+
+        <div class="oneline diag-takeaway">
+          <span class="oneline__label">The golden rule</span>
+          <p>Never expose Node.js or Python directly to port 80. Put Nginx in front: it acts as the bodyguard, the fast file dispenser, and the traffic director.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================
+         DIAGRAM 04: AUTO SCALING GROUP (ASG)
+         ======================================================== -->
+    <section class="diag-card" id="asg">
+      <div class="diag-card__wrap">
+        <div class="diag-header">
+          <span class="diag-badge diag-badge--asg">Diagram 04 · High Availability &amp; Scale</span>
+          <h2>AWS Auto Scaling Group (ASG) + ALB</h2>
+          <p>How production architectures handle huge traffic surges automatically. An Application Load Balancer (ALB) spreads traffic across multiple physical data centers (Availability Zones). When CPU usage spikes, AWS CloudWatch triggers the Auto Scaling Group to launch fresh servers instantly.</p>
+        </div>
+
+        <figure class="diagram" style="margin:0;">
+          <svg viewBox="0 0 960 540" role="img" aria-labelledby="d4-t d4-d">
+            <title id="d4-t">AWS Auto Scaling Group with Application Load Balancer Architecture</title>
+            <desc id="d4-d">Global traffic arrives at an Application Load Balancer, which distributes traffic across an Auto Scaling Group in multiple Availability Zones. CloudWatch alarms automatically scale instances up or down based on CPU load.</desc>
+
+            <defs>
+              <marker id="d4-ah" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+                <path d="M0,1 L9,5 L0,9 z" class="d-arrow"/>
+              </marker>
+            </defs>
+
+            <!-- Global Visitors -->
+            <rect class="d-box" x="14" y="225" width="120" height="90" rx="14"/>
+            <text class="d-title" x="74" y="258" text-anchor="middle">Global Users</text>
+            <text class="d-sub" x="74" y="280" text-anchor="middle">Traffic surge!</text>
+            <text class="d-sub" x="74" y="298" text-anchor="middle" style="font-size:11px;fill:#4ade80">10k requests/sec</text>
+
+            <line class="d-line" x1="135" y1="270" x2="198" y2="270" marker-end="url(#d4-ah)"/>
+
+            <!-- AWS VPC Boundary -->
+            <rect class="d-cloud" x="200" y="25" width="746" height="495" rx="22"/>
+            <text class="d-small" x="224" y="52">AWS REGION (us-east-1) · VIRTUAL PRIVATE CLOUD (VPC)</text>
+
+            <!-- ALB -->
+            <rect class="d-lb" x="224" y="195" width="145" height="150" rx="16"/>
+            <text class="d-small" x="296" y="225" text-anchor="middle" style="fill:#ffb340">FRONT DOOR</text>
+            <text class="d-title" x="296" y="252" text-anchor="middle">AWS ALB</text>
+            <text class="d-sub" x="296" y="274" text-anchor="middle">Load Balancer</text>
+            <text class="d-sub" x="296" y="296" text-anchor="middle" style="font-size:11px">Health checks &amp;</text>
+            <text class="d-sub" x="296" y="312" text-anchor="middle" style="font-size:11px">Traffic distribution</text>
+
+            <!-- CloudWatch Top Alarms -->
+            <rect class="d-control" x="400" y="55" width="520" height="74" rx="14"/>
+            <text class="d-small" x="420" y="78" style="fill:#a5c8ff">AWS CLOUDWATCH ALARM &amp; SCALING POLICY</text>
+            <text class="d-on-dark" x="420" y="100">Rule: If Average CPU &gt; 70% for 2 mins &rarr; Scale OUT (+2 instances)</text>
+            <text class="d-on-dark2" x="420" y="118">Rule: If Average CPU &lt; 30% for 5 mins &rarr; Scale IN (terminate extras to save $$)</text>
+
+            <!-- Control arrow to ASG -->
+            <line class="d-line" x1="660" y1="130" x2="660" y2="148" marker-end="url(#d4-ah)" style="stroke-dasharray:4 4;stroke:#a5c8ff"/>
+
+            <!-- Auto Scaling Group boundary -->
+            <rect class="d-cluster" x="400" y="148" width="520" height="352" rx="18"/>
+            <text class="d-small" x="420" y="172" style="fill:var(--accent-ink)">AUTO SCALING GROUP · Min: 2 · Desired: 2–4 · Max: 8 instances</text>
+
+            <!-- AZ 1: us-east-1a -->
+            <rect class="d-node" x="418" y="185" width="236" height="295" rx="14"/>
+            <text class="d-small" x="436" y="210">AZ us-east-1a (Data Center A)</text>
+
+            <!-- Instance 1 -->
+            <rect class="d-pod" x="432" y="224" width="208" height="110" rx="10"/>
+            <text class="d-podtitle" x="448" y="252">EC2 Instance #1</text>
+            <text class="d-sub" x="448" y="272" style="font-size:12px"><tspan fill="#4ade80">●</tspan> Healthy (Baseline)</text>
+            <text class="d-sub" x="448" y="294" style="font-family:var(--mono);font-size:11px">CPU: 45% · Port 80</text>
+            <text class="d-sub" x="448" y="312" style="font-size:11px;fill:var(--text-3)">App running on Docker</text>
+
+            <!-- Instance 3 (Auto-spawned) -->
+            <rect class="d-box" x="432" y="348" width="208" height="116" rx="10" stroke="rgba(192,132,252,0.6)" stroke-dasharray="4 4"/>
+            <text class="d-podtitle" x="448" y="374" style="fill:#c084fc">EC2 Instance #3</text>
+            <text class="d-sub" x="448" y="394" style="font-size:12px"><tspan fill="#c084fc">⚡</tspan> Auto-launched!</text>
+            <text class="d-sub" x="448" y="416" style="font-size:11px;fill:var(--text-2)">Created from Launch Template</text>
+            <text class="d-sub" x="448" y="434" style="font-size:11px;fill:#4ade80">Added to ALB automatically</text>
+
+            <!-- AZ 2: us-east-1b -->
+            <rect class="d-node" x="668" y="185" width="236" height="295" rx="14"/>
+            <text class="d-small" x="686" y="210">AZ us-east-1b (Data Center B)</text>
+
+            <!-- Instance 2 -->
+            <rect class="d-pod" x="682" y="224" width="208" height="110" rx="10"/>
+            <text class="d-podtitle" x="698" y="252">EC2 Instance #2</text>
+            <text class="d-sub" x="698" y="272" style="font-size:12px"><tspan fill="#4ade80">●</tspan> Healthy (Baseline)</text>
+            <text class="d-sub" x="698" y="294" style="font-family:var(--mono);font-size:11px">CPU: 42% · Port 80</text>
+            <text class="d-sub" x="698" y="312" style="font-size:11px;fill:var(--text-3)">App running on Docker</text>
+
+            <!-- Instance 4 (Auto-spawned) -->
+            <rect class="d-box" x="682" y="348" width="208" height="116" rx="10" stroke="rgba(192,132,252,0.6)" stroke-dasharray="4 4"/>
+            <text class="d-podtitle" x="698" y="374" style="fill:#c084fc">EC2 Instance #4</text>
+            <text class="d-sub" x="698" y="394" style="font-size:12px"><tspan fill="#c084fc">⚡</tspan> Auto-launched!</text>
+            <text class="d-sub" x="698" y="416" style="font-size:11px;fill:var(--text-2)">Created from Launch Template</text>
+            <text class="d-sub" x="698" y="434" style="font-size:11px;fill:#4ade80">Added to ALB automatically</text>
+
+            <!-- ALB distribution lines -->
+            <line class="d-line" x1="370" y1="240" x2="430" y2="255" marker-end="url(#d4-ah)"/>
+            <line class="d-line" x1="370" y1="280" x2="680" y2="255" marker-end="url(#d4-ah)"/>
+            <line class="d-line" x1="370" y1="320" x2="430" y2="390" marker-end="url(#d4-ah)" style="stroke-dasharray:3 3;opacity:0.7"/>
+            <line class="d-line" x1="370" y1="335" x2="680" y2="390" marker-end="url(#d4-ah)" style="stroke-dasharray:3 3;opacity:0.7"/>
+          </svg>
+
+          <ul class="legend">
+            <li><strong>ALB (Load Balancer)</strong>Distributes visitors evenly so no single computer gets overloaded.</li>
+            <li><strong>Multi-AZ Redundancy</strong>Instances are placed in different physical data centers. If one center loses power, the other keeps serving traffic.</li>
+            <li><strong>CloudWatch Monitoring</strong>Keeps a 24/7 pulse on server load and triggers alarms when limits are exceeded.</li>
+            <li><strong>Launch Template</strong>The master recipe AWS uses to stamp out identical, pre-configured EC2 instances in under 60 seconds.</li>
+            <li><strong>Scale In / Out</strong>Automatically adds capacity during peak hours and terminates instances when traffic dies down, saving huge costs.</li>
+          </ul>
+        </figure>
+
+        <div class="oneline diag-takeaway">
+          <span class="oneline__label">The power of ASG</span>
+          <p>You never have to wake up at 3 AM to add more servers. AWS monitors your load and auto-scales capacity up and down seamlessly.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Bottom links -->
+    <nav class="more" aria-label="Previous and next guides" style="margin-top: 96px;">
+      <p class="more__label">Keep learning with hands-on guides</p>
+      <div class="more__grid">
+        <a href="docker.html"><strong>Docker Guide</strong><span>Build images, run containers, and map ports.</span><em>Read guide &rarr;</em></a>
+        <a href="ec2.html"><strong>EC2 Guide</strong><span>Rent virtual servers and connect with SSH.</span><em>Read guide &rarr;</em></a>
+        <a href="nginx.html"><strong>Nginx Guide</strong><span>Configure reverse proxy and free SSL.</span><em>Read guide &rarr;</em></a>
+        <a href="eks.html"><strong>Amazon EKS Guide</strong><span>Kubernetes clusters explained simply.</span><em>Read guide &rarr;</em></a>
+      </div>
+    </nav>
+
+  </main>
+
+  <footer class="footer sitefoot">
+    <div class="sitefoot__inner">
+      <div class="sitefoot__brand">
+        <a href="index.html">Deploybook</a>
+        <p>Plain-English DevOps guides, from your first commit to a live cloud app.</p>
+        <a class="sitefoot__home" href="index.html#roadmap">See the full roadmap &rarr;</a>
+      </div>
+      <nav aria-label="All guides">
+        <p class="sitefoot__label">All guides, in reading order</p>
+        <ol>
+          <li><a href="github.html">Git &amp; GitHub</a></li>
+          <li><a href="aws.html">AWS essentials</a></li>
+          <li><a href="ec2.html">EC2 servers</a></li>
+          <li><a href="docker.html">Docker</a></li>
+          <li><a href="nginx.html">Nginx</a></li>
+          <li><a href="cicd.html">CI/CD with GitHub Actions</a></li>
+          <li><a href="eks.html">EKS</a></li>
+        </ol>
+      </nav>
+    </div>
+    <p class="sitefoot__fine">Architecture diagrams rendered in native SVG. Scalable, light, and optimized for quick visual learning.</p>
+  </footer>
+
+  <script>
+    (function () {
+      var body = document.body;
+      var openBtn = document.getElementById('menu-open');
+      var closeBtn = document.getElementById('menu-close');
+      var scrim = document.getElementById('scrim');
+      var drawer = document.getElementById('drawer');
+
+      var wide = window.matchMedia('(min-width: 1025px)');
+      var KEY = 'sidebar-closed';
+      var stored = null;
+      try { stored = localStorage.getItem(KEY); } catch (e) {}
+      if (stored === '1') body.classList.add('side-closed');
+
+      function isOpen() {
+        return wide.matches ? !body.classList.contains('side-closed') : body.classList.contains('menu-open');
+      }
+      function syncAria() {
+        var visible = isOpen();
+        drawer.setAttribute('aria-hidden', String(!visible));
+        openBtn.setAttribute('aria-expanded', String(visible));
+      }
+      function setOpen(open) {
+        if (wide.matches) {
+          body.classList.toggle('side-closed', !open);
+          try { localStorage.setItem(KEY, open ? '0' : '1'); } catch (e) {}
+        } else {
+          body.classList.toggle('menu-open', open);
+          (open ? closeBtn : openBtn).focus();
+        }
+        syncAria();
+      }
+      openBtn.addEventListener('click', function () { setOpen(!isOpen()); });
+      closeBtn.addEventListener('click', function () { setOpen(false); });
+      scrim.addEventListener('click', function () { setOpen(false); });
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && !wide.matches && body.classList.contains('menu-open')) setOpen(false);
+      });
+      var onChange = function () { body.classList.remove('menu-open'); syncAria(); };
+      if (wide.addEventListener) wide.addEventListener('change', onChange); else wide.addListener(onChange);
+      syncAria();
+    })();
+  </script>
+</body>
+</html>
