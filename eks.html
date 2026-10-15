@@ -27,6 +27,7 @@
         <a href="#eks">AWS &amp; EKS</a>
         <a href="#diagram">Diagram</a>
         <a href="#steps">Steps</a>
+        <a href="#control">Make &amp; control</a>
       </nav>
     </div>
   </header>
@@ -94,7 +95,7 @@
         <li>
           <a href="eks.html" aria-current="page">
             <span class="drawer__title"><span class="drawer__step">7</span>EKS</span>
-            <span class="drawer__desc">Kubernetes on AWS, explained &middot; 10 min</span>
+            <span class="drawer__desc">Kubernetes on AWS, explained &middot; 14 min</span>
           </a>
         </li>
       </ul>
@@ -119,7 +120,7 @@
       <p class="eyebrow">Beginner’s guide</p>
       <h1>Kubernetes on AWS,<br>explained simply.</h1>
       <p class="hero__lead">Pods, nodes, servers and EKS. What they are, how they fit together, and how your microservices end up running on them. No jargon, one picture.</p>
-      <p class="hero__meta">10 minute read</p>
+      <p class="hero__meta">14 minute read</p>
     </section>
 
     <article class="article">
@@ -137,6 +138,7 @@
           <li><a href="#eks">Where AWS and EKS fit</a></li>
           <li><a href="#diagram">The whole picture</a></li>
           <li><a href="#steps">Deploying, step by step</a></li>
+          <li><a href="#control">How to make and control EKS</a></li>
           <li><a href="#recap">Quick recap</a></li>
         </ol>
       </nav>
@@ -453,8 +455,99 @@ image: my-pantry/orders:1.0</pre>
       </section>
 
       <!-- ===== 11 ===== -->
-      <section class="section" id="recap">
+      <section class="section" id="control">
         <span class="section__num">11</span>
+        <h2>How to make and control EKS</h2>
+        <p>You know the theory: EKS is a restaurant manager hired through AWS, and pods are dishes cooking in server kitchens. But how do you actually <strong>build</strong> this on AWS, and what <strong>steering wheel</strong> do you use to control it day to day?</p>
+        <p>The good news: you never have to log into dozens of cloud servers or touch real hardware. You control everything right from your laptop using two small tools.</p>
+
+        <div class="analogy">
+          <span class="analogy__label">The mental model</span>
+          <p>Think of AWS like a contractor that builds your restaurant. You give them one order to build the building (<strong>eksctl</strong>). Once it’s open, you sit outside with a walkie-talkie (<strong>kubectl</strong>) and tell the manager what to do.</p>
+        </div>
+
+        <h3>The two tools you need on your laptop</h3>
+        <p>Before making a cluster, you install two free command-line helpers on your computer:</p>
+        <div class="pair">
+          <div class="pair__item">
+            <h3>eksctl · The Builder</h3>
+            <p>A tool made by AWS and Weaveworks. You use it once or twice: to build the entire cluster from scratch, or tear it down when you're done.</p>
+          </div>
+          <div class="pair__item">
+            <h3>kubectl · The Remote Control</h3>
+            <p>The official Kubernetes remote control (pronounced <em>kube-control</em>). You use this every day to check health, launch apps, and read logs.</p>
+          </div>
+        </div>
+
+        <h3>Step 1 · Make the cluster in AWS (One command)</h3>
+        <p>Make sure you have logged into your AWS account with <code>aws configure</code>. Then run this single command in your terminal:</p>
+<pre class="code"><span class="c"># Create an EKS cluster with 2 worker servers</span>
+eksctl create cluster \
+  --name my-cluster \
+  --region us-east-1 \
+  --nodes 2 \
+  --node-type t3.medium</pre>
+
+        <p style="margin-top:20px;">Now grab a cup of coffee. It takes about <strong>12 to 15 minutes</strong>. That isn’t broken or frozen — behind the scenes, AWS is doing an enormous amount of heavy lifting for you:</p>
+        <ul class="recap">
+          <li><span><strong>Builds the manager’s office:</strong> AWS sets up 3 independent control plane servers across separate physical buildings (Availability Zones). If one building loses power, your cluster never blinks.</span></li>
+          <li><span><strong>Rents 2 server kitchens:</strong> AWS launches 2 EC2 instances (the nodes) where your containers will actually run.</span></li>
+          <li><span><strong>Lays private roads &amp; security guards:</strong> Creates a Virtual Private Cloud (VPC), firewalls, and subnets so your microservices can talk securely.</span></li>
+          <li><span><strong>Pairs your remote control:</strong> Automatically hands the digital keycard to your laptop so <code>kubectl</code> is immediately ready to give orders.</span></li>
+        </ul>
+
+        <div class="oneline" style="margin-top:24px;">
+          <span class="oneline__label">Can you also use the AWS website?</span>
+          <p>Yes! In the AWS Web Console, you can search for <strong>EKS</strong> and click <strong>Create cluster</strong>. But you’ll have to answer 20+ questions about networking, security roles, and subnets. <strong>eksctl</strong> picks safe, battle-tested defaults for you in one line.</p>
+        </div>
+
+        <h3>Step 2 · Take the wheel (Connecting your remote)</h3>
+        <p>If you ever switch laptops or created the cluster in the AWS web console, your laptop needs the "keycard" to talk to your cluster. You grab it with this one command:</p>
+<pre class="code"><span class="c"># Pair your laptop's kubectl with your AWS cluster</span>
+aws eks update-kubeconfig --region us-east-1 --name my-cluster</pre>
+        <p style="margin-top:16px;">This saves a secure login token in a hidden file on your computer (<code>~/.kube/config</code>). From this second on, whenever you type <code>kubectl</code>, it automatically talks to your AWS cluster in the cloud.</p>
+
+        <h3>Step 3 · Controlling EKS (Your daily buttons)</h3>
+        <p>Now that your restaurant is open and your walkie-talkie is connected, what does "controlling EKS" actually look like? Here are the 6 buttons you'll press most often:</p>
+
+        <div class="words words--cmd" role="table" aria-label="Essential EKS control commands">
+          <div class="words__row" role="row">
+            <div class="words__term" role="cell">kubectl get nodes</div>
+            <p class="words__def" role="cell"><strong>Check the kitchens.</strong> Shows all your servers and confirms their status is <em>Ready</em>.</p>
+          </div>
+          <div class="words__row" role="row">
+            <div class="words__term" role="cell">kubectl get pods</div>
+            <p class="words__def" role="cell"><strong>Check the dishes cooking.</strong> Lists all running pods, whether they’re healthy (<em>Running</em>), starting (<em>ContainerCreating</em>), or crashing (<em>CrashLoopBackOff</em>).</p>
+          </div>
+          <div class="words__row" role="row">
+            <div class="words__term" role="cell">kubectl apply -f app.yaml</div>
+            <p class="words__def" role="cell"><strong>Give the manager an order.</strong> Hands your YAML file to Kubernetes. The manager reads what you want and deploys or updates your pods automatically.</p>
+          </div>
+          <div class="words__row" role="row">
+            <div class="words__term" role="cell">kubectl scale deployment orders --replicas=5</div>
+            <p class="words__def" role="cell"><strong>Rush hour volume control.</strong> Instantly tells the manager: “Keep 5 copies of the orders app running instead of 2.”</p>
+          </div>
+          <div class="words__row" role="row">
+            <div class="words__term" role="cell">kubectl logs &lt;pod-name&gt;</div>
+            <p class="words__def" role="cell"><strong>Listen to what your app is saying.</strong> Prints out whatever your Node, Python, or Go code logged to the screen (errors, incoming requests, or startup messages).</p>
+          </div>
+          <div class="words__row" role="row">
+            <div class="words__term" role="cell">kubectl describe pod &lt;pod-name&gt;</div>
+            <p class="words__def" role="cell"><strong>The doctor’s inspection.</strong> If a pod won’t start, this gives you the exact timeline of events at the bottom (e.g. “Downloaded image”, or “Out of memory”).</p>
+          </div>
+        </div>
+
+        <h3>Step 4 · Turning it off (Don’t leave the lights on!)</h3>
+        <p>AWS charges about <strong>$0.10 an hour</strong> (~$73 a month) just to keep the EKS manager running, plus whatever the 2 server nodes cost. For a company this is pocket change, but for a learner practicing on a weekend, you don’t want surprise bills.</p>
+        <p>When you’re done practicing for the day, tear the whole restaurant down with one command:</p>
+<pre class="code"><span class="c"># Delete the cluster and all servers so AWS stops charging you</span>
+eksctl delete cluster --name my-cluster --region us-east-1</pre>
+        <p style="margin-top:16px;">In about 10 minutes, AWS cleanly shuts down the servers, deletes the networking cables, dissolves the manager, and stops the billing meter.</p>
+      </section>
+
+      <!-- ===== 12 ===== -->
+      <section class="section" id="recap">
+        <span class="section__num">12</span>
         <h2>Quick recap</h2>
         <ul class="recap">
           <li><span><strong>Microservices</strong> are small programs, each with one job.</span></li>
