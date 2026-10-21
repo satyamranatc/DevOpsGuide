@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Shell Scripting, Explained Simply — Bash, Variables, Loops & Automation</title>
+  <meta name="description" content="A plain-English guide to shell scripting and Bash automation for beginners: how scripts run, shebang, variables, exit codes, loops, safety flags, and a complete working server maintenance script.">
+  <meta name="color-scheme" content="dark">
+  <meta name="theme-color" content="#05060a">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="guide.css">
+  <link rel="stylesheet" href="sidebar.css">
+</head>
+<body class="guide">
+
+  <header class="topbar">
+    <div class="topbar__inner">
+      <div class="topbar__left">
+        <button class="menu-btn" id="menu-open" type="button" aria-controls="drawer" aria-expanded="false">
+          <span class="menu-btn__bars" aria-hidden="true"></span>
+          Menu
+        </button>
+        <a class="topbar__brand" href="index.html">Deploybook</a>
+      </div>
+      <nav class="topbar__nav" aria-label="Jump to">
+        <a href="#words">The big picture</a>
+        <a href="#first-script">First script</a>
+        <a href="#diagram">Diagram</a>
+        <a href="#safety">Golden rules</a>
+        <a href="#project">Hands-on script</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="scrim" id="scrim"></div>
+  <aside class="drawer" id="drawer" aria-label="Site menu">
+    <div class="drawer__head">
+      <a class="drawer__brand" href="index.html">Deploybook</a>
+      <button class="drawer__close" id="menu-close" type="button" aria-label="Hide sidebar">&times;</button>
+    </div>
+
+    <nav aria-label="Guides">
+      <ul class="drawer__list">
+        <li>
+          <a href="index.html">
+            <span class="drawer__title">Home</span>
+          </a>
+        </li>
+        <li>
+          <a href="index.html#roadmap">
+            <span class="drawer__title">Full roadmap</span>
+            <span class="drawer__desc">All 9 stages at a glance</span>
+          </a>
+        </li>
+        <li>
+          <a href="diagrams.html">
+            <span class="drawer__title">Architecture Diagrams</span>
+            <span class="drawer__desc">Docker, EC2, Nginx, ASG &middot; Visuals</span>
+          </a>
+        </li>
+      </ul>
+
+      <p class="drawer__label">Read in this order</p>
+      <ul class="drawer__list">
+        <li>
+          <a href="github.html">
+            <span class="drawer__title"><span class="drawer__step">1</span>Git &amp; GitHub</span>
+            <span class="drawer__desc">Save, share and team up on code &middot; 8 min</span>
+          </a>
+        </li>
+        <li>
+          <a href="shell.html" aria-current="page">
+            <span class="drawer__title"><span class="drawer__step">2</span>Shell scripting</span>
+            <span class="drawer__desc">Automate tasks with Bash &middot; 12 min</span>
+          </a>
+        </li>
+        <li>
+          <a href="aws.html">
+            <span class="drawer__title"><span class="drawer__step">3</span>AWS essentials</span>
+            <span class="drawer__desc">Servers, storage and security &middot; 14 min</span>
+          </a>
+        </li>
+        <li>
+          <a href="ec2.html">
+            <span class="drawer__title"><span class="drawer__step">4</span>EC2 servers</span>
+            <span class="drawer__desc">Launch and connect to your first server &middot; 15 min</span>
+          </a>
+        </li>
+        <li>
+          <a href="docker.html">
+            <span class="drawer__title"><span class="drawer__step">5</span>Docker</span>
+            <span class="drawer__desc">Images, containers and commands &middot; 12 min</span>
+          </a>
+        </li>
+        <li>
+          <a href="nginx.html">
+            <span class="drawer__title"><span class="drawer__step">6</span>Nginx</span>
+            <span class="drawer__desc">Web server, proxy and HTTPS &middot; 14 min</span>
+          </a>
+        </li>
+        <li>
+          <a href="cicd.html">
+            <span class="drawer__title"><span class="drawer__step">7</span>CI/CD with GitHub Actions</span>
+            <span class="drawer__desc">Auto-deploy React + Express &middot; 20 min</span>
+          </a>
+        </li>
+        <li>
+          <a href="eks.html">
+            <span class="drawer__title"><span class="drawer__step">8</span>EKS</span>
+            <span class="drawer__desc">Kubernetes on AWS, explained &middot; 14 min</span>
+          </a>
+        </li>
+      </ul>
+
+      <p class="drawer__label">Coming soon</p>
+      <ul class="drawer__soon">
+        <li>Linux and networking</li>
+        <li>Terraform and Ansible</li>
+        <li>Monitoring</li>
+        <li>Security</li>
+        <li>Reliability</li>
+      </ul>
+    </nav>
+
+    <p class="drawer__foot">Short guides in plain English, written for people who are just starting out.</p>
+  </aside>
+
+  <main id="top">
+
+    <!-- ===== Hero ===== -->
+    <section class="hero">
+      <p class="eyebrow">Beginner’s guide</p>
+      <h1>Shell scripting,<br>explained simply.</h1>
+      <p class="hero__lead">From typing manual commands to building tireless robot assistants. Variables, loops, exit codes, and automated server tasks. No jargon, one clear flow.</p>
+      <p class="hero__meta">12 minute read</p>
+    </section>
+
+    <article class="article">
+
+      <nav class="contents" aria-label="Contents">
+        <h2>In this guide</h2>
+        <ol>
+          <li><a href="#story">The problem we’re solving</a></li>
+          <li><a href="#shell-idea">Terminal vs Shell vs Script</a></li>
+          <li><a href="#words">The core words you need</a></li>
+          <li><a href="#first-script">Your first script &amp; permissions</a></li>
+          <li><a href="#variables">Variables, inputs and substitution</a></li>
+          <li><a href="#exit-codes">Exit codes: your safety net</a></li>
+          <li><a href="#loops">Loops, pipes and redirection</a></li>
+          <li><a href="#diagram">The whole picture</a></li>
+          <li><a href="#safety">The Golden Rules of production Bash</a></li>
+          <li><a href="#project">Hands-on: Server health &amp; backup script</a></li>
+          <li><a href="#cheatsheet">10 daily commands cheatsheet</a></li>
+          <li><a href="#recap">Quick recap</a></li>
+        </ol>
+      </nav>
+
+      <!-- ===== 01 ===== -->
+      <section class="section" id="story">
+        <span class="section__num">01</span>
+        <h2>The problem we’re solving</h2>
+        <p>Imagine you have to deploy a new version of your website to a remote cloud server. Here is what you type by hand every single afternoon:</p>
+        <p>Connect to the server. Check available disk space. Pull the latest code from GitHub. Run <code>npm install</code>. Run the tests. Restart the Nginx web server. Check if the website answers back. If anything fails, write a note in a log file.</p>
+        <p>Doing that by hand takes ten minutes. If you misspell one command, you might delete the wrong folder or crash the live site. Doing it on ten servers is impossible.</p>
+        <p>A <strong>shell script</strong> is simply a text file containing those exact commands in order. You run that single file, and your computer executes them all in two seconds without typos.</p>
+
+        <div class="oneline">
+          <span class="oneline__label">In one line</span>
+          <p>A shell script is a to-do list for your server. You write the steps once, and the computer carries them out identically every time.</p>
+        </div>
+      </section>
+
+      <!-- ===== 02 ===== -->
+      <section class="section" id="shell-idea">
+        <span class="section__num">02</span>
+        <h2>Terminal vs Shell vs Script</h2>
+        <p>Beginners often hear words like <em>terminal</em>, <em>console</em>, <em>bash</em>, and <em>shell</em> used interchangeably. They do different jobs, and picturing an office makes them obvious.</p>
+
+        <div class="words" role="table" aria-label="Terminal, shell and script comparisons">
+          <div class="words__row" role="row">
+            <div class="words__term" role="cell">Terminal</div>
+            <p class="words__def" role="cell">The telephone window. It doesn’t understand commands; it just sends your keystrokes and displays the text that comes back.</p>
+          </div>
+          <div class="words__row" role="row">
+            <div class="words__term" role="cell">Shell</div>
+            <p class="words__def" role="cell">The interpreter on the other end of the line (usually <strong>Bash</strong> or <strong>Zsh</strong>). It reads your words, translates them for the operating system, and returns the result.</p>
+          </div>
+          <div class="words__row" role="row">
+            <div class="words__term" role="cell">Shell Script</div>
+            <p class="words__def" role="cell">An answering machine tape. A file containing 10, 50, or 100 commands saved in advance so the shell plays them all back automatically.</p>
+          </div>
+        </div>
+
+        <div class="analogy" style="margin-top:24px;">
+          <span class="analogy__label">Think of it as</span>
+          <p>The <strong>terminal</strong> is the screen and keyboard. The <strong>shell</strong> is the chef listening to orders. The <strong>script</strong> is a printed recipe card you hand to the chef.</p>
+        </div>
+      </section>
+
+      <!-- ===== 03 ===== -->
+      <section class="section" id="words">
+        <span class="section__num">03</span>
+        <h2>The core words you need</h2>
+        <p>You don't need a computer science degree to automate DevOps tasks. 90% of all production shell scripts rely on just seven fundamental concepts:</p>
+
+        <div class="words" role="table" aria-label="Core shell scripting concepts">
+          <div class="words__row" role="row">
+            <div class="words__term" role="cell">Shebang (#!/bin/bash)</div>
+            <p class="words__def" role="cell">The very first line of a script. Tells the system which interpreter program to use to read the file.</p>
+          </div>
+          <div class="words__row" role="row">
+            <div class="words__term" role="cell">Variable</div>
+            <p class="words__def" role="cell">A labelled cardboard box holding a value (like <code>APP_DIR="/var/www"</code>) so you can reuse it everywhere.</p>
+          </div>
+          <div class="words__row" role="row">
+            <div class="words__term" role="cell">Arguments ($1, $2)</div>
+            <p class="words__def" role="cell">Extra inputs you pass when calling the script, like <code>./deploy.sh production</code> where <code>$1</code> is <em>production</em>.</p>
+          </div>
+          <div class="words__row" role="row">
+            <div class="words__term" role="cell">Exit code ($?)</div>
+            <p class="words__def" role="cell">The hidden report card every command leaves behind: <code>0</code> means success, any other number means error.</p>
+          </div>
+          <div class="words__row" role="row">
+            <div class="words__term" role="cell">Pipe (|)</div>
+            <p class="words__def" role="cell">Connects two commands: takes the output of the first and pours it directly into the input of the second.</p>
+          </div>
+          <div class="words__row" role="row">
+            <div class="words__term" role="cell">Redirection (&gt; and &gt;&gt;)</div>
+            <p class="words__def" role="cell">Sends command output into a file instead of your screen. <code>&gt;</code> overwrites; <code>&gt;&gt;</code> appends to the end.</p>
+          </div>
+          <div class="words__row" role="row">
+            <div class="words__term" role="cell">Cron</div>
+            <p class="words__def" role="cell">A built-in Linux alarm clock that runs your script on a schedule (e.g. every midnight or every 5 minutes).</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== 04 ===== -->
+      <section class="section" id="first-script">
+        <span class="section__num">04</span>
+        <h2>Your first script &amp; permissions</h2>
+        <p>Creating a script is as simple as creating any text file. Let's create one called <code>hello.sh</code>:</p>
+
+<pre class="code"><span class="c">#!/bin/bash</span>
+<span class="c"># My first automated script</span>
+echo "Hello from the server!"
+echo "Today is: $(date)"
+echo "Current directory: $(pwd)"</pre>
+
+        <h3>Why the shebang (#!) is mandatory</h3>
+        <p>The strange characters <code>#!</code> are called the <strong>shebang</strong> (hash-bang). When Linux sees that line at the top of a file, it knows to run <code>/bin/bash</code> to execute the instructions below. Without it, the operating system has to guess, which can cause erratic bugs.</p>
+
+        <h3>The magic key: chmod +x</h3>
+        <p>If you try to run your script right after creating it, Linux will block you with: <code>Permission denied</code>. By default, Linux protects you by forbidding newly downloaded or created text files from running as programs.</p>
+        <p>You unlock it by giving the file <strong>executable</strong> permission:</p>
+
+<pre class="code"><span class="c"># Give execution rights to hello.sh</span>
+chmod +x hello.sh
+
+<span class="c"># Run it! (The ./ means: "look in this current directory")</span>
+./hello.sh</pre>
+
+        <div class="analogy">
+          <span class="analogy__label">Think of it as</span>
+          <p>Writing the script is writing a recipe. <code>chmod +x</code> is the official stamp of approval from the kitchen health inspector that allows the recipe to be cooked.</p>
+        </div>
+      </section>
+
+      <!-- ===== 05 ===== -->
+      <section class="section" id="variables">
+        <span class="section__num">05</span>
+        <h2>Variables, inputs and substitution</h2>
+        <p>Hardcoding file paths, server names, or passwords throughout a 100-line script is dangerous. If a folder changes, you'd have to edit twenty lines. <strong>Variables</strong> let you define values once at the top.</p>
+
+        <div class="pair">
+          <div class="pair__item">
+            <h3>Setting a variable</h3>
+            <p>Write the name and value with <strong>NO SPACES</strong> around the <code>=</code> sign:<br><code>ENVIRONMENT="production"</code><br><span style="color:#ff6b6b;font-size:14px;">&cross; ENVIRONMENT = "production" (will fail!)</span></p>
+          </div>
+          <div class="pair__item">
+            <h3>Reading a variable</h3>
+            <p>Put a dollar sign <code>$</code> in front of the name, and always wrap in double quotes:<br><code>echo "Deploying to: $ENVIRONMENT"</code></p>
+          </div>
+        </div>
+
+        <h3>Passing arguments from the command line</h3>
+        <p>You don't want to create three separate scripts for dev, staging, and production. Instead, you create one script and pass the environment as an <strong>argument</strong>:</p>
+
+<pre class="code"><span class="c">#!/bin/bash</span>
+ENV_NAME=$1
+TARGET_DIR=$2
+
+echo "Deploying to environment: $ENV_NAME"
+echo "Target path: $TARGET_DIR"</pre>
+
+        <p>When you run <code>./deploy.sh prod /var/www/app</code>, Bash automatically assigns <code>$1="prod"</code> and <code>$2="/var/www/app"</code>.</p>
+
+        <div class="words words--cmd" role="table" aria-label="Special Bash argument variables">
+          <div class="words__row" role="row">
+            <div class="words__term" role="cell">$0</div>
+            <p class="words__def" role="cell">The name of the script itself (e.g. <code>./deploy.sh</code>).</p>
+          </div>
+          <div class="words__row" role="row">
+            <div class="words__term" role="cell">$1, $2, $3</div>
+            <p class="words__def" role="cell">The 1st, 2nd, and 3rd arguments passed into the script.</p>
+          </div>
+          <div class="words__row" role="row">
+            <div class="words__term" role="cell">$#</div>
+            <p class="words__def" role="cell">The total number of arguments passed.</p>
+          </div>
+          <div class="words__row" role="row">
+            <div class="words__term" role="cell">$@</div>
+            <p class="words__def" role="cell">All arguments passed, listed out as a list.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== 06 ===== -->
+      <section class="section" id="exit-codes">
+        <span class="section__num">06</span>
+        <h2>Exit codes: your safety net</h2>
+        <p>Whenever a command finishes running in Linux, it leaves behind an invisible single-number status report called an <strong>exit code</strong> (or exit status). You check it using the special variable <code>$?</code>.</p>
+
+        <ul class="recap">
+          <li><span><strong>0 means Perfection:</strong> The command succeeded with zero errors.</span></li>
+          <li><span><strong>1 to 255 means Failure:</strong> Something broke (file not found, out of memory, no permissions).</span></li>
+        </ul>
+
+        <p>This is how scripts make intelligent decisions before doing something dangerous:</p>
+
+<pre class="code"><span class="c"># Try to ping the database server</span>
+ping -c 1 db.internal.net &gt; /dev/null 2&gt;&amp;1
+
+if [ $? -eq 0 ]; then
+  echo "Database is healthy. Proceeding with deployment..."
+else
+  echo "Error: Database is unreachable! Aborting to prevent downtime."
+  exit 1
+fi</pre>
+
+        <div class="oneline" style="margin-top:24px;">
+          <span class="oneline__label">The Golden Rule of exit codes</span>
+          <p>Always exit with <code>exit 0</code> on success, and <code>exit 1</code> on fatal errors. This lets tools like GitHub Actions or Jenkins know whether your pipeline passed or failed.</p>
+        </div>
+      </section>
+
+      <!-- ===== 07 ===== -->
+      <section class="section" id="loops">
+        <span class="section__num">07</span>
+        <h2>Loops, pipes and redirection</h2>
+        <p>The true power of shell scripting comes from combining small, focused Unix utilities together using <strong>loops</strong>, <strong>pipes</strong>, and <strong>streams</strong>.</p>
+
+        <h3>1. Looping over items</h3>
+        <p>Need to restart Nginx on three different EC2 instances or check five log files? Use a <code>for</code> loop:</p>
+
+<pre class="code"><span class="c"># Process a list of servers</span>
+for SERVER in "web-1" "web-2" "web-3"; do
+  echo "Checking health on $SERVER..."
+done</pre>
+
+        <h3>2. Pipes (|): Unix plumbing</h3>
+        <p>A pipe takes the text that one program spits out and channels it straight into the next tool without writing it to disk. Here’s how to count how many Nginx worker processes are running:</p>
+
+<pre class="code"><span class="c"># List processes &rarr; filter for 'nginx' &rarr; count lines</span>
+ps aux | grep nginx | wc -l</pre>
+
+        <h3>3. Redirection (&gt; and &gt;&gt;): Saving logs</h3>
+        <p>By default, script output is printed to your monitor. Redirection lets you steer that stream into a permanent log file:</p>
+
+<pre class="code"><span class="c"># Overwrite report.txt with fresh data</span>
+echo "Deployment started" &gt; deploy.log
+
+<span class="c"># Append to the bottom without erasing existing lines</span>
+echo "Deployment finished at $(date)" &gt;&gt; deploy.log</pre>
+      </section>
+
+    </article>
+
+    <!-- ===== 08 Diagram ===== -->
+    <section class="diagram-section" id="diagram">
+      <div class="diagram-head">
+        <span class="section__num" style="font-size:14px;font-weight:600;color:var(--text-3);display:block;margin-bottom:12px;">08</span>
+        <h2 style="margin:0 0 20px;font-size:clamp(30px,4.4vw,40px);line-height:1.15;font-weight:700;letter-spacing:-0.028em;">The whole picture</h2>
+        <p style="margin:0;color:var(--text-2);">How a production Bash script executes: from command invocation to safety checks, task pipelines, and exit code reporting.</p>
+      </div>
+
+      <figure class="diagram" style="margin:0;">
+        <svg viewBox="0 0 960 540" role="img" aria-labelledby="st sd">
+          <title id="st">Diagram of a Production Shell Script Execution Lifecycle</title>
+          <desc id="sd">Visual flow of a shell script from user trigger, shebang resolution, safety guardrails, execution pipeline, exit code verification, and final deployment status.</desc>
+
+          <defs>
+            <marker id="sah" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+              <path d="M0,1 L9,5 L0,9 z" class="d-arrow"/>
+            </marker>
+          </defs>
+
+          <!-- Outer boundary -->
+          <rect class="d-cloud" x="20" y="20" width="920" height="500" rx="20"/>
+          <text class="d-small" x="45" y="52">LINUX OPERATING SYSTEM · BASH RUNTIME</text>
+
+          <!-- Step 1: User invocation -->
+          <rect class="d-box" x="50" y="90" width="160" height="110" rx="14"/>
+          <text class="d-title" x="130" y="125" text-anchor="middle">1. Trigger</text>
+          <text class="d-sub" x="130" y="148" text-anchor="middle">./deploy.sh prod</text>
+          <text class="d-small" x="130" y="175" text-anchor="middle" style="fill:var(--accent-ink)">chmod +x checked</text>
+
+          <!-- Arrow 1 to 2 -->
+          <line class="d-line" x1="210" y1="145" x2="265" y2="145" marker-end="url(#sah)"/>
+
+          <!-- Step 2: Shebang & Safety -->
+          <rect class="d-control" x="270" y="90" width="190" height="110" rx="14"/>
+          <text class="d-on-dark" x="365" y="125" text-anchor="middle">2. Guardrails</text>
+          <text class="d-on-dark2" x="365" y="148" text-anchor="middle">#!/bin/bash</text>
+          <text class="d-small" x="365" y="175" text-anchor="middle" style="fill:var(--warm)">set -euo pipefail</text>
+
+          <!-- Arrow 2 to 3 -->
+          <line class="d-line" x1="460" y1="145" x2="515" y2="145" marker-end="url(#sah)"/>
+
+          <!-- Step 3: Variables & Args -->
+          <rect class="d-node" x="520" y="90" width="180" height="110" rx="14"/>
+          <text class="d-small" x="610" y="125" text-anchor="middle" style="fill:var(--text)">3. Inputs &amp; State</text>
+          <text class="d-sub" x="610" y="148" text-anchor="middle">$1 = "prod"</text>
+          <text class="d-sub" x="610" y="172" text-anchor="middle">DATE=$(date +%F)</text>
+
+          <!-- Arrow 3 to 4 (Downwards) -->
+          <line class="d-line" x1="610" y1="200" x2="610" y2="255" marker-end="url(#sah)"/>
+
+          <!-- Step 4: Pipeline Execution Container -->
+          <rect class="d-cluster" x="50" y="260" width="860" height="140" rx="16"/>
+          <text class="d-small" x="80" y="290" style="fill:var(--accent-ink)">4. EXECUTION PIPELINE · SEQUENTIAL TASKS</text>
+
+          <!-- Task A -->
+          <rect class="d-pod" x="80" y="305" width="220" height="75" rx="10"/>
+          <text class="d-podtitle" x="98" y="333">git pull origin main</text>
+          <text class="d-sub" x="98" y="357">Fetch latest code</text>
+
+          <!-- Task arrow -->
+          <line class="d-line" x1="300" y1="342" x2="350" y2="342" marker-end="url(#sah)"/>
+
+          <!-- Task B -->
+          <rect class="d-pod" x="355" y="305" width="220" height="75" rx="10"/>
+          <text class="d-podtitle" x="373" y="333">npm run build</text>
+          <text class="d-sub" x="373" y="357">Bundle frontend files</text>
+
+          <!-- Task arrow -->
+          <line class="d-line" x1="575" y1="342" x2="625" y2="342" marker-end="url(#sah)"/>
+
+          <!-- Task C -->
+          <rect class="d-pod" x="630" y="305" width="250" height="75" rx="10"/>
+          <text class="d-podtitle" x="648" y="333">systemctl restart nginx</text>
+          <text class="d-sub" x="648" y="357">Reload live service</text>
+
+          <!-- Arrow 4 to 5 -->
+          <line class="d-line" x1="480" y1="400" x2="480" y2="435" marker-end="url(#sah)"/>
+
+          <!-- Step 5: Result & Exit code -->
+          <rect class="d-lb" x="250" y="440" width="460" height="60" rx="12"/>
+          <text class="d-title" x="480" y="466" text-anchor="middle">5. Final Status: Exit Code ($?)</text>
+          <text class="d-sub" x="480" y="488" text-anchor="middle">0 = Success &middot; Non-zero = Instant alert sent to logs / Slack</text>
+        </svg>
+
+        <ul class="legend">
+          <li><strong>Trigger</strong>The script is launched via cron, terminal, or CI/CD agent.</li>
+          <li><strong>Guardrails</strong>The shebang sets the interpreter, and safety flags stop silent failures.</li>
+          <li><strong>Pipeline</strong>Commands execute sequentially; pipes pass data directly between tools.</li>
+          <li><strong>Exit status</strong>Reports back with code 0 on success or nonzero on error.</li>
+        </ul>
+      </figure>
+    </section>
+
+    <article class="article">
+
+      <!-- ===== 09 ===== -->
+      <section class="section" id="safety">
+        <span class="section__num">09</span>
+        <h2>The Golden Rules of production Bash</h2>
+        <p>By default, Bash has one dangerous habit: <strong>it keeps running even when a command fails.</strong></p>
+        <p>Imagine your script tries to change directory with <code>cd /tmp/old_app</code>, but the folder doesn't exist. If the very next line is <code>rm -rf *</code>, Bash will happily delete everything in your current directory instead!</p>
+        <p>Never write a production script without this single safety line near the top:</p>
+
+<pre class="code"><span class="c"># The Bash safety belt</span>
+set -euo pipefail</pre>
+
+        <div class="words" role="table" aria-label="Explanation of set -euo pipefail">
+          <div class="words__row" role="row">
+            <div class="words__term" role="cell">set -e</div>
+            <p class="words__def" role="cell"><strong>Exit immediately</strong> if any command fails. No continuing after errors.</p>
+          </div>
+          <div class="words__row" role="row">
+            <div class="words__term" role="cell">set -u</div>
+            <p class="words__def" role="cell"><strong>Treat unset variables as errors.</strong> If you misspell <code>$DEL_PATH</code> as <code>$DEL_PTH</code>, it stops immediately rather than assuming an empty string.</p>
+          </div>
+          <div class="words__row" role="row">
+            <div class="words__term" role="cell">set -o pipefail</div>
+            <p class="words__def" role="cell">Prevents errors from hiding in pipes. If <code>curl</code> fails before <code>grep</code>, the whole line is marked as failed.</p>
+          </div>
+        </div>
+
+        <div class="pair" style="margin-top:28px;">
+          <div class="pair__item">
+            <h3>Always quote variables</h3>
+            <p>Write <code>rm -rf "$TARGET_DIR"</code> instead of <code>rm -rf $TARGET_DIR</code>. If the directory has spaces, quotes prevent accidental disaster.</p>
+          </div>
+          <div class="pair__item">
+            <h3>Log with timestamps</h3>
+            <p>Write a small helper function <code>log "Doing task..."</code> that prefixes every message with the current time. Future debugging will be 10x faster.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== 10 ===== -->
+      <section class="section" id="project">
+        <span class="section__num">10</span>
+        <h2>Hands-on: Server health &amp; backup script</h2>
+        <p>Here is a complete, battle-tested maintenance script you can save as <code>server_health.sh</code> and run on any Ubuntu, Debian, or Amazon Linux EC2 server:</p>
+
+<pre class="code"><span class="c">#!/bin/bash
+# ==========================================================
+# Server Health &amp; Automated Backup Utility
+# Checks disk storage, archives web logs, and checks Nginx
+# ==========================================================</span>
+
+<span class="c"># 1. Turn on strict error safety</span>
+set -euo pipefail
+
+<span class="c"># 2. Configuration variables</span>
+BACKUP_DIR="/var/backups/logs"
+LOG_SOURCE="/var/log/nginx"
+DATE_STAMP=$(date +"%Y-%m-%d_%H%M%S")
+MAX_DISK_USAGE=85
+
+log() {
+  echo "[$(date '+%Y-%m-%d %H:%M:%S')] $1"
+}
+
+log "Starting daily server maintenance..."
+
+<span class="c"># 3. Check disk space usage</span>
+CURRENT_USAGE=$(df / | grep / | awk '{ print $5 }' | sed 's/%//g')
+log "Current root disk usage: ${CURRENT_USAGE}%"
+
+if [ "$CURRENT_USAGE" -gt "$MAX_DISK_USAGE" ]; then
+  log "WARNING: Disk space critically high! (&gt;${MAX_DISK_USAGE}%)"
+else
+  log "Disk health: OK (under ${MAX_DISK_USAGE}%)"
+fi
+
+<span class="c"># 4. Create backup archive of web logs</span>
+mkdir -p "$BACKUP_DIR"
+ARCHIVE_NAME="${BACKUP_DIR}/nginx_logs_${DATE_STAMP}.tar.gz"
+
+if [ -d "$LOG_SOURCE" ]; then
+  tar -czf "$ARCHIVE_NAME" "$LOG_SOURCE" 2&gt;/dev/null || true
+  log "Log backup created: $ARCHIVE_NAME"
+fi
+
+<span class="c"># 5. Check if Nginx web server is currently running</span>
+if systemctl is-active --quiet nginx; then
+  log "Nginx web server is active and serving traffic."
+else
+  log "ALERT: Nginx is stopped! Attempting restart..."
+  systemctl restart nginx || log "CRITICAL: Could not restart Nginx!"
+fi
+
+log "Maintenance completed successfully."
+exit 0</pre>
+
+        <div class="oneline" style="margin-top:24px;">
+          <span class="oneline__label">How to automate this with Cron</span>
+          <p>Run <code>crontab -e</code> and add this line: <code>0 2 * * * /usr/local/bin/server_health.sh &gt;&gt; /var/log/health.log 2&gt;&amp;1</code>. Your server will now run this script on autopilot every night at 2:00 AM.</p>
+        </div>
+      </section>
+
+      <!-- ===== 11 ===== -->
+      <section class="section" id="cheatsheet">
+        <span class="section__num">11</span>
+        <h2>10 daily commands cheatsheet</h2>
+        <p>These are the ten Bash expressions you will write in DevOps scripts 95% of the time:</p>
+
+        <div class="words words--cmd" role="table" aria-label="10 essential Bash commands">
+          <div class="words__row" role="row">
+            <div class="words__term" role="cell">VAR="value"</div>
+            <p class="words__def" role="cell">Assign a variable (no spaces). Read it with <code>"$VAR"</code>.</p>
+          </div>
+          <div class="words__row" role="row">
+            <div class="words__term" role="cell">$(command)</div>
+            <p class="words__def" role="cell">Command substitution. Runs a command and captures its text output.</p>
+          </div>
+          <div class="words__row" role="row">
+            <div class="words__term" role="cell">if [ -f "$FILE" ]; then</div>
+            <p class="words__def" role="cell">Checks if a file exists before trying to read or copy it.</p>
+          </div>
+          <div class="words__row" role="row">
+            <div class="words__term" role="cell">if [ -d "$DIR" ]; then</div>
+            <p class="words__def" role="cell">Checks if a directory folder exists before writing to it.</p>
+          </div>
+          <div class="words__row" role="row">
+            <div class="words__term" role="cell">if [ -z "$VAR" ]; then</div>
+            <p class="words__def" role="cell">Checks if a variable is empty or was forgotten by the user.</p>
+          </div>
+          <div class="words__row" role="row">
+            <div class="words__term" role="cell">echo "text" &gt;&gt; file.log</div>
+            <p class="words__def" role="cell">Appends a message to the end of a log file without deleting it.</p>
+          </div>
+          <div class="words__row" role="row">
+            <div class="words__term" role="cell">cmd 2&gt; /dev/null</div>
+            <p class="words__def" role="cell">Mutes error messages (sends standard error stream to the black hole).</p>
+          </div>
+          <div class="words__row" role="row">
+            <div class="words__term" role="cell">grep -q "text" file</div>
+            <p class="words__def" role="cell">Quietly searches for a pattern; check <code>$? -eq 0</code> to see if found.</p>
+          </div>
+          <div class="words__row" role="row">
+            <div class="words__term" role="cell">sleep 5</div>
+            <p class="words__def" role="cell">Pauses script execution for 5 seconds (great for waiting on server reboots).</p>
+          </div>
+          <div class="words__row" role="row">
+            <div class="words__term" role="cell">exit 0 / exit 1</div>
+            <p class="words__def" role="cell">Terminates the script with clean success (0) or error status (1).</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== 12 ===== -->
+      <section class="section" id="recap">
+        <span class="section__num">12</span>
+        <h2>Quick recap</h2>
+        <ul class="recap">
+          <li><span>A <strong>shell script</strong> is a saved sequence of terminal commands executed by the shell.</span></li>
+          <li><span>Always start with the <strong>shebang</strong> <code>#!/bin/bash</code> so Linux knows which program interprets your file.</span></li>
+          <li><span>Run <code>chmod +x your_script.sh</code> once to give the file permission to run.</span></li>
+          <li><span>Store reusable text in <strong>variables</strong> (<code>NAME="value"</code> with no spaces) and read them with double quotes (<code>"$NAME"</code>).</span></li>
+          <li><span>Every command returns an <strong>exit code</strong>: <code>0</code> is success, anything else is an error.</span></li>
+          <li><span>Always add <code>set -euo pipefail</code> at the top of production scripts to stop silent failures.</span></li>
+          <li><span>Use <strong>Cron</strong> to run your scripts on automatic daily or hourly schedules.</span></li>
+        </ul>
+
+        <div class="oneline" style="margin-top:40px;">
+          <span class="oneline__label">If you remember one thing</span>
+          <p>Don’t repeat manual steps. If you have to type the same sequence of commands more than twice, put it in a shell script and let the machine do the work.</p>
+        </div>
+      </section>
+
+    </article>
+  </main>
+
+  <nav class="more" aria-label="Previous and next guides">
+    <p class="more__label">Keep learning</p>
+    <div class="more__grid">
+      <a href="github.html"><strong>Git &amp; GitHub</strong><span>Save, share and collaborate on code.</span><em>&larr; Previous guide</em></a>
+      <a href="aws.html"><strong>AWS essentials</strong><span>Servers, storage and cloud security.</span><em>Next guide &rarr;</em></a>
+    </div>
+  </nav>
+
+  <footer class="footer sitefoot">
+    <div class="sitefoot__inner">
+      <div class="sitefoot__brand">
+        <a href="index.html">Deploybook</a>
+        <p>Plain-English DevOps guides, from your first commit to a live app.</p>
+        <a class="sitefoot__home" href="index.html#roadmap">See the full roadmap &rarr;</a>
+      </div>
+      <nav aria-label="All guides">
+        <p class="sitefoot__label">All guides, in reading order</p>
+        <ol>
+          <li><a href="github.html">Git &amp; GitHub</a></li>
+          <li><a href="shell.html" aria-current="page">Shell scripting</a></li>
+          <li><a href="aws.html">AWS essentials</a></li>
+          <li><a href="ec2.html">EC2 servers</a></li>
+          <li><a href="docker.html">Docker</a></li>
+          <li><a href="nginx.html">Nginx</a></li>
+          <li><a href="cicd.html">CI/CD with GitHub Actions</a></li>
+          <li><a href="eks.html">EKS</a></li>
+        </ol>
+      </nav>
+    </div>
+    <p class="sitefoot__fine">A beginner’s guide to Shell Scripting and Bash automation. Simplified on purpose. Real systems have more moving parts, but these ideas are the foundation for all of them.</p>
+  </footer>
+
+  <script>
+    (function () {
+      var body = document.body;
+      var openBtn = document.getElementById('menu-open');
+      var closeBtn = document.getElementById('menu-close');
+      var scrim = document.getElementById('scrim');
+      var drawer = document.getElementById('drawer');
+
+      // Sidebar: open by default on large screens, slide-in on small ones
+      var wide = window.matchMedia('(min-width: 1025px)');
+      var KEY = 'sidebar-closed';
+      var stored = null;
+      try { stored = localStorage.getItem(KEY); } catch (e) {}
+      if (stored === '1') body.classList.add('side-closed');
+
+      function isOpen() {
+        return wide.matches ? !body.classList.contains('side-closed') : body.classList.contains('menu-open');
+      }
+      function syncAria() {
+        var visible = isOpen();
+        drawer.setAttribute('aria-hidden', String(!visible));
+        openBtn.setAttribute('aria-expanded', String(visible));
+      }
+      function setOpen(open) {
+        if (wide.matches) {
+          body.classList.toggle('side-closed', !open);
+          try { localStorage.setItem(KEY, open ? '0' : '1'); } catch (e) {}
+        } else {
+          body.classList.toggle('menu-open', open);
+          (open ? closeBtn : openBtn).focus();
+        }
+        syncAria();
+      }
+      openBtn.addEventListener('click', function () { setOpen(!isOpen()); });
+      closeBtn.addEventListener('click', function () { setOpen(false); });
+      scrim.addEventListener('click', function () { setOpen(false); });
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && !wide.matches && body.classList.contains('menu-open')) setOpen(false);
+      });
+      var onChange = function () { body.classList.remove('menu-open'); syncAria(); };
+      if (wide.addEventListener) wide.addEventListener('change', onChange); else wide.addListener(onChange);
+      syncAria();
+    })();
+  </script>
+</body>
+</html>
