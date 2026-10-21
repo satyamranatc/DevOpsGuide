@@ -104,14 +104,26 @@
             <span class="drawer__desc">Kubernetes on AWS, explained &middot; 14 min</span>
           </a>
         </li>
+        <li>
+          <a href="terraform.html">
+            <span class="drawer__title"><span class="drawer__step">9</span>Terraform</span>
+            <span class="drawer__desc">Infrastructure as Code &middot; 15 min</span>
+          </a>
+        </li>
+        <li>
+          <a href="grafana.html">
+            <span class="drawer__title"><span class="drawer__step">10</span>Grafana</span>
+            <span class="drawer__desc">Dashboards &amp; monitoring &middot; 13 min</span>
+          </a>
+        </li>
       </ul>
 
       <p class="drawer__label">Coming soon</p>
       <ul class="drawer__soon">
         <li>Linux and networking</li>
-        <li>Terraform and Ansible</li>
-        <li>Monitoring</li>
-        <li>Security</li>
+        <li>Ansible configuration</li>
+        <li>Prometheus &amp; Alertmanager</li>
+        <li>Security with Vault</li>
         <li>Reliability</li>
       </ul>
     </nav>
@@ -146,6 +158,8 @@
             <li><a href="nginx.html"><strong>Nginx</strong><span>14 min read</span></a></li>
             <li><a href="cicd.html"><strong>CI/CD</strong><span>20 min read</span></a></li>
             <li><a href="eks.html"><strong>EKS</strong><span>14 min read</span></a></li>
+            <li><a href="terraform.html"><strong>Terraform</strong><span>15 min read</span></a></li>
+            <li><a href="grafana.html"><strong>Grafana</strong><span>13 min read</span></a></li>
           </ul>
         </div>
       </section>
@@ -153,7 +167,7 @@
       <div class="stats reveal" aria-label="Library at a glance">
         <div><strong>9</strong><span>stages</span></div>
         <div><strong>53</strong><span>guides planned</span></div>
-        <div><strong>8</strong><span>live today</span></div>
+        <div><strong>10</strong><span>live today</span></div>
       </div>
 
       <!-- Tool ribbon -->
@@ -472,12 +486,12 @@
           <h3>Infrastructure as code</h3>
           <p class="stage__desc">Build whole servers and networks from a text file.</p>
           <ul class="stage__list">
-            <li>Terraform</li>
+            <li class="is-live"><a href="terraform.html">Terraform <span class="pill">Live</span></a></li>
             <li>Terraform modules and state</li>
             <li>Ansible</li>
             <li>AWS CloudFormation</li>
           </ul>
-          <p class="stage__count">4 guides</p>
+          <p class="stage__count">4 guides · 1 live</p>
         </article>
 
         <article class="stage reveal">
@@ -486,12 +500,12 @@
           <p class="stage__desc">See what your apps are doing, and know when they break.</p>
           <ul class="stage__list">
             <li>Prometheus</li>
-            <li>Grafana dashboards</li>
+            <li class="is-live"><a href="grafana.html">Grafana dashboards <span class="pill">Live</span></a></li>
             <li>Logging with ELK</li>
             <li>Alerts and on-call</li>
             <li>Tracing with OpenTelemetry</li>
           </ul>
-          <p class="stage__count">5 guides</p>
+          <p class="stage__count">5 guides · 1 live</p>
         </article>
 
         <article class="stage reveal" data-d="1">

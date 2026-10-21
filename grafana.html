@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Grafana, Explained Simply — Dashboards, Metrics, Visualizations & Alerts</title>
+  <meta name="description" content="A plain-English guide to Grafana and observability for beginners: metrics vs logs, Prometheus integration, panels, PromQL queries, and setting up real-time server alerts.">
+  <meta name="color-scheme" content="dark">
+  <meta name="theme-color" content="#05060a">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="guide.css">
+  <link rel="stylesheet" href="sidebar.css">
+</head>
+<body class="guide">
+
+  <header class="topbar">
+    <div class="topbar__inner">
+      <div class="topbar__left">
+        <button class="menu-btn" id="menu-open" type="button" aria-controls="drawer" aria-expanded="false">
+          <span class="menu-btn__bars" aria-hidden="true"></span>
+          Menu
+        </button>
+        <a class="topbar__brand" href="index.html">Deploybook</a>
+      </div>
+      <nav class="topbar__nav" aria-label="Jump to">
+        <a href="#words">The big picture</a>
+        <a href="#dream-team">Prometheus &amp; Grafana</a>
+        <a href="#diagram">Diagram</a>
+        <a href="#project">60s project</a>
+        <a href="#cheatsheet">Cheatsheet</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="scrim" id="scrim"></div>
+  <aside class="drawer" id="drawer" aria-label="Site menu">
+    <div class="drawer__head">
+      <a class="drawer__brand" href="index.html">Deploybook</a>
+      <button class="drawer__close" id="menu-close" type="button" aria-label="Hide sidebar">&times;</button>
+    </div>
+
+    <nav aria-label="Guides">
+      <ul class="drawer__list">
+        <li>
+          <a href="index.html">
+            <span class="drawer__title">Home</span>
+          </a>
+        </li>
+        <li>
+          <a href="index.html#roadmap">
+            <span class="drawer__title">Full roadmap</span>
+            <span class="drawer__desc">All 9 stages at a glance</span>
+          </a>
+        </li>
+        <li>
+          <a href="diagrams.html">
+            <span class="drawer__title">Architecture Diagrams</span>
+            <span class="drawer__desc">Docker, EC2, Nginx, ASG &middot; Visuals</span>
+          </a>
+        </li>
+      </ul>
+
+      <p class="drawer__label">Read in this order</p>
+      <ul class="drawer__list">
+        <li>
+          <a href="github.html">
+            <span class="drawer__title"><span class="drawer__step">1</span>Git &amp; GitHub</span>
+            <span class="drawer__desc">Save, share and team up on code &middot; 8 min</span>
+          </a>
+        </li>
+        <li>
+          <a href="shell.html">
+            <span class="drawer__title"><span class="drawer__step">2</span>Shell scripting</span>
+            <span class="drawer__desc">Automate tasks with Bash &middot; 12 min</span>
+          </a>
+        </li>
+        <li>
+          <a href="aws.html">
+            <span class="drawer__title"><span class="drawer__step">3</span>AWS essentials</span>
+            <span class="drawer__desc">Servers, storage and security &middot; 14 min</span>
+          </a>
+        </li>
+        <li>
+          <a href="ec2.html">
+            <span class="drawer__title"><span class="drawer__step">4</span>EC2 servers</span>
+            <span class="drawer__desc">Launch and connect to your first server &middot; 15 min</span>
+          </a>
+        </li>
+        <li>
+          <a href="docker.html">
+            <span class="drawer__title"><span class="drawer__step">5</span>Docker</span>
+            <span class="drawer__desc">Images, containers and commands &middot; 12 min</span>
+          </a>
+        </li>
+        <li>
+          <a href="nginx.html">
+            <span class="drawer__title"><span class="drawer__step">6</span>Nginx</span>
+            <span class="drawer__desc">Web server, proxy and HTTPS &middot; 14 min</span>
+          </a>
+        </li>
+        <li>
+          <a href="cicd.html">
+            <span class="drawer__title"><span class="drawer__step">7</span>CI/CD with GitHub Actions</span>
+            <span class="drawer__desc">Auto-deploy React + Express &middot; 20 min</span>
+          </a>
+        </li>
+        <li>
+          <a href="eks.html">
+            <span class="drawer__title"><span class="drawer__step">8</span>EKS</span>
+            <span class="drawer__desc">Kubernetes on AWS, explained &middot; 14 min</span>
+          </a>
+        </li>
+        <li>
+          <a href="terraform.html">
+            <span class="drawer__title"><span class="drawer__step">9</span>Terraform</span>
+            <span class="drawer__desc">Infrastructure as Code &middot; 15 min</span>
+          </a>
+        </li>
+        <li>
+          <a href="grafana.html" aria-current="page">
+            <span class="drawer__title"><span class="drawer__step">10</span>Grafana</span>
+            <span class="drawer__desc">Dashboards &amp; monitoring &middot; 13 min</span>
+          </a>
+        </li>
+      </ul>
+
+      <p class="drawer__label">Coming soon</p>
+      <ul class="drawer__soon">
+        <li>Prometheus in-depth</li>
+        <li>Alertmanager &amp; PagerDuty</li>
+        <li>Logging with Loki</li>
+        <li>Distributed tracing</li>
+      </ul>
+    </nav>
+
+    <p class="drawer__foot">Short guides in plain English, written for people who are just starting out.</p>
+  </aside>
+
+  <main id="top">
+
+    <!-- ===== Hero ===== -->
+    <section class="hero">
+      <p class="eyebrow">Beginner’s guide</p>
+      <h1>Grafana,<br>explained simply.</h1>
+      <p class="hero__lead">Turn raw server numbers into beautiful, live mission control dashboards. Metrics, Prometheus, panels, and alert rules so you fix issues before users notice. No jargon, one clear flow.</p>
+      <p class="hero__meta">13 minute read</p>
+    </section>
+
+    <article class="article">
+
+      <nav class="contents" aria-label="Contents">
+        <h2>In this guide</h2>
+        <ol>
+          <li><a href="#story">The problem we’re solving</a></li>
+          <li><a href="#observability">The 3 pillars of observability</a></li>
+          <li><a href="#words">The core words you need</a></li>
+          <li><a href="#dream-team">Prometheus &amp; Grafana: The dream team</a></li>
+          <li><a href="#panels">Anatomy of a Grafana dashboard</a></li>
+          <li><a href="#promql">PromQL in 3 minutes</a></li>
+          <li><a href="#diagram">The whole picture</a></li>
+          <li><a href="#project">Run Grafana locally in 60 seconds</a></li>
+          <li><a href="#alerts">Setting up smart alerts</a></li>
+          <li><a href="#cheatsheet">Top 8 PromQL queries cheatsheet</a></li>
+          <li><a href="#recap">Quick recap</a></li>
+        </ol>
+      </nav>
+
+      <!-- ===== 01 ===== -->
+      <section class="section" id="story">
+        <span class="section__num">01</span>
+        <h2>The problem we’re solving</h2>
+        <p>Imagine flying a modern commercial jet with no windows and <strong>zero gauges or dials in the cockpit</strong>.</p>
+        <p>You don't know your altitude, you don't know your airspeed, and you don't know how much fuel is left. The only way you find out an engine has overheated is when it explodes in mid-air.</p>
+        <p>Running cloud servers and microservices without monitoring is flying blind. You don’t know that your website is crashing until angry customers start tagging your company on Twitter. By then, you’ve already lost revenue.</p>
+        <p><strong>Grafana</strong> is the illuminated mission control cockpit for your servers. It takes millions of data points — CPU temperature, memory usage, API error rates, network spikes — and draws crisp, real-time graphs so you can spot trouble thirty minutes before it causes an outage.</p>
+
+        <div class="oneline">
+          <span class="oneline__label">In one line</span>
+          <p>Grafana is an open-source visual dashboard tool that turns boring system numbers into live graphs, gauges, and alerts.</p>
+        </div>
+      </section>
+
+      <!-- ===== 02 ===== -->
+      <section class="section" id="observability">
+        <span class="section__num">02</span>
+        <h2>The 3 pillars of observability</h2>
+        <p>When software engineers talk about <strong>Observability</strong> (knowing what is happening inside your systems), they rely on three distinct data sources:</p>
+
+        <div class="words" role="table" aria-label="Three pillars of observability">
+          <div class="words__row" role="row">
+            <div class="words__term" role="cell">1. Metrics (Numbers)</div>
+            <p class="words__def" role="cell">Countable numbers recorded over time: <em>"CPU is at 82%"</em>, <em>"Memory is 3.1 GB"</em>, <em>"We are handling 450 requests/sec"</em>. Fast to query, tiny storage footprint. <strong>Grafana excels at this.</strong></p>
+          </div>
+          <div class="words__row" role="row">
+            <div class="words__term" role="cell">2. Logs (Sentences)</div>
+            <p class="words__def" role="cell">Timestamped lines of diary text: <em>"User 42 logged in"</em>, <em>"Database connection timeout on line 184"</em>. Heavy, detailed text used for post-mortem autopsy.</p>
+          </div>
+          <div class="words__row" role="row">
+            <div class="words__term" role="cell">3. Traces (Journeys)</div>
+            <p class="words__def" role="cell">A stopwatch recording a single user request bouncing through 5 microservices: <em>10ms in Auth &rarr; 40ms in Payments &rarr; 120ms in Database</em>.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== 03 ===== -->
+      <section class="section" id="words">
+        <span class="section__num">03</span>
+        <h2>The core words you need</h2>
+        <div class="words" role="table" aria-label="Grafana core vocabulary">
+          <div class="words__row" role="row">
+            <div class="words__term" role="cell">Data Source</div>
+            <p class="words__def" role="cell">Where your metrics live. Grafana doesn't store data itself; it connects to databases like Prometheus, InfluxDB, AWS CloudWatch, or PostgreSQL.</p>
+          </div>
+          <div class="words__row" role="row">
+            <div class="words__term" role="cell">Panel</div>
+            <p class="words__def" role="cell">A single visual tile on your screen: one graph, one speedometer gauge, or one big green number.</p>
+          </div>
+          <div class="words__row" role="row">
+            <div class="words__term" role="cell">Dashboard</div>
+            <p class="words__def" role="cell">A collection of panels arranged cleanly on a single screen to monitor an app, a server, or a whole Kubernetes cluster.</p>
+          </div>
+          <div class="words__row" role="row">
+            <div class="words__term" role="cell">PromQL</div>
+            <p class="words__def" role="cell">Prometheus Query Language. The math formula you type inside a Grafana panel to calculate what to display.</p>
+          </div>
+          <div class="words__row" role="row">
+            <div class="words__term" role="cell">Alert Rule</div>
+            <p class="words__def" role="cell">A watchdog condition: <em>"If API errors &gt; 5% for 2 minutes, ping our #devops Slack channel immediately."</em></p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== 04 ===== -->
+      <section class="section" id="dream-team">
+        <span class="section__num">04</span>
+        <h2>Prometheus &amp; Grafana: The dream team</h2>
+        <p>A very common misconception: people think Grafana monitors servers by itself. In reality, Grafana is the <strong>artist</strong>; it needs a <strong>librarian</strong> to supply the numbers.</p>
+        <p>That librarian is almost always <strong>Prometheus</strong>.</p>
+
+        <div class="pair">
+          <div class="pair__item">
+            <h3>Prometheus · The Data Collector</h3>
+            <p>Every 15 seconds, Prometheus knocks on your servers' doors, gathers raw numerical readings (CPU, RAM, disk, HTTP requests), and timestamps them into a high-speed database.</p>
+          </div>
+          <div class="pair__item">
+            <h3>Grafana · The Visual Dashboard</h3>
+            <p>Grafana queries Prometheus, transforms those raw timestamps into gorgeous dark-mode graphs, interactive zoomable timelines, and colored alert badges.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== 05 ===== -->
+      <section class="section" id="panels">
+        <span class="section__num">05</span>
+        <h2>Anatomy of a Grafana dashboard</h2>
+        <p>When you open Grafana, you construct dashboards out of several panel styles:</p>
+        <ul class="recap">
+          <li><span><strong>Time Series Graph:</strong> A smooth line chart showing change over time (e.g. CPU spikes over the last 24 hours).</span></li>
+          <li><span><strong>Stat / Single Value:</strong> One giant colored number (e.g. <code>99.98% Uptime</code> or <code>1,420 Active Users</code>).</span></li>
+          <li><span><strong>Gauge:</strong> A semi-circle speedometer dial that turns yellow at 70% and flashing red at 90% (e.g. Server Disk Space).</span></li>
+          <li><span><strong>Bar Gauge:</strong> Horizontal battery-style power bars comparing memory usage across 10 EC2 nodes.</span></li>
+        </ul>
+      </section>
+
+      <!-- ===== 06 ===== -->
+      <section class="section" id="promql">
+        <span class="section__num">06</span>
+        <h2>PromQL in 3 minutes</h2>
+        <p>To tell Grafana what to draw, you write a PromQL expression. Here are the 3 patterns you will use constantly:</p>
+
+        <h3>1. Ask for a metric by name</h3>
+<pre class="code"><span class="c"># Raw reading: how many total HTTP requests have occurred since boot</span>
+http_requests_total</pre>
+
+        <h3>2. Filter by label</h3>
+<pre class="code"><span class="c"># Only count requests that returned a 500 error code on the payments app</span>
+http_requests_total{status="500", app="payments"}</pre>
+
+        <h3>3. Calculate rate per second</h3>
+        <p>Counters only count upwards. To calculate <em>speed</em> (requests per second over the last 5 minutes), wrap with <code>rate()</code>:</p>
+<pre class="code"><span class="c"># How many requests per second is payments handling right now?</span>
+rate(http_requests_total{app="payments"}[5m])</pre>
+      </section>
+
+    </article>
+
+    <!-- ===== 07 Diagram ===== -->
+    <section class="diagram-section" id="diagram">
+      <div class="diagram-head">
+        <span class="section__num" style="font-size:14px;font-weight:600;color:var(--text-3);display:block;margin-bottom:12px;">07</span>
+        <h2 style="margin:0 0 20px;font-size:clamp(30px,4.4vw,40px);line-height:1.15;font-weight:700;letter-spacing:-0.028em;">The whole picture</h2>
+        <p style="margin:0;color:var(--text-2);">How metrics travel from your cloud servers into Prometheus, render inside Grafana, and trigger automated Slack alerts.</p>
+      </div>
+
+      <figure class="diagram" style="margin:0;">
+        <svg viewBox="0 0 960 540" role="img" aria-labelledby="gt gd">
+          <title id="gt">Diagram of End-to-End Observability with Grafana and Prometheus</title>
+          <desc id="gd">Shows servers running Node Exporter, Prometheus scraping metrics every 15 seconds, Grafana dashboard visualization, and alert notifications dispatched to Slack.</desc>
+
+          <defs>
+            <marker id="gah" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+              <path d="M0,1 L9,5 L0,9 z" class="d-arrow"/>
+            </marker>
+          </defs>
+
+          <!-- System Boundary -->
+          <rect class="d-cloud" x="20" y="20" width="920" height="500" rx="20"/>
+          <text class="d-small" x="45" y="52">OBSERVABILITY &amp; MONITORING PIPELINE</text>
+
+          <!-- Step 1: Target Servers & Exporters -->
+          <rect class="d-cluster" x="45" y="80" width="230" height="410" rx="16"/>
+          <text class="d-small" x="65" y="110" style="fill:var(--accent-ink)">1. TARGET SERVERS</text>
+
+          <rect class="d-node" x="65" y="130" width="190" height="90" rx="10"/>
+          <text class="d-small" x="80" y="158" style="fill:var(--text)">EC2 Server · Web</text>
+          <text class="d-sub" x="80" y="180">Node Exporter (:9100)</text>
+          <text class="d-sub" x="80" y="200">CPU, RAM, Disk, Net</text>
+
+          <rect class="d-node" x="65" y="245" width="190" height="90" rx="10"/>
+          <text class="d-small" x="80" y="273" style="fill:var(--text)">EKS Kubernetes</text>
+          <text class="d-sub" x="80" y="295">cAdvisor metrics</text>
+          <text class="d-sub" x="80" y="315">Pod health &amp; restarts</text>
+
+          <rect class="d-node" x="65" y="360" width="190" height="90" rx="10"/>
+          <text class="d-small" x="80" y="388" style="fill:var(--text)">React / Node App</text>
+          <text class="d-sub" x="80" y="410">Custom /metrics endpoint</text>
+          <text class="d-sub" x="80" y="430">HTTP 200/500 count</text>
+
+          <!-- Arrow 1 to 2 -->
+          <line class="d-line" x1="275" y1="285" x2="340" y2="285" marker-end="url(#gah)"/>
+          <text class="d-sub" x="307" y="275" text-anchor="middle">Scrapes :9100</text>
+
+          <!-- Step 2: Prometheus -->
+          <rect class="d-control" x="345" y="180" width="220" height="210" rx="16"/>
+          <text class="d-on-dark" x="455" y="215" text-anchor="middle">2. PROMETHEUS</text>
+          <text class="d-on-dark2" x="455" y="240" text-anchor="middle">Time-Series Database</text>
+          <rect class="d-box" x="365" y="260" width="180" height="105" rx="10"/>
+          <text class="d-small" x="455" y="288" text-anchor="middle" style="fill:var(--warm)">Pulls every 15s</text>
+          <text class="d-sub" x="455" y="312" text-anchor="middle">Stores numbers + tags</text>
+          <text class="d-sub" x="455" y="335" text-anchor="middle">PromQL query engine</text>
+
+          <!-- Arrow 2 to 3 -->
+          <line class="d-line" x1="565" y1="285" x2="630" y2="285" marker-end="url(#gah)"/>
+          <text class="d-sub" x="597" y="275" text-anchor="middle">PromQL query</text>
+
+          <!-- Step 3: Grafana UI -->
+          <rect class="d-cluster" x="635" y="80" width="280" height="260" rx="16"/>
+          <text class="d-small" x="655" y="110" style="fill:var(--accent-ink)">3. GRAFANA DASHBOARDS</text>
+
+          <rect class="d-pod" x="655" y="130" width="240" height="50" rx="8"/>
+          <text class="d-podtitle" x="675" y="160">CPU: 42% (Smooth graph)</text>
+
+          <rect class="d-pod" x="655" y="195" width="240" height="50" rx="8"/>
+          <text class="d-podtitle" x="675" y="225">Memory: 2.4 GB / 8 GB</text>
+
+          <rect class="d-pod" x="655" y="260" width="240" height="60" rx="8"/>
+          <text class="d-podtitle" x="675" y="285">99.98% Live Uptime</text>
+          <text class="d-sub" x="675" y="305">Real-time refresh every 5s</text>
+
+          <!-- Arrow from Grafana to Alerts -->
+          <line class="d-line" x1="775" y1="340" x2="775" y2="385" marker-end="url(#gah)"/>
+
+          <!-- Step 4: Alerts -->
+          <rect class="d-lb" x="635" y="390" width="280" height="100" rx="14"/>
+          <text class="d-title" x="775" y="422" text-anchor="middle">4. Automated Alerting</text>
+          <text class="d-sub" x="775" y="445" text-anchor="middle">If CPU &gt; 85% for 5 mins</text>
+          <text class="d-small" x="775" y="470" text-anchor="middle" style="fill:var(--accent-ink)">&rarr; Slack &middot; Email &middot; PagerDuty</text>
+        </svg>
+
+        <ul class="legend">
+          <li><strong>Exporters</strong>Tiny programs on your servers that expose raw numbers on a <code>/metrics</code> URL.</li>
+          <li><strong>Prometheus</strong>Scrapes those metrics every 15 seconds and saves them in its fast database.</li>
+          <li><strong>Grafana</strong>Queries Prometheus using PromQL and paints real-time dashboard panels.</li>
+          <li><strong>Alerts</strong>Monitors threshold rules 24/7 and pings your phone if an app crashes.</li>
+        </ul>
+      </figure>
+    </section>
+
+    <article class="article">
+
+      <!-- ===== 08 ===== -->
+      <section class="section" id="project">
+        <span class="section__num">08</span>
+        <h2>Run Grafana locally in 60 seconds</h2>
+        <p>The fastest way to experience Grafana and Prometheus is using <strong>Docker Compose</strong>. You can run the entire monitoring stack on your laptop with one command.</p>
+
+        <p>Create a file named <code>docker-compose.yml</code>:</p>
+
+<pre class="code">version: '3.8'
+
+services:
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    ports:
+      - "9090:9090"
+    restart: unless-stopped
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    restart: unless-stopped
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin</pre>
+
+        <p style="margin-top:20px;">Start both containers:</p>
+<pre class="code">docker compose up -d</pre>
+
+        <p style="margin-top:16px;">Now open your web browser:</p>
+        <ol class="steps">
+          <li>
+            <h3>Open Grafana</h3>
+            <p>Visit <code>http://localhost:3000</code>. Log in with Username: <code>admin</code> and Password: <code>admin</code>.</p>
+          </li>
+          <li>
+            <h3>Add Prometheus Data Source</h3>
+            <p>In Grafana, click <strong>Connections &rarr; Data Sources &rarr; Add data source</strong>. Select <strong>Prometheus</strong> and set the Server URL to <code>http://prometheus:9090</code>. Click <strong>Save &amp; Test</strong> (green checkmark!).</p>
+          </li>
+          <li>
+            <h3>Import a pre-built dashboard</h3>
+            <p>You never have to build dashboards from scratch! Click <strong>Dashboards &rarr; New &rarr; Import</strong>. Enter dashboard ID <strong>1860</strong> (the famous Node Exporter Full dashboard) and click <strong>Load</strong>. Instantly, you have 30+ production graphs!</p>
+          </li>
+        </ol>
+      </section>
+
+      <!-- ===== 09 ===== -->
+      <section class="section" id="alerts">
+        <span class="section__num">09</span>
+        <h2>Setting up smart alerts</h2>
+        <p>A dashboard is useless if nobody is looking at it. That's why Grafana has built-in <strong>Alert Rules</strong>.</p>
+
+        <div class="pair">
+          <div class="pair__item">
+            <h3>The Condition</h3>
+            <p><em>"Evaluate every 1 minute: if memory usage &gt; 90% for 5 minutes consecutively."</em> The 5-minute wait prevents false alarms from temporary 2-second spikes.</p>
+          </div>
+          <div class="pair__item">
+            <h3>Contact Points</h3>
+            <p>Connect your alert to <strong>Slack</strong>, <strong>Discord</strong>, <strong>Microsoft Teams</strong>, or <strong>Email</strong>. When triggered, Grafana sends a screenshot of the graph directly into your team chat!</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== 10 ===== -->
+      <section class="section" id="cheatsheet">
+        <span class="section__num">10</span>
+        <h2>Top 8 PromQL queries cheatsheet</h2>
+        <p>Keep these queries bookmarked. They form the backbone of 90% of all server monitoring dashboards:</p>
+
+        <div class="words words--cmd" role="table" aria-label="Essential PromQL queries">
+          <div class="words__row" role="row">
+            <div class="words__term" role="cell">100 - (avg by (instance) (rate(node_cpu_seconds_total{mode="idle"}[5m])) * 100)</div>
+            <p class="words__def" role="cell"><strong>Current CPU Usage %:</strong> Inverts the idle time to give true real-time CPU consumption percentage.</p>
+          </div>
+          <div class="words__row" role="row">
+            <div class="words__term" role="cell">(node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes) / node_memory_MemTotal_bytes * 100</div>
+            <p class="words__def" role="cell"><strong>RAM Usage %:</strong> Calculates true used memory taking Linux cache into account.</p>
+          </div>
+          <div class="words__row" role="row">
+            <div class="words__term" role="cell">100 - ((node_filesystem_avail_bytes{mountpoint="/"} * 100) / node_filesystem_size_bytes{mountpoint="/"})</div>
+            <p class="words__def" role="cell"><strong>Disk Full %:</strong> Measures how full the primary root hard drive partition is.</p>
+          </div>
+          <div class="words__row" role="row">
+            <div class="words__term" role="cell">sum(rate(http_requests_total[5m]))</div>
+            <p class="words__def" role="cell"><strong>Total Traffic:</strong> Total incoming HTTP requests per second across all servers.</p>
+          </div>
+          <div class="words__row" role="row">
+            <div class="words__term" role="cell">sum(rate(http_requests_total{status=~"5.."}[5m])) / sum(rate(http_requests_total[5m])) * 100</div>
+            <p class="words__def" role="cell"><strong>Error Rate %:</strong> Percentage of web requests resulting in 500 server errors.</p>
+          </div>
+          <div class="words__row" role="row">
+            <div class="words__term" role="cell">rate(node_network_receive_bytes_total[5m]) * 8</div>
+            <p class="words__def" role="cell"><strong>Network Inbound:</strong> Incoming bandwidth speed measured in bits per second.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== 11 ===== -->
+      <section class="section" id="recap">
+        <span class="section__num">11</span>
+        <h2>Quick recap</h2>
+        <ul class="recap">
+          <li><span><strong>Grafana</strong> is the visualization dashboard; <strong>Prometheus</strong> is the database that stores numerical metrics.</span></li>
+          <li><span><strong>Metrics</strong> are numbers over time; they are fast, lightweight, and ideal for live charts and alerts.</span></li>
+          <li><span><strong>Exporters</strong> (like Node Exporter) run on your servers and serve raw metrics on <code>/metrics</code>.</span></li>
+          <li><span>Use <strong>PromQL</strong> to compute rates, sums, and averages across multiple servers.</span></li>
+          <li><span>Import pre-built community dashboards using <strong>Dashboard IDs</strong> to get expert layouts in seconds.</span></li>
+          <li><span>Set up <strong>Alert Rules</strong> to automatically notify your team on Slack before an outage occurs.</span></li>
+        </ul>
+
+        <div class="oneline" style="margin-top:40px;">
+          <span class="oneline__label">If you remember one thing</span>
+          <p>You can't fix what you can't see. Connect Prometheus to gather the data, and let Grafana be your eyes in production.</p>
+        </div>
+      </section>
+
+    </article>
+  </main>
+
+  <nav class="more" aria-label="Previous and next guides">
+    <p class="more__label">Keep learning</p>
+    <div class="more__grid">
+      <a href="terraform.html"><strong>Terraform</strong><span>Infrastructure as Code, explained simply.</span><em>&larr; Previous guide</em></a>
+      <a href="index.html"><strong>All guides</strong><span>See the full roadmap from zero to deploy.</span><em>Back to home &rarr;</em></a>
+    </div>
+  </nav>
+
+  <footer class="footer sitefoot">
+    <div class="sitefoot__inner">
+      <div class="sitefoot__brand">
+        <a href="index.html">Deploybook</a>
+        <p>Plain-English DevOps guides, from your first commit to a live app.</p>
+        <a class="sitefoot__home" href="index.html#roadmap">See the full roadmap &rarr;</a>
+      </div>
+      <nav aria-label="All guides">
+        <p class="sitefoot__label">All guides, in reading order</p>
+        <ol>
+          <li><a href="github.html">Git &amp; GitHub</a></li>
+          <li><a href="shell.html">Shell scripting</a></li>
+          <li><a href="aws.html">AWS essentials</a></li>
+          <li><a href="ec2.html">EC2 servers</a></li>
+          <li><a href="docker.html">Docker</a></li>
+          <li><a href="nginx.html">Nginx</a></li>
+          <li><a href="cicd.html">CI/CD with GitHub Actions</a></li>
+          <li><a href="eks.html">EKS</a></li>
+          <li><a href="terraform.html">Terraform</a></li>
+          <li><a href="grafana.html" aria-current="page">Grafana</a></li>
+        </ol>
+      </nav>
+    </div>
+    <p class="sitefoot__fine">A beginner’s guide to Grafana &amp; Observability. Simplified on purpose. Real systems have more moving parts, but these ideas are the foundation for all of them.</p>
+  </footer>
+
+  <script>
+    (function () {
+      var body = document.body;
+      var openBtn = document.getElementById('menu-open');
+      var closeBtn = document.getElementById('menu-close');
+      var scrim = document.getElementById('scrim');
+      var drawer = document.getElementById('drawer');
+
+      var wide = window.matchMedia('(min-width: 1025px)');
+      var KEY = 'sidebar-closed';
+      var stored = null;
+      try { stored = localStorage.getItem(KEY); } catch (e) {}
+      if (stored === '1') body.classList.add('side-closed');
+
+      function isOpen() {
+        return wide.matches ? !body.classList.contains('side-closed') : body.classList.contains('menu-open');
+      }
+      function syncAria() {
+        var visible = isOpen();
+        drawer.setAttribute('aria-hidden', String(!visible));
+        openBtn.setAttribute('aria-expanded', String(visible));
+      }
+      function setOpen(open) {
+        if (wide.matches) {
+          body.classList.toggle('side-closed', !open);
+          try { localStorage.setItem(KEY, open ? '0' : '1'); } catch (e) {}
+        } else {
+          body.classList.toggle('menu-open', open);
+          (open ? closeBtn : openBtn).focus();
+        }
+        syncAria();
+      }
+      openBtn.addEventListener('click', function () { setOpen(!isOpen()); });
+      closeBtn.addEventListener('click', function () { setOpen(false); });
+      scrim.addEventListener('click', function () { setOpen(false); });
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && !wide.matches && body.classList.contains('menu-open')) setOpen(false);
+      });
+      var onChange = function () { body.classList.remove('menu-open'); syncAria(); };
+      if (wide.addEventListener) wide.addEventListener('change', onChange); else wide.addListener(onChange);
+      syncAria();
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Terraform, Explained Simply — Infrastructure as Code, State, Plan & Apply</title>
+  <meta name="description" content="A plain-English guide to Terraform and Infrastructure as Code (IaC) for beginners: providers, resources, state files, init, plan, apply, and a complete working AWS deployment.">
+  <meta name="color-scheme" content="dark">
+  <meta name="theme-color" content="#05060a">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="guide.css">
+  <link rel="stylesheet" href="sidebar.css">
+</head>
+<body class="guide">
+
+  <header class="topbar">
+    <div class="topbar__inner">
+      <div class="topbar__left">
+        <button class="menu-btn" id="menu-open" type="button" aria-controls="drawer" aria-expanded="false">
+          <span class="menu-btn__bars" aria-hidden="true"></span>
+          Menu
+        </button>
+        <a class="topbar__brand" href="index.html">Deploybook</a>
+      </div>
+      <nav class="topbar__nav" aria-label="Jump to">
+        <a href="#words">The big picture</a>
+        <a href="#workflow">The 3 commands</a>
+        <a href="#diagram">Diagram</a>
+        <a href="#state">State file</a>
+        <a href="#project">Working project</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="scrim" id="scrim"></div>
+  <aside class="drawer" id="drawer" aria-label="Site menu">
+    <div class="drawer__head">
+      <a class="drawer__brand" href="index.html">Deploybook</a>
+      <button class="drawer__close" id="menu-close" type="button" aria-label="Hide sidebar">&times;</button>
+    </div>
+
+    <nav aria-label="Guides">
+      <ul class="drawer__list">
+        <li>
+          <a href="index.html">
+            <span class="drawer__title">Home</span>
+          </a>
+        </li>
+        <li>
+          <a href="index.html#roadmap">
+            <span class="drawer__title">Full roadmap</span>
+            <span class="drawer__desc">All 9 stages at a glance</span>
+          </a>
+        </li>
+        <li>
+          <a href="diagrams.html">
+            <span class="drawer__title">Architecture Diagrams</span>
+            <span class="drawer__desc">Docker, EC2, Nginx, ASG &middot; Visuals</span>
+          </a>
+        </li>
+      </ul>
+
+      <p class="drawer__label">Read in this order</p>
+      <ul class="drawer__list">
+        <li>
+          <a href="github.html">
+            <span class="drawer__title"><span class="drawer__step">1</span>Git &amp; GitHub</span>
+            <span class="drawer__desc">Save, share and team up on code &middot; 8 min</span>
+          </a>
+        </li>
+        <li>
+          <a href="shell.html">
+            <span class="drawer__title"><span class="drawer__step">2</span>Shell scripting</span>
+            <span class="drawer__desc">Automate tasks with Bash &middot; 12 min</span>
+          </a>
+        </li>
+        <li>
+          <a href="aws.html">
+            <span class="drawer__title"><span class="drawer__step">3</span>AWS essentials</span>
+            <span class="drawer__desc">Servers, storage and security &middot; 14 min</span>
+          </a>
+        </li>
+        <li>
+          <a href="ec2.html">
+            <span class="drawer__title"><span class="drawer__step">4</span>EC2 servers</span>
+            <span class="drawer__desc">Launch and connect to your first server &middot; 15 min</span>
+          </a>
+        </li>
+        <li>
+          <a href="docker.html">
+            <span class="drawer__title"><span class="drawer__step">5</span>Docker</span>
+            <span class="drawer__desc">Images, containers and commands &middot; 12 min</span>
+          </a>
+        </li>
+        <li>
+          <a href="nginx.html">
+            <span class="drawer__title"><span class="drawer__step">6</span>Nginx</span>
+            <span class="drawer__desc">Web server, proxy and HTTPS &middot; 14 min</span>
+          </a>
+        </li>
+        <li>
+          <a href="cicd.html">
+            <span class="drawer__title"><span class="drawer__step">7</span>CI/CD with GitHub Actions</span>
+            <span class="drawer__desc">Auto-deploy React + Express &middot; 20 min</span>
+          </a>
+        </li>
+        <li>
+          <a href="eks.html">
+            <span class="drawer__title"><span class="drawer__step">8</span>EKS</span>
+            <span class="drawer__desc">Kubernetes on AWS, explained &middot; 14 min</span>
+          </a>
+        </li>
+        <li>
+          <a href="terraform.html" aria-current="page">
+            <span class="drawer__title"><span class="drawer__step">9</span>Terraform</span>
+            <span class="drawer__desc">Infrastructure as Code &middot; 15 min</span>
+          </a>
+        </li>
+        <li>
+          <a href="grafana.html">
+            <span class="drawer__title"><span class="drawer__step">10</span>Grafana</span>
+            <span class="drawer__desc">Dashboards &amp; monitoring &middot; 13 min</span>
+          </a>
+        </li>
+      </ul>
+
+      <p class="drawer__label">Coming soon</p>
+      <ul class="drawer__soon">
+        <li>Ansible configuration</li>
+        <li>Prometheus &amp; Alertmanager</li>
+        <li>Security with Vault</li>
+        <li>Cost optimization</li>
+      </ul>
+    </nav>
+
+    <p class="drawer__foot">Short guides in plain English, written for people who are just starting out.</p>
+  </aside>
+
+  <main id="top">
+
+    <!-- ===== Hero ===== -->
+    <section class="hero">
+      <p class="eyebrow">Beginner’s guide</p>
+      <h1>Terraform,<br>explained simply.</h1>
+      <p class="hero__lead">Build whole cloud networks, databases, and servers from a plain text file. What Infrastructure as Code is, how state works, and how to create cloud setups in minutes. No jargon, one clear flow.</p>
+      <p class="hero__meta">15 minute read</p>
+    </section>
+
+    <article class="article">
+
+      <nav class="contents" aria-label="Contents">
+        <h2>In this guide</h2>
+        <ol>
+          <li><a href="#story">The problem we’re solving</a></li>
+          <li><a href="#declarative">Imperative vs Declarative</a></li>
+          <li><a href="#words">The core words you need</a></li>
+          <li><a href="#workflow">The 3 core commands: Init, Plan, Apply</a></li>
+          <li><a href="#hcl">Understanding HCL syntax</a></li>
+          <li><a href="#state">The state file: Terraform’s memory</a></li>
+          <li><a href="#diagram">The whole picture</a></li>
+          <li><a href="#project">Hands-on: Provisioning AWS with Terraform</a></li>
+          <li><a href="#destroy">Cleaning up with terraform destroy</a></li>
+          <li><a href="#rules">Golden rules for production</a></li>
+          <li><a href="#cheatsheet">Commands cheatsheet</a></li>
+          <li><a href="#recap">Quick recap</a></li>
+        </ol>
+      </nav>
+
+      <!-- ===== 01 ===== -->
+      <section class="section" id="story">
+        <span class="section__num">01</span>
+        <h2>The problem we’re solving</h2>
+        <p>Imagine your company needs an infrastructure setup on AWS: one virtual private network (VPC), two subnets, an internet gateway, three security firewall rules, two EC2 servers, and a PostgreSQL database.</p>
+        <p>If you build this through the AWS website GUI, you will click through <strong>over 80 different web forms, drop-downs, and confirmation popups</strong>. It takes an hour. If you make one typo in a subnet mask, nothing connects.</p>
+        <p>Worse, six months later your boss asks: <em>“Can you spin up an identical test environment for the QA team?”</em> You have to remember and re-click all 80 steps from memory.</p>
+        <p>This is called <strong>ClickOps</strong>, and it causes human error, security leaks, and forgotten servers that cost thousands in surprise bills.</p>
+        <p><strong>Terraform</strong> replaces manual clicking with code. You describe your entire cloud architecture in a single text file. You run one command, and Terraform creates, configures, and links every server automatically.</p>
+
+        <div class="oneline">
+          <span class="oneline__label">In one line</span>
+          <p>Terraform is a free tool that builds, updates, and deletes cloud infrastructure using code files instead of manual clicking.</p>
+        </div>
+      </section>
+
+      <!-- ===== 02 ===== -->
+      <section class="section" id="declarative">
+        <span class="section__num">02</span>
+        <h2>Imperative vs Declarative</h2>
+        <p>Traditional shell scripts are <strong>imperative</strong>: you give a list of step-by-step instructions. (<em>“Click this, then wait 5 seconds, then download that, then start this.”</em>)</p>
+        <p>Terraform is <strong>declarative</strong>: you describe the <strong>desired end result</strong>, and Terraform figures out the steps needed to get there.</p>
+
+        <div class="analogy">
+          <span class="analogy__label">The Restaurant Metaphor</span>
+          <p><strong>Imperative (Shell Script):</strong> You walk into the kitchen and tell the chef: <em>“Crack two eggs, turn on the stove to medium, melt butter for 30 seconds, scramble for 2 minutes, put on plate.”</em> If the pan is already hot, it burns.</p>
+          <p style="margin-top:8px;"><strong>Declarative (Terraform):</strong> You tell the waiter: <em>“I want scrambled eggs on a plate.”</em> The waiter inspects the table. If you already have eggs, they do nothing. If you don't, they prepare them.</p>
+        </div>
+      </section>
+
+      <!-- ===== 03 ===== -->
+      <section class="section" id="words">
+        <span class="section__num">03</span>
+        <h2>The core words you need</h2>
+        <p>Terraform uses simple vocabulary. Learn these six terms and you will understand almost any Terraform codebase:</p>
+
+        <div class="words" role="table" aria-label="Terraform key terms">
+          <div class="words__row" role="row">
+            <div class="words__term" role="cell">IaC (Infrastructure as Code)</div>
+            <p class="words__def" role="cell">Managing and provisioning cloud resources (servers, databases, networks) through machine-readable definition files rather than physical hardware configuration or manual GUI clicks.</p>
+          </div>
+          <div class="words__row" role="row">
+            <div class="words__term" role="cell">Provider</div>
+            <p class="words__def" role="cell">A plugin that teaches Terraform how to talk to a specific cloud or API (e.g. AWS, Azure, Google Cloud, GitHub, Docker, Kubernetes).</p>
+          </div>
+          <div class="words__row" role="row">
+            <div class="words__term" role="cell">Resource</div>
+            <p class="words__def" role="cell">A specific piece of cloud infrastructure you want to exist (e.g. an EC2 virtual machine, an S3 storage bucket, a firewall security rule).</p>
+          </div>
+          <div class="words__row" role="row">
+            <div class="words__term" role="cell">State File (.tfstate)</div>
+            <p class="words__def" role="cell">Terraform’s photographic memory. A JSON ledger where it records which real cloud resources it has built and their IDs.</p>
+          </div>
+          <div class="words__row" role="row">
+            <div class="words__term" role="cell">Plan</div>
+            <p class="words__def" role="cell">A dry-run preview. Terraform compares your code against what actually exists in the cloud and displays an exact list of what it will add (+), change (~), or destroy (-).</p>
+          </div>
+          <div class="words__row" role="row">
+            <div class="words__term" role="cell">HCL (HashiCorp Config Lang)</div>
+            <p class="words__def" role="cell">The human-friendly language used to write Terraform files. Easier to read and write than JSON or YAML.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== 04 ===== -->
+      <section class="section" id="workflow">
+        <span class="section__num">04</span>
+        <h2>The 3 core commands: Init, Plan, Apply</h2>
+        <p>Every single Terraform project in the world follows the exact same three-step heartbeat:</p>
+
+        <div class="pair">
+          <div class="pair__item">
+            <h3>1. terraform init</h3>
+            <p><strong>The handshake.</strong> Terraform reads your configuration, sees that you want to talk to AWS, and downloads the official AWS provider plugin into a hidden <code>.terraform</code> folder.</p>
+          </div>
+          <div class="pair__item">
+            <h3>2. terraform plan</h3>
+            <p><strong>The dry run.</strong> Checks what already exists in AWS, calculates the difference, and tells you: <em>“Plan: 2 to add, 0 to change, 0 to destroy.”</em> Nothing is touched yet.</p>
+          </div>
+        </div>
+
+        <div class="oneline" style="margin-top:20px;">
+          <span class="oneline__label">3. terraform apply</span>
+          <p><strong>The execution.</strong> Makes the real API calls to AWS, builds the actual cloud resources, and saves the resulting IDs into your local state ledger.</p>
+        </div>
+      </section>
+
+      <!-- ===== 05 ===== -->
+      <section class="section" id="hcl">
+        <span class="section__num">05</span>
+        <h2>Understanding HCL syntax</h2>
+        <p>Terraform files end in <code>.tf</code>. The syntax is composed of simple blocks. Here is what an AWS EC2 server looks like in HCL:</p>
+
+<pre class="code"><span class="c"># Configure the AWS Provider</span>
+provider "aws" {
+  region = "us-east-1"
+}
+
+<span class="c"># Define a virtual server resource</span>
+resource "aws_instance" "web_server" {
+  ami           = "ami-0c55b159cbfafe1f0" <span class="c"># Ubuntu 22.04 LTS</span>
+  instance_type = "t3.micro"
+
+  tags = {
+    Name        = "Production-Web-Server"
+    Environment = "Prod"
+  }
+}</pre>
+
+        <p>Notice the structure of the resource block:</p>
+        <ul class="recap">
+          <li><span><code>resource</code>: The keyword saying you want something to exist.</span></li>
+          <li><span><code>"aws_instance"</code>: The resource type defined by the AWS provider.</span></li>
+          <li><span><code>"web_server"</code>: Your custom local nickname for this resource so other parts of your code can reference it.</span></li>
+        </ul>
+      </section>
+
+      <!-- ===== 06 ===== -->
+      <section class="section" id="state">
+        <span class="section__num">06</span>
+        <h2>The state file: Terraform’s memory</h2>
+        <p>When you run <code>terraform apply</code>, Terraform creates an instance on AWS. AWS responds: <em>“Created! Its ID is i-087abc1234.”</em></p>
+        <p>How does Terraform remember tomorrow that <code>i-087abc1234</code> belongs to your project? It saves it in a file called <strong>terraform.tfstate</strong>.</p>
+
+        <div class="pair">
+          <div class="pair__item">
+            <h3>Why state is critical</h3>
+            <p>Without state, running <code>terraform apply</code> a second time would create <em>another</em> duplicate server. State lets Terraform know your server is already running, so it does nothing!</p>
+          </div>
+          <div class="pair__item">
+            <h3>Golden Rule of State</h3>
+            <p><strong>Never edit terraform.tfstate by hand.</strong> If you corrupt this file, Terraform loses track of what exists in AWS and may attempt to recreate or delete everything.</p>
+          </div>
+        </div>
+      </section>
+
+    </article>
+
+    <!-- ===== 07 Diagram ===== -->
+    <section class="diagram-section" id="diagram">
+      <div class="diagram-head">
+        <span class="section__num" style="font-size:14px;font-weight:600;color:var(--text-3);display:block;margin-bottom:12px;">07</span>
+        <h2 style="margin:0 0 20px;font-size:clamp(30px,4.4vw,40px);line-height:1.15;font-weight:700;letter-spacing:-0.028em;">The whole picture</h2>
+        <p style="margin:0;color:var(--text-2);">How Terraform moves from your local text editor to real live cloud infrastructure across the world.</p>
+      </div>
+
+      <figure class="diagram" style="margin:0;">
+        <svg viewBox="0 0 960 540" role="img" aria-labelledby="tt td">
+          <title id="tt">Diagram of Terraform Execution Lifecycle and Architecture</title>
+          <desc id="td">Shows your HCL code file, provider plugin initialization, state diff computation, AWS API execution, and live cloud infrastructure creation.</desc>
+
+          <defs>
+            <marker id="tah" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+              <path d="M0,1 L9,5 L0,9 z" class="d-arrow"/>
+            </marker>
+          </defs>
+
+          <!-- Cloud boundary -->
+          <rect class="d-cloud" x="530" y="30" width="410" height="480" rx="20"/>
+          <text class="d-small" x="555" y="62">AWS CLOUD · LIVE INFRASTRUCTURE</text>
+
+          <!-- Code Box -->
+          <rect class="d-box" x="30" y="80" width="180" height="110" rx="14"/>
+          <text class="d-title" x="120" y="115" text-anchor="middle">1. main.tf</text>
+          <text class="d-sub" x="120" y="138" text-anchor="middle">Declarative Code</text>
+          <text class="d-small" x="120" y="165" text-anchor="middle" style="fill:var(--accent-ink)">HCL definitions</text>
+
+          <!-- Arrow 1 to 2 -->
+          <line class="d-line" x1="210" y1="135" x2="265" y2="135" marker-end="url(#tah)"/>
+
+          <!-- Core Engine -->
+          <rect class="d-control" x="270" y="80" width="210" height="110" rx="14"/>
+          <text class="d-on-dark" x="375" y="115" text-anchor="middle">2. Terraform Core</text>
+          <text class="d-on-dark2" x="375" y="138" text-anchor="middle">terraform plan / apply</text>
+          <text class="d-small" x="375" y="165" text-anchor="middle" style="fill:var(--warm)">Computes Diff (+ / ~ / -)</text>
+
+          <!-- Bidirectional state connection -->
+          <line class="d-line" x1="375" y1="190" x2="375" y2="250" marker-end="url(#tah)"/>
+          <rect class="d-node" x="270" y="255" width="210" height="90" rx="14"/>
+          <text class="d-small" x="375" y="285" text-anchor="middle" style="fill:var(--text)">terraform.tfstate</text>
+          <text class="d-sub" x="375" y="308" text-anchor="middle">Records actual IDs</text>
+          <text class="d-sub" x="375" y="328" text-anchor="middle">&amp; cloud attributes</text>
+
+          <!-- Arrow 2 to Cloud -->
+          <line class="d-line" x1="480" y1="135" x2="550" y2="135" marker-end="url(#tah)"/>
+          <text class="d-sub" x="515" y="125" text-anchor="middle">HTTPS API</text>
+
+          <!-- Real Cloud Infrastructure (Created) -->
+          <rect class="d-cluster" x="560" y="90" width="350" height="390" rx="16"/>
+          <text class="d-small" x="585" y="120" style="fill:var(--accent-ink)">PROVISIONED RESOURCES</text>
+
+          <rect class="d-pod" x="585" y="140" width="300" height="90" rx="10"/>
+          <text class="d-podtitle" x="605" y="170">aws_vpc · "main"</text>
+          <text class="d-sub" x="605" y="195">CIDR: 10.0.0.0/16 &middot; Private Cloud</text>
+
+          <rect class="d-pod" x="585" y="250" width="300" height="90" rx="10"/>
+          <text class="d-podtitle" x="605" y="280">aws_security_group · "web"</text>
+          <text class="d-sub" x="605" y="305">Inbound: Port 80 (HTTP) &amp; 443 (HTTPS)</text>
+
+          <rect class="d-pod" x="585" y="360" width="300" height="90" rx="10"/>
+          <text class="d-podtitle" x="605" y="390">aws_instance · "app_server"</text>
+          <text class="d-sub" x="605" y="415">t3.micro &middot; Ubuntu 22.04 LTS live</text>
+        </svg>
+
+        <ul class="legend">
+          <li><strong>Code (main.tf)</strong>You declare the exact infrastructure you want in human-readable HCL.</li>
+          <li><strong>Core Engine</strong>Reads code, compares it against the state ledger, and displays a dry-run plan.</li>
+          <li><strong>State file</strong>Keeps a photographic memory of the real resources created in the cloud.</li>
+          <li><strong>Cloud API</strong>Terraform makes official HTTPS API calls to AWS to create the actual servers.</li>
+        </ul>
+      </figure>
+    </section>
+
+    <article class="article">
+
+      <!-- ===== 08 ===== -->
+      <section class="section" id="project">
+        <span class="section__num">08</span>
+        <h2>Hands-on: Provisioning AWS with Terraform</h2>
+        <p>Let's build a real, working AWS project from scratch. You will create a Virtual Private Cloud (VPC), a public subnet, an internet firewall rule, and an EC2 web server in under two minutes.</p>
+
+        <ol class="steps">
+          <li>
+            <h3>Configure AWS login</h3>
+            <p>Make sure your laptop has AWS credentials configured by running <code>aws configure</code> and typing your Access Key and Secret Key.</p>
+          </li>
+          <li>
+            <h3>Create your project directory and main.tf</h3>
+            <p>Make a new folder and create <code>main.tf</code>:</p>
+<pre class="code">mkdir my-terraform-infra
+cd my-terraform-infra
+touch main.tf</pre>
+          </li>
+          <li>
+            <h3>Paste this complete working configuration</h3>
+            <p>Open <code>main.tf</code> in your editor and paste:</p>
+<pre class="code"><span class="c"># 1. AWS Provider Configuration</span>
+terraform {
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~&gt; 5.0"
+    }
+  }
+}
+
+provider "aws" {
+  region = "us-east-1"
+}
+
+<span class="c"># 2. Virtual Private Cloud (VPC)</span>
+resource "aws_vpc" "app_vpc" {
+  cidr_block           = "10.0.0.0/16"
+  enable_dns_hostnames = true
+
+  tags = {
+    Name = "deploybook-vpc"
+  }
+}
+
+<span class="c"># 3. Security Group (Firewall allowing HTTP and SSH)</span>
+resource "aws_security_group" "web_sg" {
+  name        = "web-sg"
+  description = "Allow HTTP traffic"
+  vpc_id      = aws_vpc.app_vpc.id
+
+  ingress {
+    description = "Allow Web"
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
+<span class="c"># 4. EC2 Web Server</span>
+resource "aws_instance" "web" {
+  ami           = "ami-0c55b159cbfafe1f0" <span class="c"># Amazon Linux / Ubuntu</span>
+  instance_type = "t3.micro"
+
+  tags = {
+    Name = "Terraform-Web-Demo"
+  }
+}
+
+<span class="c"># 5. Output values (Prints after apply)</span>
+output "server_id" {
+  value = aws_instance.web.id
+}</pre>
+          </li>
+          <li>
+            <h3>Initialize and apply</h3>
+            <p>Run these two commands in your terminal:</p>
+<pre class="code"><span class="c"># 1. Download the AWS provider plugin</span>
+terraform init
+
+<span class="c"># 2. Preview and deploy</span>
+terraform apply</pre>
+            <p style="margin-top:14px;">Terraform prints out the exact plan: <code>Plan: 3 to add, 0 to change, 0 to destroy.</code> Type <strong>yes</strong> and press Enter. Within 45 seconds, all resources exist in your AWS account!</p>
+          </li>
+        </ol>
+      </section>
+
+      <!-- ===== 09 ===== -->
+      <section class="section" id="destroy">
+        <span class="section__num">09</span>
+        <h2>Cleaning up with terraform destroy</h2>
+        <p>In cloud computing, forgotten test servers cause expensive bills. One of Terraform's superpowers is complete, flawless teardown.</p>
+        <p>When you're finished practicing for the day, type:</p>
+
+<pre class="code"><span class="c"># Delete everything defined in your main.tf</span>
+terraform destroy</pre>
+
+        <p>Terraform inspects its state file, identifies every resource it created, determines the reverse dependency order (deletes the server first, then the firewall, then the VPC), and cleanly wipes them all out. Zero orphaned resources, zero surprise bills.</p>
+      </section>
+
+      <!-- ===== 10 ===== -->
+      <section class="section" id="rules">
+        <span class="section__num">10</span>
+        <h2>Golden rules for production</h2>
+        <div class="pair">
+          <div class="pair__item">
+            <h3>Use Remote State (S3 + DynamoDB)</h3>
+            <p>Never commit <code>terraform.tfstate</code> to GitHub! Store it in an encrypted AWS S3 bucket, and use DynamoDB for state locking so two teammates don't apply at the same time.</p>
+          </div>
+          <div class="pair__item">
+            <h3>Always run terraform plan</h3>
+            <p>Never run <code>apply -auto-approve</code> blindly in production. Always inspect the plan output to confirm you aren't accidentally destroying a live production database!</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== 11 ===== -->
+      <section class="section" id="cheatsheet">
+        <span class="section__num">11</span>
+        <h2>Commands cheatsheet</h2>
+
+        <div class="words words--cmd" role="table" aria-label="Terraform essential commands">
+          <div class="words__row" role="row">
+            <div class="words__term" role="cell">terraform init</div>
+            <p class="words__def" role="cell">Initializes the directory and downloads required provider plugins.</p>
+          </div>
+          <div class="words__row" role="row">
+            <div class="words__term" role="cell">terraform plan</div>
+            <p class="words__def" role="cell">Calculates the diff between code and reality; shows proposed changes.</p>
+          </div>
+          <div class="words__row" role="row">
+            <div class="words__term" role="cell">terraform apply</div>
+            <p class="words__def" role="cell">Executes the plan to provision or update real cloud resources.</p>
+          </div>
+          <div class="words__row" role="row">
+            <div class="words__term" role="cell">terraform destroy</div>
+            <p class="words__def" role="cell">Tears down and deletes all resources managed by the state file.</p>
+          </div>
+          <div class="words__row" role="row">
+            <div class="words__term" role="cell">terraform fmt</div>
+            <p class="words__def" role="cell">Auto-formats your <code>.tf</code> files with canonical spacing and alignment.</p>
+          </div>
+          <div class="words__row" role="row">
+            <div class="words__term" role="cell">terraform validate</div>
+            <p class="words__def" role="cell">Checks your code for syntax errors and internal consistency.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== 12 ===== -->
+      <section class="section" id="recap">
+        <span class="section__num">12</span>
+        <h2>Quick recap</h2>
+        <ul class="recap">
+          <li><span><strong>Infrastructure as Code (IaC)</strong> replaces manual clicking with version-controlled text files.</span></li>
+          <li><span>Terraform is <strong>declarative</strong>: you declare what you want, Terraform figures out how to build it.</span></li>
+          <li><span><strong>Providers</strong> are plugins that translate Terraform code into cloud API requests (AWS, Azure, GCP).</span></li>
+          <li><span>The 3 core commands are <strong>init</strong> (download plugins), <strong>plan</strong> (preview changes), and <strong>apply</strong> (build).</span></li>
+          <li><span>The <strong>.tfstate file</strong> is Terraform's memory; protect it and store it in remote cloud storage.</span></li>
+          <li><span>Run <strong>terraform destroy</strong> when done to cleanly delete all test resources and avoid cloud bills.</span></li>
+        </ul>
+
+        <div class="oneline" style="margin-top:40px;">
+          <span class="oneline__label">If you remember one thing</span>
+          <p>Never build cloud infrastructure with manual clicks twice. Define it in Terraform once, and you can recreate it anytime with a single command.</p>
+        </div>
+      </section>
+
+    </article>
+  </main>
+
+  <nav class="more" aria-label="Previous and next guides">
+    <p class="more__label">Keep learning</p>
+    <div class="more__grid">
+      <a href="eks.html"><strong>EKS</strong><span>Kubernetes on AWS, explained simply.</span><em>&larr; Previous guide</em></a>
+      <a href="grafana.html"><strong>Grafana</strong><span>Dashboards, metrics &amp; monitoring.</span><em>Next guide &rarr;</em></a>
+    </div>
+  </nav>
+
+  <footer class="footer sitefoot">
+    <div class="sitefoot__inner">
+      <div class="sitefoot__brand">
+        <a href="index.html">Deploybook</a>
+        <p>Plain-English DevOps guides, from your first commit to a live app.</p>
+        <a class="sitefoot__home" href="index.html#roadmap">See the full roadmap &rarr;</a>
+      </div>
+      <nav aria-label="All guides">
+        <p class="sitefoot__label">All guides, in reading order</p>
+        <ol>
+          <li><a href="github.html">Git &amp; GitHub</a></li>
+          <li><a href="shell.html">Shell scripting</a></li>
+          <li><a href="aws.html">AWS essentials</a></li>
+          <li><a href="ec2.html">EC2 servers</a></li>
+          <li><a href="docker.html">Docker</a></li>
+          <li><a href="nginx.html">Nginx</a></li>
+          <li><a href="cicd.html">CI/CD with GitHub Actions</a></li>
+          <li><a href="eks.html">EKS</a></li>
+          <li><a href="terraform.html" aria-current="page">Terraform</a></li>
+          <li><a href="grafana.html">Grafana</a></li>
+        </ol>
+      </nav>
+    </div>
+    <p class="sitefoot__fine">A beginner’s guide to Terraform &amp; Infrastructure as Code. Simplified on purpose. Real systems have more moving parts, but these ideas are the foundation for all of them.</p>
+  </footer>
+
+  <script>
+    (function () {
+      var body = document.body;
+      var openBtn = document.getElementById('menu-open');
+      var closeBtn = document.getElementById('menu-close');
+      var scrim = document.getElementById('scrim');
+      var drawer = document.getElementById('drawer');
+
+      var wide = window.matchMedia('(min-width: 1025px)');
+      var KEY = 'sidebar-closed';
+      var stored = null;
+      try { stored = localStorage.getItem(KEY); } catch (e) {}
+      if (stored === '1') body.classList.add('side-closed');
+
+      function isOpen() {
+        return wide.matches ? !body.classList.contains('side-closed') : body.classList.contains('menu-open');
+      }
+      function syncAria() {
+        var visible = isOpen();
+        drawer.setAttribute('aria-hidden', String(!visible));
+        openBtn.setAttribute('aria-expanded', String(visible));
+      }
+      function setOpen(open) {
+        if (wide.matches) {
+          body.classList.toggle('side-closed', !open);
+          try { localStorage.setItem(KEY, open ? '0' : '1'); } catch (e) {}
+        } else {
+          body.classList.toggle('menu-open', open);
+          (open ? closeBtn : openBtn).focus();
+        }
+        syncAria();
+      }
+      openBtn.addEventListener('click', function () { setOpen(!isOpen()); });
+      closeBtn.addEventListener('click', function () { setOpen(false); });
+      scrim.addEventListener('click', function () { setOpen(false); });
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && !wide.matches && body.classList.contains('menu-open')) setOpen(false);
+      });
+      var onChange = function () { body.classList.remove('menu-open'); syncAria(); };
+      if (wide.addEventListener) wide.addEventListener('change', onChange); else wide.addListener(onChange);
+      syncAria();
+    })();
+  </script>
+</body>
+</html>
