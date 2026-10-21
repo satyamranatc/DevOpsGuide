@@ -27,7 +27,7 @@
         <a href="#eks">AWS &amp; EKS</a>
         <a href="#diagram">Diagram</a>
         <a href="#steps">Steps</a>
-        <a href="#control">Make &amp; control</a>
+        <a href="#gui-deploy">AWS GUI Guide</a>
       </nav>
     </div>
   </header>
@@ -145,6 +145,7 @@
           <li><a href="#diagram">The whole picture</a></li>
           <li><a href="#steps">Deploying, step by step</a></li>
           <li><a href="#control">How to make and control EKS</a></li>
+          <li><a href="#gui-deploy">Deploy a React app with AWS GUI</a></li>
           <li><a href="#recap">Quick recap</a></li>
         </ol>
       </nav>
@@ -552,8 +553,159 @@ eksctl delete cluster --name my-cluster --region us-east-1</pre>
       </section>
 
       <!-- ===== 12 ===== -->
-      <section class="section" id="recap">
+      <section class="section" id="gui-deploy">
         <span class="section__num">12</span>
+        <h2>Deploy a React app with the AWS GUI</h2>
+        <p>If you prefer clicking through visual dashboards instead of typing terminal commands, you can build your entire Amazon EKS cluster and deploy your React (or MERN) frontend directly inside the <strong>AWS Management Console</strong>.</p>
+        <p>Here is the full, click-by-click journey from your local React project to a live URL running across multiple AWS cloud servers.</p>
+
+        <div class="analogy">
+          <span class="analogy__label">The GUI Roadmap</span>
+          <p>We will: <strong>(1)</strong> Store your React container in AWS ECR, <strong>(2)</strong> Create 2 IAM security badges, <strong>(3)</strong> Click <em>Create cluster</em> in the EKS Console, <strong>(4)</strong> Add 2 server nodes in the Compute tab, <strong>(5)</strong> Tell Kubernetes to launch your pods, and <strong>(6)</strong> Open your live AWS Load Balancer URL.</p>
+        </div>
+
+        <ol class="steps">
+          <li>
+            <h3>Containerize your React app and push to AWS ECR</h3>
+            <p>First, wrap your React app in a high-performance, lightweight production web server (Nginx). In your React project root directory, create a file named <code>Dockerfile</code>:</p>
+<pre class="code"><span class="c"># Stage 1: Build the React static production bundle</span>
+FROM node:18-alpine AS build
+WORKDIR /app
+COPY package*.json ./
+RUN npm install
+COPY . .
+RUN npm run build
+
+<span class="c"># Stage 2: Serve static files with ultra-fast Nginx</span>
+FROM nginx:alpine
+COPY --from=build /app/build /usr/share/nginx/html
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]</pre>
+
+            <p style="margin-top:16px;">Now open the <strong>AWS Management Console</strong> in your browser:</p>
+            <ul class="recap">
+              <li><span>Search for <strong>ECR</strong> (Elastic Container Registry) in the top search bar and click <strong>Repositories</strong>.</span></li>
+              <li><span>Click the orange <strong>Create repository</strong> button, keep visibility as <strong>Private</strong>, name it <code>my-react-app</code>, and click <strong>Create repository</strong>.</span></li>
+              <li><span>Click on your newly created repository name in the list, then click the <strong>View push commands</strong> button at the top right.</span></li>
+              <li><span>AWS opens a popup with 4 exact commands containing your account ID. Run them in your terminal to build, tag, and upload your container image into your private AWS pantry.</span></li>
+            </ul>
+          </li>
+
+          <li>
+            <h3>Create the 2 required IAM Security Roles</h3>
+            <p>Before launching EKS, AWS requires two security badges (IAM roles) so that the EKS manager and your EC2 servers have permission to coordinate:</p>
+            <div class="pair">
+              <div class="pair__item">
+                <h3>Role 1: Cluster Manager Role</h3>
+                <p>1. Open <strong>IAM Console &rarr; Roles &rarr; Create role</strong>.<br>2. Select <strong>AWS service</strong> &rarr; Use case: <strong>EKS - Cluster</strong>.<br>3. Policy is automatically checked: <code>AmazonEKSClusterPolicy</code>.<br>4. Name it <code>eksClusterRole</code> and click <strong>Create role</strong>.</p>
+              </div>
+              <div class="pair__item">
+                <h3>Role 2: EC2 Node Worker Role</h3>
+                <p>1. In Roles, click <strong>Create role</strong> &rarr; Service: <strong>EC2</strong>.<br>2. Search and attach these 3 policies:<br>&bull; <code>AmazonEKSWorkerNodePolicy</code><br>&bull; <code>AmazonEC2ContainerRegistryReadOnly</code> (to pull your ECR image)<br>&bull; <code>AmazonEKS_CNI_Policy</code><br>3. Name it <code>eksNodeRole</code> and click <strong>Create role</strong>.</p>
+              </div>
+            </div>
+          </li>
+
+          <li>
+            <h3>Create the EKS Cluster in the AWS Web Console</h3>
+            <p>Now summon the restaurant manager through the AWS GUI:</p>
+            <ul class="recap">
+              <li><span>Search for <strong>EKS</strong> in the AWS Console search bar and click <strong>Clusters &rarr; Add cluster &rarr; Create</strong>.</span></li>
+              <li><span><strong>Step 1 (Configure cluster):</strong> Name your cluster <code>react-eks-cluster</code>, select Kubernetes version (e.g. <code>1.30</code>), and choose <code>eksClusterRole</code> in the <em>Cluster service role</em> dropdown. Click <strong>Next</strong>.</span></li>
+              <li><span><strong>Step 2 (Specify networking):</strong> Choose your <strong>VPC</strong> (the default VPC works great), select at least 2 public subnets in different Availability Zones (e.g. <code>us-east-1a</code> and <code>us-east-1b</code>), and under <em>Cluster endpoint access</em> select <strong>Public and private</strong>.</span></li>
+              <li><span>Click <strong>Next</strong> through the default networking add-ons (CoreDNS, kube-proxy, VPC CNI), review your settings, and click <strong>Create</strong>.</span></li>
+            </ul>
+            <p style="margin-top:14px;color:var(--text-3);font-size:14px;">The cluster status will display <em>Creating</em>. It takes about 8 to 12 minutes for AWS to configure the high-availability manager across 3 physical facilities. Grab a coffee while it finishes!</p>
+          </li>
+
+          <li>
+            <h3>Add Worker Nodes (Compute) via the EKS Tab</h3>
+            <p>Once your cluster status turns green (<strong>Active</strong>), it's time to launch the server kitchens where your React pods will actually live:</p>
+            <ul class="recap">
+              <li><span>Click into <code>react-eks-cluster</code> and switch to the <strong>Compute</strong> tab.</span></li>
+              <li><span>Under the <strong>Node groups</strong> section, click <strong>Add node group</strong>.</span></li>
+              <li><span><strong>Step 1 (Configure node group):</strong> Name it <code>react-node-group</code> and choose <code>eksNodeRole</code> from the <em>Node IAM Role</em> dropdown. Click <strong>Next</strong>.</span></li>
+              <li><span><strong>Step 2 (Compute and scaling):</strong> Keep Amazon Linux 2, choose instance type <code>t3.medium</code> (or <code>t3.small</code> for testing), and set Scaling: Desired = <strong>2</strong>, Minimum = <strong>1</strong>, Maximum = <strong>3</strong>.</span></li>
+              <li><span>Click <strong>Next</strong>, confirm the subnets, and click <strong>Create</strong>. Within 3 to 4 minutes, your two servers will show status <strong>Active</strong>.</span></li>
+            </ul>
+          </li>
+
+          <li>
+            <h3>Deploy your React App to the Cluster</h3>
+            <p>Now that your cluster and server nodes are live in the AWS GUI, pair your laptop once so your command line can talk to the new cluster:</p>
+<pre class="code"><span class="c"># Link your kubectl remote control to your new AWS GUI cluster</span>
+aws eks update-kubeconfig --region us-east-1 --name react-eks-cluster</pre>
+
+            <p style="margin-top:16px;">Create a deployment file named <code>react-app.yaml</code> (replace the image URL with your real ECR repository URI from Step 1):</p>
+<pre class="code">apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: react-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: react-app
+  template:
+    metadata:
+      labels:
+        app: react-app
+    spec:
+      containers:
+      - name: react-app
+        image: &lt;YOUR-ACCOUNT-ID&gt;.dkr.ecr.us-east-1.amazonaws.com/my-react-app:latest
+        ports:
+        - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: react-service
+spec:
+  type: LoadBalancer
+  selector:
+    app: react-app
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 80</pre>
+
+            <p style="margin-top:16px;">Apply your recipe to the cluster:</p>
+<pre class="code"><span class="c"># Hand your recipe to Kubernetes</span>
+kubectl apply -f react-app.yaml</pre>
+          </li>
+
+          <li>
+            <h3>See your live site via the AWS Load Balancer (GUI)</h3>
+            <p>Because your service configuration specified <code>type: LoadBalancer</code>, Kubernetes automatically requested AWS to provision an internet-facing Elastic Load Balancer (ELB).</p>
+            <ul class="recap">
+              <li><span>In the AWS Console, search for <strong>EC2</strong> and click <strong>Load Balancers</strong> in the left sidebar menu under <em>Load Balancing</em>.</span></li>
+              <li><span>You will see an active Load Balancer created automatically with a name like <code>a78bc...</code>.</span></li>
+              <li><span>Select it and copy the <strong>DNS name</strong> in the summary card below (e.g. <code>k8s-default-reactapp-12345.us-east-1.elb.amazonaws.com</code>).</span></li>
+              <li><span>Paste the DNS name into your browser tab: <strong>Your React app is live, load-balanced across multiple AWS EC2 instances!</strong></span></li>
+            </ul>
+            <div class="oneline" style="margin-top:20px;">
+              <span class="oneline__label">Prefer checking via terminal?</span>
+              <p>Run <code>kubectl get svc react-service</code> — the address listed under the <strong>EXTERNAL-IP</strong> column is the exact same AWS Load Balancer URL.</p>
+            </div>
+          </li>
+
+          <li>
+            <h3>Clean up in the AWS Console (Stop the billing meter)</h3>
+            <p>When you're finished testing for the day, clean up so AWS stops billing you:</p>
+            <ul class="recap">
+              <li><span>Run <code>kubectl delete service react-service</code> in terminal to release and terminate the AWS Load Balancer immediately.</span></li>
+              <li><span>In the <strong>EKS Console &rarr; Clusters &rarr; react-eks-cluster &rarr; Compute tab</strong>, select your node group and click <strong>Delete</strong>.</span></li>
+              <li><span>Once the nodes are terminated, click <strong>Delete cluster</strong> at the top right of the EKS Console.</span></li>
+              <li><span>In the <strong>ECR Console</strong>, delete your repository if you no longer need the stored Docker image.</span></li>
+            </ul>
+          </li>
+        </ol>
+      </section>
+
+      <!-- ===== 13 ===== -->
+      <section class="section" id="recap">
+        <span class="section__num">13</span>
         <h2>Quick recap</h2>
         <ul class="recap">
           <li><span><strong>Microservices</strong> are small programs, each with one job.</span></li>
