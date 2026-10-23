@@ -302,39 +302,39 @@ a:hover { text-decoration: underline; }
 
 /* ---------- Steps ---------- */
 .steps { margin: 32px 0 0; padding: 0; list-style: none; counter-reset: s; }
-.steps li {
+.steps > li {
   counter-increment: s;
   position: relative;
-  padding: 0 0 36px 64px;
+  padding: 0 0 36px 52px;
 }
-.steps li::before {
+.steps > li::before {
   content: counter(s);
   position: absolute;
   left: 0;
   top: -2px;
-  width: 40px;
-  height: 40px;
+  width: 36px;
+  height: 36px;
   display: grid;
   place-items: center;
   border-radius: 50%;
   background: var(--accent);
   color: #fff;
   font-weight: 600;
-  font-size: 16px;
+  font-size: 15px;
 }
-.steps li::after {
+.steps > li::after {
   content: "";
   position: absolute;
-  left: 19.5px;
-  top: 46px;
+  left: 17.5px;
+  top: 42px;
   bottom: 6px;
   width: 1px;
   background: var(--line);
 }
-.steps li:last-child { padding-bottom: 0; }
-.steps li:last-child::after { display: none; }
-.steps h3 { margin: 0 0 6px; }
-.steps p { margin: 0; }
+.steps > li:last-child { padding-bottom: 0; }
+.steps > li:last-child::after { display: none; }
+.steps > li > h3 { margin: 0 0 6px; }
+.steps > li > p { margin: 0; }
 
 /* ---------- Code ---------- */
 .code {
@@ -359,17 +359,31 @@ a:hover { text-decoration: underline; }
 .pair__item p { margin: 0; font-size: 16px; line-height: 1.6; }
 
 /* ---------- Recap ---------- */
-.recap { margin: 28px 0 0; padding: 0; list-style: none; }
+.recap { margin: 20px 0 0; padding: 0; list-style: none; }
 .recap li {
-  display: grid;
-  grid-template-columns: 24px 1fr;
+  display: flex;
+  align-items: flex-start;
   gap: 12px;
-  padding: 10px 0;
+  padding: 8px 0;
   color: var(--text-2);
-  font-size: 17px;
+  font-size: 16px;
   line-height: 1.6;
 }
-.recap li::before { content: ""; width: 8px; height: 8px; margin-top: 11px; border-radius: 50%; background: var(--accent); }
+.recap li::before {
+  content: "";
+  display: block;
+  flex: 0 0 8px;
+  width: 8px;
+  height: 8px;
+  margin-top: 9px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: none;
+}
+.recap li > span {
+  flex: 1 1 auto;
+  min-width: 0;
+}
 
 /* ---------- Footer ---------- */
 .footer {
