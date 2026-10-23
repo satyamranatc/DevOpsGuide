@@ -552,6 +552,34 @@ aws eks update-kubeconfig --region us-east-1 --name my-cluster</pre>
 <pre class="code"><span class="c"># Delete the cluster and all servers so AWS stops charging you</span>
 eksctl delete cluster --name my-cluster --region us-east-1</pre>
         <p style="margin-top:16px;">In about 10 minutes, AWS cleanly shuts down the servers, deletes the networking cables, dissolves the manager, and stops the billing meter.</p>
+
+        <div class="analogy" style="margin-top:32px;">
+          <span class="analogy__label">In the real world: Other ways to deploy to EKS</span>
+          <p>We teach <strong>eksctl</strong> (CLI) and the <strong>AWS Console</strong> (GUI) because they are the clearest starting points for beginners. In production, teams choose from a few other standard options depending on their needs:</p>
+        </div>
+
+        <div class="words words--cmd" role="table" aria-label="Other EKS deployment options" style="margin-top:16px;">
+          <div class="words__row" role="row">
+            <div class="words__term" role="cell">Terraform / OpenTofu (IaC)</div>
+            <p class="words__def" role="cell"><strong>When to use:</strong> Writing and version-controlling your entire AWS infrastructure as code in Git. The standard for 90% of enterprise DevOps teams.</p>
+          </div>
+          <div class="words__row" role="row">
+            <div class="words__term" role="cell">CI/CD (GitHub Actions / GitLab)</div>
+            <p class="words__def" role="cell"><strong>When to use:</strong> Fully automated deployments. Every time you push code to GitHub, a pipeline tests it, builds the image, and deploys it to EKS automatically.</p>
+          </div>
+          <div class="words__row" role="row">
+            <div class="words__term" role="cell">Helm Charts</div>
+            <p class="words__def" role="cell"><strong>When to use:</strong> The package manager for Kubernetes (like <code>npm</code> for K8s). Best for packaging complex apps or installing pre-built tools (monitoring, ingress, databases) with one command.</p>
+          </div>
+          <div class="words__row" role="row">
+            <div class="words__term" role="cell">GitOps (ArgoCD / Flux)</div>
+            <p class="words__def" role="cell"><strong>When to use:</strong> Continuous reconciliation. An agent inside EKS watches your Git repo, and automatically applies changes whenever a pull request is merged.</p>
+          </div>
+          <div class="words__row" role="row">
+            <div class="words__term" role="cell">AWS Fargate (Serverless Pods)</div>
+            <p class="words__def" role="cell"><strong>When to use:</strong> When you want zero EC2 servers to patch or manage. AWS runs each pod in its own isolated micro-VM, and you only pay for what the pod consumes.</p>
+          </div>
+        </div>
       </section>
 
       <!-- ===== 12 ===== -->
