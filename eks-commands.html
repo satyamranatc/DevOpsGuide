@@ -1,0 +1,1397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Amazon EKS Terminal Commands Cheat Sheet — Step-by-Step CLI, kubectl &amp; ECR Deployment</title>
+  <meta name="description" content="Master Amazon EKS terminal commands step-by-step: tool validation, AWS CLI setup, cluster connection, core kubectl resources, private ECR image deployment, and troubleshooting.">
+  <meta name="color-scheme" content="dark">
+  <meta name="theme-color" content="#05060a">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="guide.css">
+  <link rel="stylesheet" href="sidebar.css">
+  <style>
+    /* Custom enhancements for the EKS Terminal Cheat Sheet */
+    .cheat-table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      margin: 24px 0;
+      border-radius: var(--r-md);
+      overflow: hidden;
+      border: 1px solid var(--line);
+      background: var(--surface);
+      font-size: 15px;
+    }
+    .cheat-table th,
+    .cheat-table td {
+      padding: 14px 18px;
+      text-align: left;
+      border-bottom: 1px solid var(--line);
+      vertical-align: top;
+    }
+    .cheat-table th {
+      background: rgba(255, 255, 255, 0.04);
+      color: var(--text);
+      font-weight: 600;
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .cheat-table tr:last-child td {
+      border-bottom: none;
+    }
+    .cheat-table tr:hover td {
+      background: rgba(255, 255, 255, 0.02);
+    }
+    .cheat-table code {
+      font-family: var(--mono);
+      font-size: 13.5px;
+      background: rgba(91, 157, 255, 0.1);
+      color: var(--accent-ink);
+      padding: 3px 7px;
+      border-radius: 5px;
+      border: 1px solid rgba(91, 157, 255, 0.2);
+      word-break: break-word;
+      display: inline-block;
+    }
+
+    /* Terminal code box with header & copy button */
+    .cmd-box {
+      margin: 20px 0;
+      background: #080a10;
+      border: 1px solid var(--line);
+      border-radius: var(--r-md);
+      overflow: hidden;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+    }
+    .cmd-box__header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 16px;
+      background: rgba(255, 255, 255, 0.03);
+      border-bottom: 1px solid var(--line);
+      font-size: 12px;
+      color: var(--text-3);
+      font-family: var(--mono);
+    }
+    .cmd-box__dots {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+    .cmd-box__dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+    .cmd-box__dot--red { background: #ff5f56; }
+    .cmd-box__dot--yellow { background: #ffbd2e; }
+    .cmd-box__dot--green { background: #27c93f; }
+    .cmd-box__title {
+      color: var(--text-3);
+      font-weight: 500;
+    }
+    .cmd-box__copy {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: var(--text-2);
+      border-radius: 6px;
+      padding: 4px 10px;
+      font-size: 12px;
+      cursor: pointer;
+      font-family: var(--font);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+    }
+    .cmd-box__copy:hover {
+      background: rgba(255, 255, 255, 0.18);
+      color: #fff;
+    }
+    .cmd-box__copy.copied {
+      background: rgba(39, 201, 63, 0.2);
+      color: #70f08a;
+      border-color: rgba(39, 201, 63, 0.4);
+    }
+    .cmd-box .code {
+      margin: 0;
+      border: none;
+      border-radius: 0;
+      box-shadow: none;
+    }
+
+    /* Output preview block */
+    .cmd-output {
+      padding: 12px 18px;
+      background: rgba(0, 0, 0, 0.4);
+      border-top: 1px dashed rgba(255, 255, 255, 0.08);
+      font-family: var(--mono);
+      font-size: 13px;
+      color: #8be9fd;
+      line-height: 1.5;
+    }
+    .cmd-output__label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-3);
+      margin-bottom: 4px;
+      display: block;
+    }
+
+    /* Practical Checklist */
+    .task-card {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--r-md);
+      padding: 24px;
+      margin: 28px 0;
+    }
+    .task-card h3 {
+      margin: 0 0 12px;
+      font-size: 19px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .task-list {
+      list-style: none;
+      padding: 0;
+      margin: 16px 0 0;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .task-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      padding: 12px 14px;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--line);
+      border-radius: var(--r-sm);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .task-item:hover {
+      background: rgba(255, 255, 255, 0.04);
+      border-color: rgba(91, 157, 255, 0.3);
+    }
+    .task-item input[type="checkbox"] {
+      margin-top: 4px;
+      width: 18px;
+      height: 18px;
+      accent-color: #5b9dff;
+      cursor: pointer;
+    }
+    .task-item.completed {
+      opacity: 0.7;
+      text-decoration: line-through;
+      background: rgba(39, 201, 63, 0.04);
+      border-color: rgba(39, 201, 63, 0.2);
+    }
+    .task-item.completed code {
+      text-decoration: none;
+    }
+    .task-text {
+      flex: 1;
+      font-size: 15px;
+      line-height: 1.5;
+      color: var(--text);
+    }
+    .task-meta {
+      font-size: 12px;
+      color: var(--text-3);
+      display: block;
+      margin-top: 4px;
+    }
+
+    /* Architecture mini-flow */
+    .flow-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 12px;
+      margin: 24px 0;
+    }
+    .flow-card {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--r-sm);
+      padding: 16px;
+      position: relative;
+    }
+    .flow-card__step {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--accent-ink);
+      margin-bottom: 4px;
+    }
+    .flow-card__title {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+    .flow-card__desc {
+      font-size: 13px;
+      color: var(--text-3);
+      line-height: 1.4;
+      margin: 0;
+    }
+
+    /* Sub-sections within section */
+    .substep {
+      margin-top: 44px;
+      padding-top: 24px;
+      border-top: 1px dashed rgba(255, 255, 255, 0.08);
+    }
+    .substep:first-of-type {
+      border-top: none;
+      padding-top: 0;
+    }
+
+    /* Cross-guide banner */
+    .guide-banner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      padding: 20px 24px;
+      background: linear-gradient(135deg, rgba(91, 157, 255, 0.12), rgba(155, 123, 255, 0.08));
+      border: 1px solid rgba(120, 160, 255, 0.25);
+      border-radius: var(--r-md);
+      margin: 28px 0;
+    }
+    .guide-banner__text h4 {
+      margin: 0 0 4px;
+      font-size: 16px;
+      color: var(--text);
+    }
+    .guide-banner__text p {
+      margin: 0;
+      font-size: 14px;
+      color: var(--text-2);
+    }
+    .guide-banner__link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 16px;
+      background: var(--accent);
+      color: #fff !important;
+      border-radius: 980px;
+      font-size: 13px;
+      font-weight: 600;
+      white-space: nowrap;
+      text-decoration: none !important;
+      transition: transform 0.2s ease, opacity 0.2s ease;
+    }
+    .guide-banner__link:hover {
+      transform: translateY(-1px);
+      opacity: 0.92;
+    }
+    @media (max-width: 640px) {
+      .guide-banner {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+  </style>
+</head>
+<body class="guide">
+
+  <!-- Top bar -->
+  <header class="topbar">
+    <div class="topbar__inner">
+      <div class="topbar__left">
+        <button class="menu-btn" id="menu-open" type="button" aria-controls="drawer" aria-expanded="false">
+          <span class="menu-btn__bars" aria-hidden="true"></span>
+          Menu
+        </button>
+        <a class="topbar__brand" href="index.html">Deploybook</a>
+      </div>
+      <nav class="topbar__nav" aria-label="Jump to">
+        <a href="#tools">Tools</a>
+        <a href="#aws-cli">AWS CLI</a>
+        <a href="#clusters">Clusters</a>
+        <a href="#kubeconfig">Connect</a>
+        <a href="#k8s-commands">Core kubectl</a>
+        <a href="#ecr-deploy">ECR Deploy</a>
+        <a href="#troubleshooting">Troubleshooting</a>
+        <a href="#practical-task">First Task</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Off-canvas drawer menu -->
+  <div class="scrim" id="scrim"></div>
+  <aside class="drawer" id="drawer" aria-label="Site menu">
+    <div class="drawer__head">
+      <a class="drawer__brand" href="index.html">Deploybook</a>
+      <button class="drawer__close" id="menu-close" type="button" aria-label="Hide sidebar">&times;</button>
+    </div>
+
+    <nav aria-label="Guides">
+      <ul class="drawer__list">
+        <li>
+          <a href="index.html">
+            <span class="drawer__title">Home</span>
+          </a>
+        </li>
+        <li>
+          <a href="index.html#roadmap">
+            <span class="drawer__title">Full roadmap</span>
+            <span class="drawer__desc">All 9 stages at a glance</span>
+          </a>
+        </li>
+        <li>
+          <a href="diagrams.html">
+            <span class="drawer__title">Architecture Diagrams</span>
+            <span class="drawer__desc">Docker, EC2, Nginx, ASG &middot; Visuals</span>
+          </a>
+        </li>
+      </ul>
+
+      <p class="drawer__label">Read in this order</p>
+      <ul class="drawer__list">
+        <li>
+          <a href="github.html">
+            <span class="drawer__title"><span class="drawer__step">1</span>Git &amp; GitHub</span>
+            <span class="drawer__desc">Save, share and team up on code &middot; 8 min</span>
+          </a>
+        </li>
+        <li>
+          <a href="shell.html">
+            <span class="drawer__title"><span class="drawer__step">2</span>Shell scripting</span>
+            <span class="drawer__desc">Automate tasks with Bash &middot; 12 min</span>
+          </a>
+        </li>
+        <li>
+          <a href="aws.html">
+            <span class="drawer__title"><span class="drawer__step">3</span>AWS essentials</span>
+            <span class="drawer__desc">Servers, storage and security &middot; 14 min</span>
+          </a>
+        </li>
+        <li>
+          <a href="ec2.html">
+            <span class="drawer__title"><span class="drawer__step">4</span>EC2 servers</span>
+            <span class="drawer__desc">Launch and connect to your first server &middot; 15 min</span>
+          </a>
+        </li>
+        <li>
+          <a href="docker.html">
+            <span class="drawer__title"><span class="drawer__step">5</span>Docker</span>
+            <span class="drawer__desc">Images, containers and commands &middot; 12 min</span>
+          </a>
+        </li>
+        <li>
+          <a href="nginx.html">
+            <span class="drawer__title"><span class="drawer__step">6</span>Nginx</span>
+            <span class="drawer__desc">Web server, proxy and HTTPS &middot; 14 min</span>
+          </a>
+        </li>
+        <li>
+          <a href="cicd.html">
+            <span class="drawer__title"><span class="drawer__step">7</span>CI/CD with GitHub Actions</span>
+            <span class="drawer__desc">Auto-deploy React + Express &middot; 20 min</span>
+          </a>
+        </li>
+        <li>
+          <a href="eks.html">
+            <span class="drawer__title"><span class="drawer__step">8</span>EKS Conceptual Guide</span>
+            <span class="drawer__desc">Pods, nodes, AWS GUI &middot; 14 min</span>
+          </a>
+        </li>
+        <li>
+          <a href="eks-commands.html" aria-current="page">
+            <span class="drawer__title"><span class="drawer__step">&gt;_</span>EKS Terminal Cheat Sheet</span>
+            <span class="drawer__desc">CLI commands &amp; React ECR deploy &middot; 10 min</span>
+          </a>
+        </li>
+        <li>
+          <a href="terraform.html">
+            <span class="drawer__title"><span class="drawer__step">9</span>Terraform</span>
+            <span class="drawer__desc">Infrastructure as Code &middot; 15 min</span>
+          </a>
+        </li>
+        <li>
+          <a href="grafana.html">
+            <span class="drawer__title"><span class="drawer__step">10</span>Grafana</span>
+            <span class="drawer__desc">Dashboards &amp; monitoring &middot; 13 min</span>
+          </a>
+        </li>
+      </ul>
+
+      <p class="drawer__label">Coming soon</p>
+      <ul class="drawer__soon">
+        <li>Linux and networking</li>
+        <li>Ansible configuration</li>
+        <li>Prometheus &amp; Alertmanager</li>
+        <li>Security with Vault</li>
+        <li>Reliability</li>
+      </ul>
+    </nav>
+
+    <p class="drawer__foot">Short guides in plain English, written for people who are just starting out.</p>
+  </aside>
+
+  <main id="top">
+
+    <!-- Hero -->
+    <section class="hero">
+      <p class="eyebrow">&#128640; Terminal Commands Cheat Sheet</p>
+      <h1>Amazon EKS Commands,<br>Step by Step.</h1>
+      <p class="hero__lead">From basic terminal commands to deploying your React application from Amazon ECR. Everything you need to control, inspect, and troubleshoot Kubernetes on AWS.</p>
+      <p class="hero__meta">Hands-on CLI guide &middot; Copy-paste ready &middot; 10 min read</p>
+    </section>
+
+    <article class="article">
+
+      <!-- Cross-Guide Reference -->
+      <div class="guide-banner">
+        <div class="guide-banner__text">
+          <h4>Looking for the architectural concepts first?</h4>
+          <p>Read our beginner guide explaining pods, nodes, control planes, and AWS GUI setups.</p>
+        </div>
+        <a href="eks.html" class="guide-banner__link">EKS Architectural Guide &rarr;</a>
+      </div>
+
+      <!-- Quick Context Box -->
+      <div class="oneline">
+        <span class="oneline__label">Prerequisite knowledge</span>
+        <p>Since you've already worked with an EKS cluster, node groups, EC2, and load balancers, we will build directly on that knowledge with production-grade terminal commands.</p>
+      </div>
+
+      <!-- High-level Flow Cards -->
+      <div class="flow-grid">
+        <div class="flow-card">
+          <div class="flow-card__step">Phase 1</div>
+          <div class="flow-card__title">Terminal Setup</div>
+          <p class="flow-card__desc">Verify CLI tools and configure AWS credentials.</p>
+        </div>
+        <div class="flow-card">
+          <div class="flow-card__step">Phase 2</div>
+          <div class="flow-card__title">Cluster Link</div>
+          <p class="flow-card__desc">Fetch kubeconfig and bind kubectl to EKS control plane.</p>
+        </div>
+        <div class="flow-card">
+          <div class="flow-card__step">Phase 3</div>
+          <div class="flow-card__title">Core Operations</div>
+          <p class="flow-card__desc">Inspect nodes, manage pods, scale deployments &amp; services.</p>
+        </div>
+        <div class="flow-card">
+          <div class="flow-card__step">Phase 4</div>
+          <div class="flow-card__title">ECR &rarr; LoadBalancer</div>
+          <p class="flow-card__desc">Deploy React container image from ECR with live web access.</p>
+        </div>
+      </div>
+
+      <!-- Table of Contents -->
+      <nav class="contents" aria-label="Contents">
+        <h2>In this guide</h2>
+        <ol>
+          <li><a href="#tools">Step 1: Check Your Tools</a></li>
+          <li><a href="#aws-cli">Step 2: Configure AWS CLI</a></li>
+          <li><a href="#clusters">Step 3: List Your EKS Clusters</a></li>
+          <li><a href="#kubeconfig">Step 4: Connect kubectl to EKS</a></li>
+          <li><a href="#k8s-commands">Step 5: Essential Kubernetes Commands</a></li>
+          <li><a href="#ecr-deploy">Step 6: Deploy React App from ECR</a></li>
+          <li><a href="#troubleshooting">Step 7: Troubleshooting Commands</a></li>
+          <li><a href="#practical-task">Your First Practical Task</a></li>
+        </ol>
+      </nav>
+
+      <!-- ========================================================
+           Step 1: Check Your Tools
+           ======================================================== -->
+      <section class="section" id="tools">
+        <span class="section__num">01</span>
+        <h2>Step 1: Check Your Tools</h2>
+        <p>First, check whether the required tools are installed on your terminal (Mac/Linux). Open your command line and run:</p>
+
+        <div class="cmd-box">
+          <div class="cmd-box__header">
+            <div class="cmd-box__dots">
+              <span class="cmd-box__dot cmd-box__dot--red"></span>
+              <span class="cmd-box__dot cmd-box__dot--yellow"></span>
+              <span class="cmd-box__dot cmd-box__dot--green"></span>
+              <span class="cmd-box__title">terminal &mdash; tool check</span>
+            </div>
+            <button class="cmd-box__copy" data-target="cmd-tools" type="button">Copy</button>
+          </div>
+          <pre class="code" id="cmd-tools">aws --version
+kubectl version --client
+docker --version</pre>
+        </div>
+
+        <h3>What do these tools do?</h3>
+        <table class="cheat-table" aria-label="CLI tools and purposes">
+          <thead>
+            <tr>
+              <th style="width: 25%;">Tool</th>
+              <th>Purpose</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>aws</code></td>
+              <td>Interact with AWS cloud services (EKS, ECR, IAM, EC2, VPC).</td>
+            </tr>
+            <tr>
+              <td><code>kubectl</code></td>
+              <td>The standard Kubernetes CLI used to control pods, nodes, deployments, and services.</td>
+            </tr>
+            <tr>
+              <td><code>docker</code></td>
+              <td>Build, tag, and manage local container images before pushing to registries.</td>
+            </tr>
+            <tr>
+              <td><code>eks</code></td>
+              <td>AWS-managed Kubernetes service; accessed through AWS CLI tools and <code>kubectl</code>.</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="analogy">
+          <span class="analogy__label">Missing a tool on Mac?</span>
+          <p>If any command prints <em>command not found</em>, install it using Homebrew:<br>
+          <code>brew install awscli kubernetes-cli</code><br>
+          For Docker, download Docker Desktop or run <code>brew install --cask docker</code>.</p>
+        </div>
+      </section>
+
+      <!-- ========================================================
+           Step 2: Configure AWS CLI
+           ======================================================== -->
+      <section class="section" id="aws-cli">
+        <span class="section__num">02</span>
+        <h2>Step 2: Configure AWS CLI</h2>
+        <p>Before communicating with your EKS cluster, your terminal must know who you are and have permissions granted via AWS IAM credentials.</p>
+
+        <h3>Check your active AWS identity</h3>
+        <p>Run <code>sts get-caller-identity</code> to verify your Account ID and IAM User/Role:</p>
+        <div class="cmd-box">
+          <div class="cmd-box__header">
+            <div class="cmd-box__dots">
+              <span class="cmd-box__dot cmd-box__dot--red"></span>
+              <span class="cmd-box__dot cmd-box__dot--yellow"></span>
+              <span class="cmd-box__dot cmd-box__dot--green"></span>
+              <span class="cmd-box__title">bash &mdash; check identity</span>
+            </div>
+            <button class="cmd-box__copy" data-target="cmd-identity" type="button">Copy</button>
+          </div>
+          <pre class="code" id="cmd-identity">aws sts get-caller-identity</pre>
+          <div class="cmd-output">
+            <span class="cmd-output__label">Sample Output</span>
+            { "UserId": "AIDAJ...", "Account": "123456789012", "Arn": "arn:aws:iam::123456789012:user/admin" }
+          </div>
+        </div>
+
+        <h3>List your configured AWS region</h3>
+        <div class="cmd-box">
+          <div class="cmd-box__header">
+            <div class="cmd-box__dots">
+              <span class="cmd-box__dot cmd-box__dot--red"></span>
+              <span class="cmd-box__dot cmd-box__dot--yellow"></span>
+              <span class="cmd-box__dot cmd-box__dot--green"></span>
+              <span class="cmd-box__title">bash &mdash; check region</span>
+            </div>
+            <button class="cmd-box__copy" data-target="cmd-region" type="button">Copy</button>
+          </div>
+          <pre class="code" id="cmd-region">aws configure get region</pre>
+        </div>
+
+        <p>If your AWS CLI isn't configured yet or returns an authentication error, run:</p>
+        <div class="cmd-box">
+          <div class="cmd-box__header">
+            <div class="cmd-box__dots">
+              <span class="cmd-box__dot cmd-box__dot--red"></span>
+              <span class="cmd-box__dot cmd-box__dot--yellow"></span>
+              <span class="cmd-box__dot cmd-box__dot--green"></span>
+              <span class="cmd-box__title">bash &mdash; setup credentials</span>
+            </div>
+            <button class="cmd-box__copy" data-target="cmd-config" type="button">Copy</button>
+          </div>
+          <pre class="code" id="cmd-config">aws configure</pre>
+        </div>
+
+        <p>The interactive prompt will request four items:</p>
+        <ul class="recap">
+          <li><span><strong>AWS Access Key ID:</strong> Your 20-character key starting with <code>AKIA...</code></span></li>
+          <li><span><strong>AWS Secret Access Key:</strong> Your private 40-character secret.</span></li>
+          <li><span><strong>Default region:</strong> The region where your EKS cluster lives (e.g. <code>ap-south-1</code>, <code>us-east-1</code>).</span></li>
+          <li><span><strong>Default output format:</strong> Enter <code>json</code>.</span></li>
+        </ul>
+
+        <div class="oneline" style="border-color: rgba(255, 95, 86, 0.4); background: rgba(255, 95, 86, 0.1);">
+          <span class="oneline__label" style="color: #ff8b85;">&#128274; Security Tip</span>
+          <p>Never share your AWS credentials, paste them in public chats, or commit them to GitHub repositories. Use AWS IAM credentials with least-privilege policies.</p>
+        </div>
+      </section>
+
+      <!-- ========================================================
+           Step 3: List Your EKS Clusters
+           ======================================================== -->
+      <section class="section" id="clusters">
+        <span class="section__num">03</span>
+        <h2>Step 3: List Your EKS Clusters</h2>
+        <p>List all active and creating EKS clusters within your current default region:</p>
+
+        <div class="cmd-box">
+          <div class="cmd-box__header">
+            <div class="cmd-box__dots">
+              <span class="cmd-box__dot cmd-box__dot--red"></span>
+              <span class="cmd-box__dot cmd-box__dot--yellow"></span>
+              <span class="cmd-box__dot cmd-box__dot--green"></span>
+              <span class="cmd-box__title">bash &mdash; list clusters</span>
+            </div>
+            <button class="cmd-box__copy" data-target="cmd-list-clusters" type="button">Copy</button>
+          </div>
+          <pre class="code" id="cmd-list-clusters">aws eks list-clusters</pre>
+        </div>
+
+        <h3>Get detailed status of a cluster</h3>
+        <p>Query the status of your specific cluster (replace <code>myEks</code> with your cluster name):</p>
+
+        <div class="cmd-box">
+          <div class="cmd-box__header">
+            <div class="cmd-box__dots">
+              <span class="cmd-box__dot cmd-box__dot--red"></span>
+              <span class="cmd-box__dot cmd-box__dot--yellow"></span>
+              <span class="cmd-box__dot cmd-box__dot--green"></span>
+              <span class="cmd-box__title">bash &mdash; describe cluster status</span>
+            </div>
+            <button class="cmd-box__copy" data-target="cmd-desc-cluster" type="button">Copy</button>
+          </div>
+          <pre class="code" id="cmd-desc-cluster">aws eks describe-cluster \
+  --name myEks \
+  --query "cluster.status"</pre>
+          <div class="cmd-output">
+            <span class="cmd-output__label">Expected output when cluster is ready</span>
+            "ACTIVE"
+          </div>
+        </div>
+
+        <h3>Check or specify explicit region</h3>
+        <p>If <code>aws eks list-clusters</code> returns an empty list <code>{"clusters": []}</code>, check what region your CLI is searching:</p>
+        <div class="cmd-box">
+          <div class="cmd-box__header">
+            <div class="cmd-box__dots">
+              <span class="cmd-box__dot cmd-box__dot--red"></span>
+              <span class="cmd-box__dot cmd-box__dot--yellow"></span>
+              <span class="cmd-box__dot cmd-box__dot--green"></span>
+              <span class="cmd-box__title">bash &mdash; check region</span>
+            </div>
+            <button class="cmd-box__copy" data-target="cmd-check-region" type="button">Copy</button>
+          </div>
+          <pre class="code" id="cmd-check-region">aws configure get region</pre>
+        </div>
+
+        <p>You can also query the cluster by explicitly passing the <code>--region</code> flag:</p>
+        <div class="cmd-box">
+          <div class="cmd-box__header">
+            <div class="cmd-box__dots">
+              <span class="cmd-box__dot cmd-box__dot--red"></span>
+              <span class="cmd-box__dot cmd-box__dot--yellow"></span>
+              <span class="cmd-box__dot cmd-box__dot--green"></span>
+              <span class="cmd-box__title">bash &mdash; explicit region</span>
+            </div>
+            <button class="cmd-box__copy" data-target="cmd-region-list" type="button">Copy</button>
+          </div>
+          <pre class="code" id="cmd-region-list">aws eks list-clusters --region ap-south-1</pre>
+        </div>
+        <p style="font-size:14px;color:var(--text-3);margin-top:-8px;">Replace <code>ap-south-1</code> with the region where your cluster was launched (e.g. <code>us-east-1</code>, <code>eu-west-1</code>).</p>
+      </section>
+
+      <!-- ========================================================
+           Step 4: Connect kubectl to EKS
+           ======================================================== -->
+      <section class="section" id="kubeconfig">
+        <span class="section__num">04</span>
+        <h2>Step 4: Connect kubectl to EKS</h2>
+        <p>This is <strong>one of the most important commands</strong> in the entire EKS workflow. It downloads the cluster certificate authority, endpoint URL, and generates authentication tokens in your local <code>~/.kube/config</code> file.</p>
+
+        <div class="cmd-box">
+          <div class="cmd-box__header">
+            <div class="cmd-box__dots">
+              <span class="cmd-box__dot cmd-box__dot--red"></span>
+              <span class="cmd-box__dot cmd-box__dot--yellow"></span>
+              <span class="cmd-box__dot cmd-box__dot--green"></span>
+              <span class="cmd-box__title">bash &mdash; update-kubeconfig</span>
+            </div>
+            <button class="cmd-box__copy" data-target="cmd-kubeconfig" type="button">Copy</button>
+          </div>
+          <pre class="code" id="cmd-kubeconfig">aws eks update-kubeconfig --name myEks</pre>
+          <div class="cmd-output">
+            <span class="cmd-output__label">Sample Success Message</span>
+            Updated context arn:aws:eks:ap-south-1:123456789012:cluster/myEks in ~/.kube/config
+          </div>
+        </div>
+
+        <p>If your cluster is in a different region than your default CLI config, specify the region flag:</p>
+        <div class="cmd-box">
+          <div class="cmd-box__header">
+            <div class="cmd-box__dots">
+              <span class="cmd-box__dot cmd-box__dot--red"></span>
+              <span class="cmd-box__dot cmd-box__dot--yellow"></span>
+              <span class="cmd-box__dot cmd-box__dot--green"></span>
+              <span class="cmd-box__title">bash &mdash; update-kubeconfig with region</span>
+            </div>
+            <button class="cmd-box__copy" data-target="cmd-kubeconfig-reg" type="button">Copy</button>
+          </div>
+          <pre class="code" id="cmd-kubeconfig-reg">aws eks update-kubeconfig --region ap-south-1 --name myEks</pre>
+        </div>
+
+        <h3>Verify the connection</h3>
+        <p>Verify that <code>kubectl</code> can reach the Kubernetes API endpoint:</p>
+        <div class="cmd-box">
+          <div class="cmd-box__header">
+            <div class="cmd-box__dots">
+              <span class="cmd-box__dot cmd-box__dot--red"></span>
+              <span class="cmd-box__dot cmd-box__dot--yellow"></span>
+              <span class="cmd-box__dot cmd-box__dot--green"></span>
+              <span class="cmd-box__title">bash &mdash; cluster-info</span>
+            </div>
+            <button class="cmd-box__copy" data-target="cmd-cluster-info" type="button">Copy</button>
+          </div>
+          <pre class="code" id="cmd-cluster-info">kubectl cluster-info</pre>
+        </div>
+
+        <h3>Check which cluster your terminal is connected to</h3>
+        <div class="cmd-box">
+          <div class="cmd-box__header">
+            <div class="cmd-box__dots">
+              <span class="cmd-box__dot cmd-box__dot--red"></span>
+              <span class="cmd-box__dot cmd-box__dot--yellow"></span>
+              <span class="cmd-box__dot cmd-box__dot--green"></span>
+              <span class="cmd-box__title">bash &mdash; current-context</span>
+            </div>
+            <button class="cmd-box__copy" data-target="cmd-curr-ctx" type="button">Copy</button>
+          </div>
+          <pre class="code" id="cmd-curr-ctx">kubectl config current-context</pre>
+        </div>
+
+        <h3>Check whether Kubernetes can communicate with worker nodes</h3>
+        <div class="cmd-box">
+          <div class="cmd-box__header">
+            <div class="cmd-box__dots">
+              <span class="cmd-box__dot cmd-box__dot--red"></span>
+              <span class="cmd-box__dot cmd-box__dot--yellow"></span>
+              <span class="cmd-box__dot cmd-box__dot--green"></span>
+              <span class="cmd-box__title">bash &mdash; get nodes</span>
+            </div>
+            <button class="cmd-box__copy" data-target="cmd-get-nodes" type="button">Copy</button>
+          </div>
+          <pre class="code" id="cmd-get-nodes">kubectl get nodes</pre>
+        </div>
+        <p>If configured correctly, you will see your worker nodes with status <strong>Ready</strong>.</p>
+      </section>
+
+      <!-- ========================================================
+           Step 5: Essential Kubernetes Commands
+           ======================================================== -->
+      <section class="section" id="k8s-commands">
+        <span class="section__num">05</span>
+        <h2>Step 5: Essential Kubernetes Commands</h2>
+        <p>These are the core commands you will use daily while operating and inspecting applications on EKS. They are organized across the 4 foundational Kubernetes primitives: <strong>Nodes</strong>, <strong>Pods</strong>, <strong>Deployments</strong>, and <strong>Services</strong>.</p>
+
+        <!-- 5.1 Nodes -->
+        <div class="substep">
+          <h3>1. Nodes</h3>
+          <p>A node is a worker server (an EC2 instance in your cluster) where pods actually execute.</p>
+
+          <div class="cmd-box">
+            <div class="cmd-box__header">
+              <div class="cmd-box__dots">
+                <span class="cmd-box__dot cmd-box__dot--red"></span>
+                <span class="cmd-box__dot cmd-box__dot--yellow"></span>
+                <span class="cmd-box__dot cmd-box__dot--green"></span>
+                <span class="cmd-box__title">bash &mdash; nodes inspection</span>
+              </div>
+              <button class="cmd-box__copy" data-target="cmd-nodes-all" type="button">Copy</button>
+            </div>
+            <pre class="code" id="cmd-nodes-all"><span class="c"># List worker nodes</span>
+kubectl get nodes
+
+<span class="c"># Show additional information (Internal IP, External IP, OS image, Kernel, Container Runtime)</span>
+kubectl get nodes -o wide
+
+<span class="c"># Get detailed resource capacity, conditions, and allocated pods of a node</span>
+kubectl describe node &lt;node-name&gt;</pre>
+          </div>
+        </div>
+
+        <!-- 5.2 Pods -->
+        <div class="substep">
+          <h3>2. Pods</h3>
+          <p>A pod is the smallest deployable unit in Kubernetes. It typically runs one application container (such as our React/Nginx web server), although it can contain multiple co-located containers sharing localhost networking and volumes.</p>
+
+          <div class="cmd-box">
+            <div class="cmd-box__header">
+              <div class="cmd-box__dots">
+                <span class="cmd-box__dot cmd-box__dot--red"></span>
+                <span class="cmd-box__dot cmd-box__dot--yellow"></span>
+                <span class="cmd-box__dot cmd-box__dot--green"></span>
+                <span class="cmd-box__title">bash &mdash; pods inspection &amp; logs</span>
+              </div>
+              <button class="cmd-box__copy" data-target="cmd-pods-all" type="button">Copy</button>
+            </div>
+            <pre class="code" id="cmd-pods-all"><span class="c"># List pods in default namespace</span>
+kubectl get pods
+
+<span class="c"># List pods across all namespaces (includes kube-system core add-ons)</span>
+kubectl get pods -A
+
+<span class="c"># Show detailed pod status, restart counts, mount paths, and lifecycle events</span>
+kubectl describe pod &lt;pod-name&gt;
+
+<span class="c"># Watch pods in real-time as their status changes (e.g., ContainerCreating &rarr; Running)</span>
+kubectl get pods -w
+
+<span class="c"># View application stdout/stderr logs</span>
+kubectl logs &lt;pod-name&gt;
+
+<span class="c"># Stream logs live (follow mode like tail -f)</span>
+kubectl logs -f &lt;pod-name&gt;</pre>
+          </div>
+        </div>
+
+        <!-- 5.3 Deployments -->
+        <div class="substep">
+          <h3>3. Deployments</h3>
+          <p>A Deployment manages application replicas (ReplicaSets), orchestrates zero-downtime rolling updates, and automatically replaces pods that crash or become unhealthy.</p>
+
+          <div class="cmd-box">
+            <div class="cmd-box__header">
+              <div class="cmd-box__dots">
+                <span class="cmd-box__dot cmd-box__dot--red"></span>
+                <span class="cmd-box__dot cmd-box__dot--yellow"></span>
+                <span class="cmd-box__dot cmd-box__dot--green"></span>
+                <span class="cmd-box__title">bash &mdash; deployment lifecycle</span>
+              </div>
+              <button class="cmd-box__copy" data-target="cmd-deployments-all" type="button">Copy</button>
+            </div>
+            <pre class="code" id="cmd-deployments-all"><span class="c"># List active deployments</span>
+kubectl get deployments
+
+<span class="c"># Get deployment configuration details and rolling update strategy</span>
+kubectl describe deployment &lt;deployment-name&gt;
+
+<span class="c"># Scale a deployment dynamically to 3 replicas</span>
+kubectl scale deployment &lt;deployment-name&gt; --replicas=3
+
+<span class="c"># Track the rollout progress of a new version</span>
+kubectl rollout status deployment/&lt;deployment-name&gt;
+
+<span class="c"># Gracefully restart all pods in a deployment without downtime</span>
+kubectl rollout restart deployment/&lt;deployment-name&gt;</pre>
+          </div>
+        </div>
+
+        <!-- 5.4 Services -->
+        <div class="substep">
+          <h3>4. Services</h3>
+          <p>Pods are ephemeral and can be terminated at any moment with a new IP address. A <strong>Service</strong> provides a stable network endpoint, DNS record, and built-in load balancer across a matching group of pods.</p>
+
+          <div class="cmd-box">
+            <div class="cmd-box__header">
+              <div class="cmd-box__dots">
+                <span class="cmd-box__dot cmd-box__dot--red"></span>
+                <span class="cmd-box__dot cmd-box__dot--yellow"></span>
+                <span class="cmd-box__dot cmd-box__dot--green"></span>
+                <span class="cmd-box__title">bash &mdash; service commands</span>
+              </div>
+              <button class="cmd-box__copy" data-target="cmd-services-all" type="button">Copy</button>
+            </div>
+            <pre class="code" id="cmd-services-all"><span class="c"># List services</span>
+kubectl get services
+
+<span class="c"># Get detailed service information and endpoint targets</span>
+kubectl describe service &lt;service-name&gt;</pre>
+          </div>
+
+          <h3>Common Service Types</h3>
+          <table class="cheat-table" aria-label="Service types and purposes">
+            <thead>
+              <tr>
+                <th style="width: 28%;">Type</th>
+                <th>Purpose &amp; Accessibility</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>ClusterIP</code></td>
+                <td>Internal cluster access only (default). Only other pods inside the cluster can reach this IP.</td>
+              </tr>
+              <tr>
+                <td><code>NodePort</code></td>
+                <td>Exposes a static port (30000–32767) on each worker node’s IP address.</td>
+              </tr>
+              <tr>
+                <td><code>LoadBalancer</code></td>
+                <td>Requests an external cloud load balancer (AWS NLB/CLB or ALB) to route public traffic to your pods.</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <p>For a web application that needs public access, a <code>LoadBalancer</code> Service is the most direct option. In advanced setups, an Ingress with the <strong>AWS Load Balancer Controller</strong> can also be used to route multiple domain paths through a single Application Load Balancer.</p>
+        </div>
+      </section>
+
+      <!-- ========================================================
+           Step 6: Deploy a React Application from Amazon ECR
+           ======================================================== -->
+      <section class="section" id="ecr-deploy">
+        <span class="section__num">06</span>
+        <h2>Step 6: Deploy a React Application from Amazon ECR</h2>
+        <p>Now, let's tie together Docker, Amazon ECR (Elastic Container Registry), and EKS to run your actual React web frontend.</p>
+
+        <!-- 6.1 ECR -->
+        <div class="substep">
+          <h3>Step 6.1: Find your ECR image</h3>
+          <p>List your ECR repositories to find where your container image was pushed:</p>
+
+          <div class="cmd-box">
+            <div class="cmd-box__header">
+              <div class="cmd-box__dots">
+                <span class="cmd-box__dot cmd-box__dot--red"></span>
+                <span class="cmd-box__dot cmd-box__dot--yellow"></span>
+                <span class="cmd-box__dot cmd-box__dot--green"></span>
+                <span class="cmd-box__title">bash &mdash; find ECR image</span>
+              </div>
+              <button class="cmd-box__copy" data-target="cmd-ecr-find" type="button">Copy</button>
+            </div>
+            <pre class="code" id="cmd-ecr-find"><span class="c"># List all ECR repositories in your account</span>
+aws ecr describe-repositories
+
+<span class="c"># List image tags in a particular repository</span>
+aws ecr list-images \
+  --repository-name my-react-app</pre>
+          </div>
+
+          <p>Your complete image URI follows this structure:</p>
+          <div class="cmd-box">
+            <div class="cmd-box__header">
+              <div class="cmd-box__dots">
+                <span class="cmd-box__dot cmd-box__dot--red"></span>
+                <span class="cmd-box__dot cmd-box__dot--yellow"></span>
+                <span class="cmd-box__dot cmd-box__dot--green"></span>
+                <span class="cmd-box__title">image URI anatomy</span>
+              </div>
+              <button class="cmd-box__copy" data-target="cmd-ecr-uri" type="button">Copy</button>
+            </div>
+            <pre class="code" id="cmd-ecr-uri">123456789012.dkr.ecr.ap-south-1.amazonaws.com/my-react-app:latest</pre>
+          </div>
+          <p style="font-size:14px;color:var(--text-3);margin-top:-8px;">Replace the AWS account ID (<code>123456789012</code>), region (<code>ap-south-1</code>), repository name (<code>my-react-app</code>), and tag (<code>latest</code>) with your actual values.</p>
+        </div>
+
+        <!-- 6.2 Deployment manifest -->
+        <div class="substep">
+          <h3>Step 6.2: Create a Kubernetes Deployment</h3>
+          <p>Create a manifest file named <code>deployment.yaml</code> in your project directory:</p>
+
+          <div class="cmd-box">
+            <div class="cmd-box__header">
+              <div class="cmd-box__dots">
+                <span class="cmd-box__dot cmd-box__dot--red"></span>
+                <span class="cmd-box__dot cmd-box__dot--yellow"></span>
+                <span class="cmd-box__dot cmd-box__dot--green"></span>
+                <span class="cmd-box__title">deployment.yaml</span>
+              </div>
+              <button class="cmd-box__copy" data-target="manifest-deployment" type="button">Copy</button>
+            </div>
+            <pre class="code" id="manifest-deployment">apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: react-app
+
+spec:
+  replicas: 2
+
+  selector:
+    matchLabels:
+      app: react-app
+
+  template:
+    metadata:
+      labels:
+        app: react-app
+
+    spec:
+      containers:
+        - name: react-container
+          image: 123456789012.dkr.ecr.ap-south-1.amazonaws.com/my-react-app:latest
+
+          ports:
+            - containerPort: 80</pre>
+          </div>
+
+          <p>This manifest requests 2 replica pods and assumes your compiled React static bundle is served by Nginx inside the container listening on port <code>80</code>.</p>
+
+          <div class="oneline">
+            <span class="oneline__label">&#9888; Crucial IAM Node Permission</span>
+            <p>Your EKS worker nodes (or Pod Identity/IRSA) must have the <code>AmazonEC2ContainerRegistryReadOnly</code> policy attached to their IAM Role. Otherwise, the nodes cannot authenticate to ECR, and your pods will be trapped in <code>ImagePullBackOff</code>.</p>
+          </div>
+        </div>
+
+        <!-- 6.3 Apply deployment -->
+        <div class="substep">
+          <h3>Step 6.3: Apply the Deployment</h3>
+          <p>Apply the manifest to your connected EKS cluster and observe the rollout:</p>
+
+          <div class="cmd-box">
+            <div class="cmd-box__header">
+              <div class="cmd-box__dots">
+                <span class="cmd-box__dot cmd-box__dot--red"></span>
+                <span class="cmd-box__dot cmd-box__dot--yellow"></span>
+                <span class="cmd-box__dot cmd-box__dot--green"></span>
+                <span class="cmd-box__title">bash &mdash; apply &amp; verify deployment</span>
+              </div>
+              <button class="cmd-box__copy" data-target="cmd-apply-dep" type="button">Copy</button>
+            </div>
+            <pre class="code" id="cmd-apply-dep"><span class="c"># Submit deployment recipe to EKS</span>
+kubectl apply -f deployment.yaml
+
+<span class="c"># Check deployment replica status</span>
+kubectl get deployments
+
+<span class="c"># Check the 2 spawned pods</span>
+kubectl get pods
+
+<span class="c"># Wait until deployment is ready</span>
+kubectl rollout status deployment/react-app</pre>
+          </div>
+
+          <p>If any pod is stuck in <code>ImagePullBackOff</code> or <code>ErrImagePull</code>, inspect the container events immediately:</p>
+          <div class="cmd-box">
+            <div class="cmd-box__header">
+              <div class="cmd-box__dots">
+                <span class="cmd-box__dot cmd-box__dot--red"></span>
+                <span class="cmd-box__dot cmd-box__dot--yellow"></span>
+                <span class="cmd-box__dot cmd-box__dot--green"></span>
+                <span class="cmd-box__title">bash &mdash; pod inspect</span>
+              </div>
+              <button class="cmd-box__copy" data-target="cmd-pod-inspect" type="button">Copy</button>
+            </div>
+            <pre class="code" id="cmd-pod-inspect">kubectl describe pod &lt;pod-name&gt;</pre>
+          </div>
+        </div>
+
+        <!-- 6.4 Expose via Service -->
+        <div class="substep">
+          <h3>Step 6.4: Expose the React Application</h3>
+          <p>Create a service file named <code>service.yaml</code> to request a public AWS Load Balancer:</p>
+
+          <div class="cmd-box">
+            <div class="cmd-box__header">
+              <div class="cmd-box__dots">
+                <span class="cmd-box__dot cmd-box__dot--red"></span>
+                <span class="cmd-box__dot cmd-box__dot--yellow"></span>
+                <span class="cmd-box__dot cmd-box__dot--green"></span>
+                <span class="cmd-box__title">service.yaml</span>
+              </div>
+              <button class="cmd-box__copy" data-target="manifest-service" type="button">Copy</button>
+            </div>
+            <pre class="code" id="manifest-service">apiVersion: v1
+kind: Service
+
+metadata:
+  name: react-service
+
+spec:
+  type: LoadBalancer
+
+  selector:
+    app: react-app
+
+  ports:
+    - port: 80
+      targetPort: 80</pre>
+          </div>
+
+          <p>Apply the Service and watch until AWS provides an external load balancer URL:</p>
+          <div class="cmd-box">
+            <div class="cmd-box__header">
+              <div class="cmd-box__dots">
+                <span class="cmd-box__dot cmd-box__dot--red"></span>
+                <span class="cmd-box__dot cmd-box__dot--yellow"></span>
+                <span class="cmd-box__dot cmd-box__dot--green"></span>
+                <span class="cmd-box__title">bash &mdash; apply &amp; watch service</span>
+              </div>
+              <button class="cmd-box__copy" data-target="cmd-apply-svc" type="button">Copy</button>
+            </div>
+            <pre class="code" id="cmd-apply-svc"><span class="c"># Submit service manifest</span>
+kubectl apply -f service.yaml
+
+<span class="c"># Check service</span>
+kubectl get services
+
+<span class="c"># Watch until EXTERNAL-IP changes from &lt;pending&gt; to an AWS ELB DNS name</span>
+kubectl get service react-service -w</pre>
+            <div class="cmd-output">
+              <span class="cmd-output__label">Sample Finished Service</span>
+              NAME            TYPE           CLUSTER-IP      EXTERNAL-IP<br>
+              react-service   LoadBalancer   10.100.45.12    a1b2c3d4e5...ap-south-1.elb.amazonaws.com
+            </div>
+          </div>
+
+          <p>Once the external DNS address appears, copy it and open it in your browser: <strong>Your React application is live on the internet!</strong></p>
+
+          <div class="analogy">
+            <span class="analogy__label">&#128184; Cost &amp; Networking Note</span>
+            <p>Creating a <code>type: LoadBalancer</code> Service triggers AWS to provision an Elastic Load Balancer (ELB), which incurs hourly AWS charges while active. Furthermore, ensure your VPC public subnets are tagged with <code>kubernetes.io/role/elb=1</code> so AWS knows where to bind public IPs.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========================================================
+           Step 7: Troubleshooting Commands
+           ======================================================== -->
+      <section class="section" id="troubleshooting">
+        <span class="section__num">07</span>
+        <h2>Step 7: Troubleshooting Commands</h2>
+        <p>Memorize these 8 commands. When deployments fail, pods crash, or connections hang, these commands give you the diagnostic answers within seconds:</p>
+
+        <table class="cheat-table" aria-label="EKS Troubleshooting Commands">
+          <thead>
+            <tr>
+              <th style="width: 32%;">Problem</th>
+              <th>Command</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Pods are not running</strong></td>
+              <td><code>kubectl get pods -A</code></td>
+            </tr>
+            <tr>
+              <td><strong>Pod details and events</strong></td>
+              <td><code>kubectl describe pod &lt;pod-name&gt;</code></td>
+            </tr>
+            <tr>
+              <td><strong>Application logs</strong></td>
+              <td><code>kubectl logs &lt;pod-name&gt;</code></td>
+            </tr>
+            <tr>
+              <td><strong>Node problems</strong></td>
+              <td><code>kubectl describe node &lt;node-name&gt;</code></td>
+            </tr>
+            <tr>
+              <td><strong>Deployment status</strong></td>
+              <td><code>kubectl rollout status deployment/&lt;name&gt;</code></td>
+            </tr>
+            <tr>
+              <td><strong>Service configuration</strong></td>
+              <td><code>kubectl describe service &lt;name&gt;</code></td>
+            </tr>
+            <tr>
+              <td><strong>Recent cluster events</strong></td>
+              <td><code>kubectl get events --sort-by=.metadata.creationTimestamp</code></td>
+            </tr>
+            <tr>
+              <td><strong>Current Kubernetes context</strong></td>
+              <td><code>kubectl config current-context</code></td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- ========================================================
+           Your First Practical Task
+           ======================================================== -->
+      <section class="section" id="practical-task">
+        <span class="section__num">08</span>
+        <h2>Your First Practical Task</h2>
+        <p>Open your local terminal and execute these <strong>5 diagnostic commands one by one</strong> to understand the exact state of your EKS cluster:</p>
+
+        <div class="task-card">
+          <h3>Interactive Task Checklist</h3>
+          <p style="margin: 0; color: var(--text-2); font-size: 14px;">Run each command in your terminal and check off the items as you verify the cluster output:</p>
+
+          <ul class="task-list" id="practical-checklist">
+            <li class="task-item" data-index="1">
+              <input type="checkbox" id="task-1" aria-label="Check cluster list">
+              <label class="task-text" for="task-1">
+                <strong>1. List clusters:</strong> <code>aws eks list-clusters</code>
+                <span class="task-meta">Confirms your AWS account has an active EKS cluster in the target region.</span>
+              </label>
+            </li>
+            <li class="task-item" data-index="2">
+              <input type="checkbox" id="task-2" aria-label="Check active context">
+              <label class="task-text" for="task-2">
+                <strong>2. Verify context:</strong> <code>kubectl config current-context</code>
+                <span class="task-meta">Ensures kubectl is targeting your AWS EKS cluster ARN rather than a local minikube or docker-desktop context.</span>
+              </label>
+            </li>
+            <li class="task-item" data-index="3">
+              <input type="checkbox" id="task-3" aria-label="Check worker nodes">
+              <label class="task-text" for="task-3">
+                <strong>3. Inspect worker nodes:</strong> <code>kubectl get nodes</code>
+                <span class="task-meta">Confirms that EC2 worker nodes have joined the cluster and are in status <strong>Ready</strong>.</span>
+              </label>
+            </li>
+            <li class="task-item" data-index="4">
+              <input type="checkbox" id="task-4" aria-label="Check pods in all namespaces">
+              <label class="task-text" for="task-4">
+                <strong>4. Inspect all pods:</strong> <code>kubectl get pods -A</code>
+                <span class="task-meta">Verifies that CoreDNS, kube-proxy, and VPC CNI system pods are in status <strong>Running</strong>.</span>
+              </label>
+            </li>
+            <li class="task-item" data-index="5">
+              <input type="checkbox" id="task-5" aria-label="Check all services">
+              <label class="task-text" for="task-5">
+                <strong>5. Inspect all services:</strong> <code>kubectl get services -A</code>
+                <span class="task-meta">Checks default cluster routing, active LoadBalancers, and Kubernetes API endpoints.</span>
+              </label>
+            </li>
+          </ul>
+        </div>
+
+        <div class="oneline" style="border-color: rgba(255, 179, 64, 0.4); background: rgba(255, 179, 64, 0.08);">
+          <span class="oneline__label" style="color: #ffb340;">&#9888; Important Billing Reminder</span>
+          <p>Since you've previously worked with node groups and EC2 instances, always verify your active AWS resources before creating anything new. EKS clusters ($0.10/hour), EC2 worker nodes, and elastic load balancers continue generating charges while running. When finished practicing, clean up unnecessary services and node groups.</p>
+        </div>
+
+        <p style="margin-top:28px;">Once you have run these commands, share the output of <code>kubectl get nodes</code> and <code>kubectl get pods -A</code> with your team or assistant to diagnose and proceed with the next step!</p>
+      </section>
+
+    </article>
+
+    <!-- Keep Learning Section -->
+    <section class="more" aria-label="Other guides">
+      <p class="more__label">Keep learning</p>
+      <div class="more__grid">
+        <a href="eks.html">
+          <strong>EKS Architecture</strong>
+          <span>Pods, nodes, restaurants and AWS GUI deployment</span>
+          <em>Review guide &rarr;</em>
+        </a>
+        <a href="docker.html">
+          <strong>Docker</strong>
+          <span>Build, test, and containerize your React app</span>
+          <em>Review guide &rarr;</em>
+        </a>
+        <a href="cicd.html">
+          <strong>CI/CD Pipelines</strong>
+          <span>Automate pushing to ECR and rolling updates to EKS</span>
+          <em>Review guide &rarr;</em>
+        </a>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="sitefoot__lead">
+        <p><strong>Deploybook</strong> &mdash; The complete DevOps guide, from zero to deploy.</p>
+      </div>
+      <p class="sitefoot__fine">Amazon EKS Terminal Commands Cheat Sheet. Built for clarity, hands-on terminal confidence, and safe cloud operations.</p>
+    </footer>
+
+  </main>
+
+  <script>
+    (function () {
+      // Sidebar drawer logic
+      var body = document.body;
+      var openBtn = document.getElementById('menu-open');
+      var closeBtn = document.getElementById('menu-close');
+      var scrim = document.getElementById('scrim');
+      var drawer = document.getElementById('drawer');
+
+      var wide = window.matchMedia('(min-width: 1025px)');
+      var KEY = 'sidebar-closed';
+      var stored = null;
+      try { stored = localStorage.getItem(KEY); } catch (e) {}
+      if (stored === '1') body.classList.add('side-closed');
+
+      function isOpen() {
+        return wide.matches ? !body.classList.contains('side-closed') : body.classList.contains('menu-open');
+      }
+      function syncAria() {
+        var visible = isOpen();
+        drawer.setAttribute('aria-hidden', String(!visible));
+        openBtn.setAttribute('aria-expanded', String(visible));
+      }
+      function setOpen(open) {
+        if (wide.matches) {
+          body.classList.toggle('side-closed', !open);
+          try { localStorage.setItem(KEY, open ? '0' : '1'); } catch (e) {}
+        } else {
+          body.classList.toggle('menu-open', open);
+          (open ? closeBtn : openBtn).focus();
+        }
+        syncAria();
+      }
+      openBtn.addEventListener('click', function () { setOpen(!isOpen()); });
+      closeBtn.addEventListener('click', function () { setOpen(false); });
+      scrim.addEventListener('click', function () { setOpen(false); });
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && !wide.matches && body.classList.contains('menu-open')) setOpen(false);
+      });
+      var onChange = function () { body.classList.remove('menu-open'); syncAria(); };
+      if (wide.addEventListener) wide.addEventListener('change', onChange); else wide.addListener(onChange);
+      syncAria();
+
+      // One-click Copy Button logic
+      var copyBtns = document.querySelectorAll('.cmd-box__copy');
+      copyBtns.forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          var targetId = btn.getAttribute('data-target');
+          var targetEl = document.getElementById(targetId);
+          if (!targetEl) return;
+
+          // Strip comments if needed or copy raw text
+          var textToCopy = targetEl.innerText || targetEl.textContent;
+          navigator.clipboard.writeText(textToCopy).then(function () {
+            var origText = btn.textContent;
+            btn.textContent = 'Copied!';
+            btn.classList.add('copied');
+            setTimeout(function () {
+              btn.textContent = origText;
+              btn.classList.remove('copied');
+            }, 2000);
+          }).catch(function (err) {
+            console.error('Clipboard copy failed:', err);
+          });
+        });
+      });
+
+      // Interactive Checklist persistence
+      var checkItems = document.querySelectorAll('.task-item');
+      var CHECK_KEY = 'eks-tasks-state';
+      var savedState = {};
+      try {
+        savedState = JSON.parse(localStorage.getItem(CHECK_KEY)) || {};
+      } catch (e) {}
+
+      checkItems.forEach(function (item) {
+        var idx = item.getAttribute('data-index');
+        var checkbox = item.querySelector('input[type="checkbox"]');
+        if (savedState[idx]) {
+          checkbox.checked = true;
+          item.classList.add('completed');
+        }
+        checkbox.addEventListener('change', function () {
+          if (checkbox.checked) {
+            item.classList.add('completed');
+            savedState[idx] = true;
+          } else {
+            item.classList.remove('completed');
+            delete savedState[idx];
+          }
+          try {
+            localStorage.setItem(CHECK_KEY, JSON.stringify(savedState));
+          } catch (e) {}
+        });
+      });
+    })();
+  </script>
+</body>
+</html>
