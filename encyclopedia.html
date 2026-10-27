@@ -1,0 +1,1455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DevOps &amp; Cloud Tech Encyclopedia — 1-Line Definitions from Docker to Kubernetes</title>
+  <meta name="description" content="The ultimate DevOps & Cloud encyclopedia: clear, punchy 1-line definitions for Docker, Nginx, EKS, ASG/ADG, Load Balancers, kubectl, Kubernetes, and 50+ essential tech terms.">
+  <meta name="color-scheme" content="dark">
+  <meta name="theme-color" content="#05060a">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="guide.css">
+  <link rel="stylesheet" href="sidebar.css">
+  <style>
+    /* Encyclopedia Custom Design System */
+    .ency-hero {
+      position: relative;
+      isolation: isolate;
+      padding-top: 104px;
+      padding-bottom: 48px;
+      text-align: center;
+      max-width: 920px;
+      margin: 0 auto;
+      padding-left: 24px;
+      padding-right: 24px;
+    }
+    .ency-controls {
+      max-width: 980px;
+      margin: 0 auto 36px;
+      padding: 0 24px;
+    }
+    .search-wrapper {
+      position: relative;
+      margin-bottom: 20px;
+    }
+    .search-input {
+      width: 100%;
+      height: 56px;
+      padding: 0 54px 0 52px;
+      background: rgba(14, 16, 23, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 980px;
+      font-size: 17px;
+      color: #fff;
+      font-family: var(--font);
+      outline: none;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
+      backdrop-filter: blur(20px);
+      transition: all 0.25s ease;
+    }
+    .search-input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 4px rgba(91, 157, 255, 0.2), 0 8px 32px rgba(0, 0, 0, 0.5);
+      background: rgba(14, 16, 23, 0.98);
+    }
+    .search-icon {
+      position: absolute;
+      left: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-3);
+      pointer-events: none;
+      font-size: 18px;
+    }
+    .search-clear {
+      position: absolute;
+      right: 18px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(255, 255, 255, 0.1);
+      border: 0;
+      color: var(--text-2);
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      transition: background 0.2s;
+    }
+    .search-clear:hover {
+      background: rgba(255, 255, 255, 0.2);
+      color: #fff;
+    }
+
+    /* Category pills */
+    .cat-filters {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-bottom: 24px;
+    }
+    .cat-btn {
+      padding: 8px 16px;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 980px;
+      color: var(--text-2);
+      font-size: 13.5px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+    .cat-btn:hover {
+      color: #fff;
+      border-color: rgba(255, 255, 255, 0.2);
+      background: rgba(255, 255, 255, 0.05);
+    }
+    .cat-btn.active {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+      font-weight: 600;
+      box-shadow: 0 4px 14px rgba(91, 157, 255, 0.35);
+    }
+
+    /* Alphabet jump bar */
+    .alpha-bar {
+      display: flex;
+      gap: 4px;
+      flex-wrap: wrap;
+      justify-content: center;
+      padding: 10px 14px;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--line);
+      border-radius: var(--r-md);
+      margin-bottom: 32px;
+    }
+    .alpha-link {
+      padding: 4px 8px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-3);
+      border-radius: 4px;
+      text-decoration: none !important;
+      transition: all 0.15s ease;
+    }
+    .alpha-link:hover, .alpha-link.active {
+      color: var(--accent-ink);
+      background: rgba(91, 157, 255, 0.15);
+    }
+
+    /* Terms Grid */
+    .ency-wrap {
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 0 24px 100px;
+    }
+    .results-count {
+      margin-bottom: 20px;
+      font-size: 14px;
+      color: var(--text-3);
+      font-weight: 500;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .terms-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 18px;
+    }
+
+    /* Term Card */
+    .term-card {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--r-md);
+      padding: 22px 24px;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      transition: transform 0.25s cubic-bezier(0.32, 0.72, 0, 1), border-color 0.25s ease, box-shadow 0.25s ease;
+    }
+    .term-card:hover {
+      transform: translateY(-3px);
+      border-color: rgba(91, 157, 255, 0.4);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+    }
+    .term-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    .term-title-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+    .term-title {
+      margin: 0;
+      font-size: 21px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: #fff;
+    }
+    .term-alias {
+      font-size: 12px;
+      color: var(--text-3);
+      font-family: var(--mono);
+    }
+    .term-badge {
+      display: inline-block;
+      padding: 3px 9px;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      border-radius: 980px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--line);
+      color: var(--accent-ink);
+      white-space: nowrap;
+    }
+
+    /* 1-Line Definition Box */
+    .term-oneline {
+      background: linear-gradient(135deg, rgba(91, 157, 255, 0.12), rgba(155, 123, 255, 0.06));
+      border: 1px solid rgba(120, 160, 255, 0.2);
+      border-radius: 8px;
+      padding: 10px 14px;
+      margin-bottom: 14px;
+    }
+    .term-oneline-label {
+      font-size: 10.5px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--accent-ink);
+      display: block;
+      margin-bottom: 3px;
+    }
+    .term-def {
+      margin: 0;
+      font-size: 15px;
+      line-height: 1.5;
+      color: #fff;
+      font-weight: 500;
+    }
+
+    /* Explanation & Context */
+    .term-desc {
+      font-size: 14px;
+      line-height: 1.6;
+      color: var(--text-2);
+      margin: 0 0 16px;
+      flex: 1;
+    }
+
+    /* Card Footer & Copy */
+    .term-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 14px;
+      border-top: 1px solid var(--line);
+      margin-top: auto;
+    }
+    .term-guide-link {
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--accent-ink);
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: gap 0.2s;
+    }
+    .term-guide-link:hover {
+      gap: 7px;
+      text-decoration: underline;
+    }
+    .copy-term-btn {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--line);
+      color: var(--text-3);
+      border-radius: 6px;
+      padding: 4px 9px;
+      font-size: 11.5px;
+      cursor: pointer;
+      font-family: var(--font);
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      transition: all 0.2s ease;
+    }
+    .copy-term-btn:hover {
+      background: rgba(255, 255, 255, 0.12);
+      color: #fff;
+    }
+    .copy-term-btn.copied {
+      background: rgba(39, 201, 63, 0.2);
+      color: #70f08a;
+      border-color: rgba(39, 201, 63, 0.4);
+    }
+
+    /* Highlight matching terms */
+    mark {
+      background: rgba(255, 179, 64, 0.3);
+      color: #ffca66;
+      border-radius: 2px;
+      padding: 0 2px;
+    }
+
+    /* No results state */
+    .no-results {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 60px 24px;
+      background: var(--surface);
+      border: 1px dashed var(--line);
+      border-radius: var(--r-lg);
+    }
+    .no-results h3 {
+      font-size: 20px;
+      margin: 0 0 8px;
+      color: #fff;
+    }
+    .no-results p {
+      color: var(--text-3);
+      margin: 0 0 16px;
+    }
+
+    @media (max-width: 768px) {
+      .terms-grid { grid-template-columns: 1fr; }
+      .ency-hero { padding-top: 80px; }
+    }
+  </style>
+</head>
+<body class="guide">
+
+  <!-- Top bar -->
+  <header class="topbar">
+    <div class="topbar__inner">
+      <div class="topbar__left">
+        <button class="menu-btn" id="menu-open" type="button" aria-controls="drawer" aria-expanded="false">
+          <span class="menu-btn__bars" aria-hidden="true"></span>
+          Menu
+        </button>
+        <a class="topbar__brand" href="index.html">Deploybook</a>
+      </div>
+      <nav class="topbar__nav" aria-label="Jump to">
+        <a href="#search-area">Search</a>
+        <a href="eks-commands.html">EKS Commands</a>
+        <a href="eks.html">EKS Guide</a>
+        <a href="diagrams.html">Architecture</a>
+        <a href="index.html#roadmap">Roadmap</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Off-canvas drawer menu -->
+  <div class="scrim" id="scrim"></div>
+  <aside class="drawer" id="drawer" aria-label="Site menu">
+    <div class="drawer__head">
+      <a class="drawer__brand" href="index.html">Deploybook</a>
+      <button class="drawer__close" id="menu-close" type="button" aria-label="Hide sidebar">&times;</button>
+    </div>
+
+    <nav aria-label="Guides">
+      <ul class="drawer__list">
+        <li>
+          <a href="index.html">
+            <span class="drawer__title">Home</span>
+          </a>
+        </li>
+        <li>
+          <a href="encyclopedia.html" aria-current="page">
+            <span class="drawer__title">&#128218; Tech Encyclopedia</span>
+            <span class="drawer__desc">1-line definitions for all DevOps terms</span>
+          </a>
+        </li>
+        <li>
+          <a href="diagrams.html">
+            <span class="drawer__title">Architecture Diagrams</span>
+            <span class="drawer__desc">Docker, EC2, Nginx, ASG &middot; Visuals</span>
+          </a>
+        </li>
+      </ul>
+
+      <p class="drawer__label">Read in this order</p>
+      <ul class="drawer__list">
+        <li>
+          <a href="github.html">
+            <span class="drawer__title"><span class="drawer__step">1</span>Git &amp; GitHub</span>
+            <span class="drawer__desc">Save, share and team up on code &middot; 8 min</span>
+          </a>
+        </li>
+        <li>
+          <a href="shell.html">
+            <span class="drawer__title"><span class="drawer__step">2</span>Shell scripting</span>
+            <span class="drawer__desc">Automate tasks with Bash &middot; 12 min</span>
+          </a>
+        </li>
+        <li>
+          <a href="aws.html">
+            <span class="drawer__title"><span class="drawer__step">3</span>AWS essentials</span>
+            <span class="drawer__desc">Servers, storage and security &middot; 14 min</span>
+          </a>
+        </li>
+        <li>
+          <a href="ec2.html">
+            <span class="drawer__title"><span class="drawer__step">4</span>EC2 servers</span>
+            <span class="drawer__desc">Launch and connect to your first server &middot; 15 min</span>
+          </a>
+        </li>
+        <li>
+          <a href="docker.html">
+            <span class="drawer__title"><span class="drawer__step">5</span>Docker</span>
+            <span class="drawer__desc">Images, containers and commands &middot; 12 min</span>
+          </a>
+        </li>
+        <li>
+          <a href="nginx.html">
+            <span class="drawer__title"><span class="drawer__step">6</span>Nginx</span>
+            <span class="drawer__desc">Web server, proxy and HTTPS &middot; 14 min</span>
+          </a>
+        </li>
+        <li>
+          <a href="cicd.html">
+            <span class="drawer__title"><span class="drawer__step">7</span>CI/CD with GitHub Actions</span>
+            <span class="drawer__desc">Auto-deploy React + Express &middot; 20 min</span>
+          </a>
+        </li>
+        <li>
+          <a href="eks.html">
+            <span class="drawer__title"><span class="drawer__step">8</span>Amazon EKS</span>
+            <span class="drawer__desc">Kubernetes on AWS, explained &middot; 14 min</span>
+          </a>
+        </li>
+        <li>
+          <a href="eks-commands.html">
+            <span class="drawer__title"><span class="drawer__step">&gt;_</span>EKS Cheat Sheet</span>
+            <span class="drawer__desc">Terminal commands &amp; ECR deploy &middot; 10 min</span>
+          </a>
+        </li>
+        <li>
+          <a href="terraform.html">
+            <span class="drawer__title"><span class="drawer__step">9</span>Terraform</span>
+            <span class="drawer__desc">Infrastructure as Code &middot; 15 min</span>
+          </a>
+        </li>
+        <li>
+          <a href="grafana.html">
+            <span class="drawer__title"><span class="drawer__step">10</span>Grafana</span>
+            <span class="drawer__desc">Dashboards &amp; monitoring &middot; 13 min</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
+    <p class="drawer__foot">Short guides in plain English, written for people who are just starting out.</p>
+  </aside>
+
+  <main id="top">
+
+    <!-- Hero -->
+    <section class="ency-hero">
+      <p class="eyebrow">&#128218; The DevOps &amp; Cloud Dictionary</p>
+      <h1>Tech Encyclopedia,<br>in One Line.</h1>
+      <p class="hero__lead">No corporate fluff, no confusing jargon. Plain-English 1-line definitions for Docker, Nginx, EKS, ASG/ADG, Load Balancers, kubectl, Kubernetes, and beyond.</p>
+      <p class="hero__meta">Live search &middot; Filter by category &middot; Instant copy</p>
+    </section>
+
+    <!-- Controls -->
+    <div class="ency-controls" id="search-area">
+      <!-- Search Input -->
+      <div class="search-wrapper">
+        <span class="search-icon" aria-hidden="true">&#128269;</span>
+        <input type="text" id="term-search" class="search-input" placeholder="Search any term (e.g., docker, adg, nginx, qube, kubectl, loadbalancer)..." autocomplete="off" spellcheck="false">
+        <button id="search-clear" class="search-clear" type="button" aria-label="Clear search">&times;</button>
+      </div>
+
+      <!-- Categories -->
+      <div class="cat-filters" id="cat-filters" role="group" aria-label="Filter terms by domain">
+        <button class="cat-btn active" data-cat="all" type="button">All Terms</button>
+        <button class="cat-btn" data-cat="kubernetes" type="button">Kubernetes &amp; EKS</button>
+        <button class="cat-btn" data-cat="containers" type="button">Containers &amp; Docker</button>
+        <button class="cat-btn" data-cat="aws" type="button">AWS &amp; Cloud</button>
+        <button class="cat-btn" data-cat="networking" type="button">Traffic &amp; Load Balancing</button>
+        <button class="cat-btn" data-cat="cicd" type="button">CI/CD &amp; Automation</button>
+        <button class="cat-btn" data-cat="monitoring" type="button">Monitoring &amp; Observability</button>
+      </div>
+
+      <!-- Alphabet Navigation -->
+      <div class="alpha-bar" id="alpha-bar" aria-label="Jump to letter">
+        <span style="font-size:11px;color:var(--text-3);line-height:24px;margin-right:6px;">JUMP:</span>
+        <!-- Generated dynamically or linked -->
+      </div>
+    </div>
+
+    <!-- Terms Grid Container -->
+    <div class="ency-wrap">
+      <div class="results-count">
+        <span id="count-display">Showing 52 terms</span>
+        <span style="font-size: 12px; color: var(--text-3);">Click "Copy" to paste any definition</span>
+      </div>
+
+      <div class="terms-grid" id="terms-grid">
+
+        <!-- ==================== DOCKER ==================== -->
+        <article class="term-card" data-cat="containers" data-letter="D" data-keywords="docker container image containerization daemon dockerfile container runtime">
+          <div class="term-top">
+            <div class="term-title-wrap">
+              <h2 class="term-title">Docker</h2>
+              <span class="term-alias">Container Platform</span>
+            </div>
+            <span class="term-badge">Containers</span>
+          </div>
+          <div class="term-oneline">
+            <span class="term-oneline-label">In One Line</span>
+            <p class="term-def">Packs your application with all its code, libraries, and settings into one sealed box that runs identically on any computer.</p>
+          </div>
+          <p class="term-desc">Eliminates the classic "works on my machine" problem by running software inside isolated, lightweight process environments.</p>
+          <div class="term-footer">
+            <a href="docker.html" class="term-guide-link">Docker Guide &rarr;</a>
+            <button class="copy-term-btn" type="button" data-def="Docker: Packs your application with all its code, libraries, and settings into one sealed box that runs identically on any computer.">Copy</button>
+          </div>
+        </article>
+
+        <!-- ==================== NGINX ==================== -->
+        <article class="term-card" data-cat="networking" data-letter="N" data-keywords="nginx web server reverse proxy load balancer https ssl fastcgi">
+          <div class="term-top">
+            <div class="term-title-wrap">
+              <h2 class="term-title">Nginx</h2>
+              <span class="term-alias">Web Server &amp; Reverse Proxy</span>
+            </div>
+            <span class="term-badge">Traffic</span>
+          </div>
+          <div class="term-oneline">
+            <span class="term-oneline-label">In One Line</span>
+            <p class="term-def">A high-speed traffic host standing at the front door of your servers to serve static files and route visitors to your backend apps.</p>
+          </div>
+          <p class="term-desc">Handles SSL/TLS termination, request caching, and reverse proxying so client requests reach the appropriate ports and containers securely.</p>
+          <div class="term-footer">
+            <a href="nginx.html" class="term-guide-link">Nginx Guide &rarr;</a>
+            <button class="copy-term-btn" type="button" data-def="Nginx: A high-speed traffic host standing at the front door of your servers to serve static files and route visitors to your backend apps.">Copy</button>
+          </div>
+        </article>
+
+        <!-- ==================== EKS ==================== -->
+        <article class="term-card" data-cat="kubernetes" data-letter="E" data-keywords="eks amazon eks elastic kubernetes service aws k8s control plane managed">
+          <div class="term-top">
+            <div class="term-title-wrap">
+              <h2 class="term-title">EKS</h2>
+              <span class="term-alias">Elastic Kubernetes Service (AWS)</span>
+            </div>
+            <span class="term-badge">Kubernetes</span>
+          </div>
+          <div class="term-oneline">
+            <span class="term-oneline-label">In One Line</span>
+            <p class="term-def">Amazon's managed Kubernetes service that runs the control plane for you across 3 physical facilities with zero management overhead.</p>
+          </div>
+          <p class="term-desc">You deploy containers and worker node groups, while AWS handles master node uptime, automated backups, and version patching.</p>
+          <div class="term-footer">
+            <a href="eks.html" class="term-guide-link">EKS Guide &rarr;</a>
+            <button class="copy-term-btn" type="button" data-def="EKS: Amazon's managed Kubernetes service that runs the control plane for you across 3 physical facilities with zero management overhead.">Copy</button>
+          </div>
+        </article>
+
+        <!-- ==================== ASG / ADG ==================== -->
+        <article class="term-card" data-cat="aws" data-letter="A" data-keywords="asg adg auto scaling group autoscaling ec2 scale out scale in elasticity">
+          <div class="term-top">
+            <div class="term-title-wrap">
+              <h2 class="term-title">ASG (Auto Scaling Group)</h2>
+              <span class="term-alias">AWS EC2 Elasticity &middot; aka ADG</span>
+            </div>
+            <span class="term-badge">AWS</span>
+          </div>
+          <div class="term-oneline">
+            <span class="term-oneline-label">In One Line</span>
+            <p class="term-def">An automated pool of EC2 servers that adds instances when traffic surges and terminates them when demand cools down.</p>
+          </div>
+          <p class="term-desc">Maintains healthy server minimums and automatically replaces failed or frozen virtual machines without human intervention.</p>
+          <div class="term-footer">
+            <a href="aws.html" class="term-guide-link">AWS Essentials &rarr;</a>
+            <button class="copy-term-btn" type="button" data-def="ASG (Auto Scaling Group): An automated pool of EC2 servers that adds instances when traffic surges and terminates them when demand cools down.">Copy</button>
+          </div>
+        </article>
+
+        <!-- ==================== LOAD BALANCER ==================== -->
+        <article class="term-card" data-cat="networking" data-letter="L" data-keywords="load balancer loadbalancer alb nlb clb elb traffic round robin">
+          <div class="term-top">
+            <div class="term-title-wrap">
+              <h2 class="term-title">Load Balancer</h2>
+              <span class="term-alias">ALB / NLB / CLB</span>
+            </div>
+            <span class="term-badge">Traffic</span>
+          </div>
+          <div class="term-oneline">
+            <span class="term-oneline-label">In One Line</span>
+            <p class="term-def">A digital traffic cop that evenly spreads incoming visitor requests across multiple healthy servers so no single computer gets overwhelmed.</p>
+          </div>
+          <p class="term-desc">Detects unhealthy servers instantly, automatically reroutes requests, and acts as the public entry point for your infrastructure.</p>
+          <div class="term-footer">
+            <a href="eks-commands.html#ecr-deploy" class="term-guide-link">Load Balancer in EKS &rarr;</a>
+            <button class="copy-term-btn" type="button" data-def="Load Balancer: A digital traffic cop that evenly spreads incoming visitor requests across multiple healthy servers so no single computer gets overwhelmed.">Copy</button>
+          </div>
+        </article>
+
+        <!-- ==================== KUBECTL ==================== -->
+        <article class="term-card" data-cat="kubernetes" data-letter="K" data-keywords="kubectl kbue ctl kubecontrol kube ctl cli command line kubernetes client">
+          <div class="term-top">
+            <div class="term-title-wrap">
+              <h2 class="term-title">kubectl</h2>
+              <span class="term-alias">Pronounced "koob-control"</span>
+            </div>
+            <span class="term-badge">Kubernetes</span>
+          </div>
+          <div class="term-oneline">
+            <span class="term-oneline-label">In One Line</span>
+            <p class="term-def">The remote control command-line tool you use to inspect, create, scale, and troubleshoot anything inside a Kubernetes cluster.</p>
+          </div>
+          <p class="term-desc">Sends authenticated JSON/YAML requests to the cluster API server to view logs, restart deployments, and inspect worker nodes.</p>
+          <div class="term-footer">
+            <a href="eks-commands.html#k8s-commands" class="term-guide-link">kubectl Cheat Sheet &rarr;</a>
+            <button class="copy-term-btn" type="button" data-def="kubectl: The remote control command-line tool you use to inspect, create, scale, and troubleshoot anything inside a Kubernetes cluster.">Copy</button>
+          </div>
+        </article>
+
+        <!-- ==================== KUBERNETES / KUBE ==================== -->
+        <article class="term-card" data-cat="kubernetes" data-letter="K" data-keywords="kubernetes qube kube k8s orchestration container manager pods nodes">
+          <div class="term-top">
+            <div class="term-title-wrap">
+              <h2 class="term-title">Kubernetes (K8s)</h2>
+              <span class="term-alias">aka Kube / Qube</span>
+            </div>
+            <span class="term-badge">Kubernetes</span>
+          </div>
+          <div class="term-oneline">
+            <span class="term-oneline-label">In One Line</span>
+            <p class="term-def">An automated operating system for the cloud that schedules, balances, scales, and self-heals containerized applications across many servers.</p>
+          </div>
+          <p class="term-desc">Acts as the head chef of your infrastructure: ensures if a container dies, another one immediately replaces it without downtime.</p>
+          <div class="term-footer">
+            <a href="eks.html" class="term-guide-link">Kubernetes Explained &rarr;</a>
+            <button class="copy-term-btn" type="button" data-def="Kubernetes (K8s): An automated operating system for the cloud that schedules, balances, scales, and self-heals containerized applications across many servers.">Copy</button>
+          </div>
+        </article>
+
+        <!-- ==================== KUBELET ==================== -->
+        <article class="term-card" data-cat="kubernetes" data-letter="K" data-keywords="kubelet kube node agent pod lifecycle worker">
+          <div class="term-top">
+            <div class="term-title-wrap">
+              <h2 class="term-title">Kubelet</h2>
+              <span class="term-alias">Worker Node Agent</span>
+            </div>
+            <span class="term-badge">Kubernetes</span>
+          </div>
+          <div class="term-oneline">
+            <span class="term-oneline-label">In One Line</span>
+            <p class="term-def">The supervisor agent running on every worker node that receives orders from the control plane and ensures assigned pods stay alive.</p>
+          </div>
+          <p class="term-desc">Checks PodSpecs, triggers container runtimes to start containers, performs health checks, and reports node status back to the API server.</p>
+          <div class="term-footer">
+            <a href="eks.html#node" class="term-guide-link">Nodes in EKS &rarr;</a>
+            <button class="copy-term-btn" type="button" data-def="Kubelet: The supervisor agent running on every worker node that receives orders from the control plane and ensures assigned pods stay alive.">Copy</button>
+          </div>
+        </article>
+
+        <!-- ==================== KUBE-PROXY ==================== -->
+        <article class="term-card" data-cat="kubernetes" data-letter="K" data-keywords="kube-proxy kube proxy iptables ipvs cluster networking">
+          <div class="term-top">
+            <div class="term-title-wrap">
+              <h2 class="term-title">kube-proxy</h2>
+              <span class="term-alias">Cluster Network Forwarder</span>
+            </div>
+            <span class="term-badge">Kubernetes</span>
+          </div>
+          <div class="term-oneline">
+            <span class="term-oneline-label">In One Line</span>
+            <p class="term-def">A network controller running on each worker node that maintains routing rules so pods can talk to services and each other.</p>
+          </div>
+          <p class="term-desc">Translates virtual Service IPs and ports into actual pod backend IP addresses using operating system packet filters like iptables or IPVS.</p>
+          <div class="term-footer">
+            <a href="eks.html#deployment" class="term-guide-link">Services in EKS &rarr;</a>
+            <button class="copy-term-btn" type="button" data-def="kube-proxy: A network controller running on each worker node that maintains routing rules so pods can talk to services and each other.">Copy</button>
+          </div>
+        </article>
+
+        <!-- ==================== KUBE-APISERVER ==================== -->
+        <article class="term-card" data-cat="kubernetes" data-letter="K" data-keywords="kube-apiserver api server control plane master etcd rest">
+          <div class="term-top">
+            <div class="term-title-wrap">
+              <h2 class="term-title">kube-apiserver</h2>
+              <span class="term-alias">Kubernetes Front Gate</span>
+            </div>
+            <span class="term-badge">Kubernetes</span>
+          </div>
+          <div class="term-oneline">
+            <span class="term-oneline-label">In One Line</span>
+            <p class="term-def">The central doorway of the cluster that validates, authenticates, and executes every command issued by users or internal controllers.</p>
+          </div>
+          <p class="term-desc">The only component that talks directly to the etcd database to store and retrieve cluster state.</p>
+          <div class="term-footer">
+            <a href="eks.html#cluster" class="term-guide-link">Control Plane &rarr;</a>
+            <button class="copy-term-btn" type="button" data-def="kube-apiserver: The central doorway of the cluster that validates, authenticates, and executes every command issued by users or internal controllers.">Copy</button>
+          </div>
+        </article>
+
+        <!-- ==================== POD ==================== -->
+        <article class="term-card" data-cat="kubernetes" data-letter="P" data-keywords="pod pods container atomic unit k8s">
+          <div class="term-top">
+            <div class="term-title-wrap">
+              <h2 class="term-title">Pod</h2>
+              <span class="term-alias">Atomic Compute Unit</span>
+            </div>
+            <span class="term-badge">Kubernetes</span>
+          </div>
+          <div class="term-oneline">
+            <span class="term-oneline-label">In One Line</span>
+            <p class="term-def">The smallest deployable unit in Kubernetes—a disposable tray that wraps one or more tightly-coupled containers sharing IP and storage.</p>
+          </div>
+          <p class="term-desc">Pods are ephemeral: if one crashes or runs out of memory, Kubernetes destroys it and launches a brand new one.</p>
+          <div class="term-footer">
+            <a href="eks.html#pod" class="term-guide-link">Pods Explained &rarr;</a>
+            <button class="copy-term-btn" type="button" data-def="Pod: The smallest deployable unit in Kubernetes—a disposable tray that wraps one or more tightly-coupled containers sharing IP and storage.">Copy</button>
+          </div>
+        </article>
+
+        <!-- ==================== DEPLOYMENT ==================== -->
+        <article class="term-card" data-cat="kubernetes" data-letter="D" data-keywords="deployment replicaset rolling update replicas zero downtime">
+          <div class="term-top">
+            <div class="term-title-wrap">
+              <h2 class="term-title">Deployment</h2>
+              <span class="term-alias">Pod Lifecycle Manager</span>
+            </div>
+            <span class="term-badge">Kubernetes</span>
+          </div>
+          <div class="term-oneline">
+            <span class="term-oneline-label">In One Line</span>
+            <p class="term-def">A manager that guarantees a set number of pod replicas are running and safely conducts zero-downtime rolling updates.</p>
+          </div>
+          <p class="term-desc">When you push an update, it spins up new version pods before safely draining old ones so your website never displays an error.</p>
+          <div class="term-footer">
+            <a href="eks-commands.html#k8s-commands" class="term-guide-link">Deployment Commands &rarr;</a>
+            <button class="copy-term-btn" type="button" data-def="Deployment: A manager that guarantees a set number of pod replicas are running and safely conducts zero-downtime rolling updates.">Copy</button>
+          </div>
+        </article>
+
+        <!-- ==================== SERVICE ==================== -->
+        <article class="term-card" data-cat="kubernetes" data-letter="S" data-keywords="service clusterip nodeport loadbalancer endpoint static ip">
+          <div class="term-top">
+            <div class="term-title-wrap">
+              <h2 class="term-title">Service</h2>
+              <span class="term-alias">Stable Endpoint &middot; ClusterIP/LB</span>
+            </div>
+            <span class="term-badge">Kubernetes</span>
+          </div>
+          <div class="term-oneline">
+            <span class="term-oneline-label">In One Line</span>
+            <p class="term-def">A permanent IP address and DNS name that routes traffic across a group of ephemeral, constantly shifting pods.</p>
+          </div>
+          <p class="term-desc">Because pods are created and destroyed constantly, services provide a rock-solid target for internal apps or outside visitors to reach.</p>
+          <div class="term-footer">
+            <a href="eks.html#deployment" class="term-guide-link">Services Explained &rarr;</a>
+            <button class="copy-term-btn" type="button" data-def="Service: A permanent IP address and DNS name that routes traffic across a group of ephemeral, constantly shifting pods.">Copy</button>
+          </div>
+        </article>
+
+        <!-- ==================== INGRESS ==================== -->
+        <article class="term-card" data-cat="kubernetes" data-letter="I" data-keywords="ingress ingress controller routing path host ssl alb controller">
+          <div class="term-top">
+            <div class="term-title-wrap">
+              <h2 class="term-title">Ingress</h2>
+              <span class="term-alias">HTTP/HTTPS Route Manager</span>
+            </div>
+            <span class="term-badge">Traffic</span>
+          </div>
+          <div class="term-oneline">
+            <span class="term-oneline-label">In One Line</span>
+            <p class="term-def">A smart routing rulebook that directs external HTTP/HTTPS traffic to internal services based on domain names and URL paths.</p>
+          </div>
+          <p class="term-desc">Allows you to expose 50 different microservices using just one shared AWS Application Load Balancer instead of paying for 50 separate LBs.</p>
+          <div class="term-footer">
+            <a href="eks.html#gui-deploy" class="term-guide-link">Ingress in EKS &rarr;</a>
+            <button class="copy-term-btn" type="button" data-def="Ingress: A smart routing rulebook that directs external HTTP/HTTPS traffic to internal services based on domain names and URL paths.">Copy</button>
+          </div>
+        </article>
+
+        <!-- ==================== ECR ==================== -->
+        <article class="term-card" data-cat="aws" data-letter="E" data-keywords="ecr amazon ecr elastic container registry docker registry repository">
+          <div class="term-top">
+            <div class="term-title-wrap">
+              <h2 class="term-title">ECR</h2>
+              <span class="term-alias">Elastic Container Registry (AWS)</span>
+            </div>
+            <span class="term-badge">AWS</span>
+          </div>
+          <div class="term-oneline">
+            <span class="term-oneline-label">In One Line</span>
+            <p class="term-def">Amazon's private, highly secure pantry for storing, versioning, and distributing Docker container images to EKS or EC2.</p>
+          </div>
+          <p class="term-desc">Integrates natively with AWS IAM credentials so your worker servers can pull application updates without public exposure.</p>
+          <div class="term-footer">
+            <a href="eks-commands.html#ecr-deploy" class="term-guide-link">Deploying from ECR &rarr;</a>
+            <button class="copy-term-btn" type="button" data-def="ECR: Amazon's private, highly secure pantry for storing, versioning, and distributing Docker container images to EKS or EC2.">Copy</button>
+          </div>
+        </article>
+
+        <!-- ==================== EC2 ==================== -->
+        <article class="term-card" data-cat="aws" data-letter="E" data-keywords="ec2 elastic compute cloud virtual server instance vm aws">
+          <div class="term-top">
+            <div class="term-title-wrap">
+              <h2 class="term-title">EC2</h2>
+              <span class="term-alias">Elastic Compute Cloud</span>
+            </div>
+            <span class="term-badge">AWS</span>
+          </div>
+          <div class="term-oneline">
+            <span class="term-oneline-label">In One Line</span>
+            <p class="term-def">On-demand virtual computers you rent from AWS by the second to host code, databases, or act as Kubernetes worker nodes.</p>
+          </div>
+          <p class="term-desc">Choose CPU, RAM, GPU, and storage size on the fly and resize whenever requirements change.</p>
+          <div class="term-footer">
+            <a href="ec2.html" class="term-guide-link">EC2 Guide &rarr;</a>
+            <button class="copy-term-btn" type="button" data-def="EC2: On-demand virtual computers you rent from AWS by the second to host code, databases, or act as Kubernetes worker nodes.">Copy</button>
+          </div>
+        </article>
+
+        <!-- ==================== S3 ==================== -->
+        <article class="term-card" data-cat="aws" data-letter="S" data-keywords="s3 simple storage service bucket object blob storage durable">
+          <div class="term-top">
+            <div class="term-title-wrap">
+              <h2 class="term-title">S3</h2>
+              <span class="term-alias">Simple Storage Service</span>
+            </div>
+            <span class="term-badge">AWS</span>
+          </div>
+          <div class="term-oneline">
+            <span class="term-oneline-label">In One Line</span>
+            <p class="term-def">An infinitely scalable digital filing cabinet for storing any quantity of files, images, database backups, or static websites.</p>
+          </div>
+          <p class="term-desc">Offers 99.999999999% (11 9's) durability by automatically replicating your files across multiple physical data centers.</p>
+          <div class="term-footer">
+            <a href="aws.html" class="term-guide-link">AWS S3 Essentials &rarr;</a>
+            <button class="copy-term-btn" type="button" data-def="S3: An infinitely scalable digital filing cabinet for storing any quantity of files, images, database backups, or static websites.">Copy</button>
+          </div>
+        </article>
+
+        <!-- ==================== IAM ==================== -->
+        <article class="term-card" data-cat="aws" data-letter="I" data-keywords="iam identity and access management roles users policies security credentials">
+          <div class="term-top">
+            <div class="term-title-wrap">
+              <h2 class="term-title">IAM</h2>
+              <span class="term-alias">Identity &amp; Access Management</span>
+            </div>
+            <span class="term-badge">AWS</span>
+          </div>
+          <div class="term-oneline">
+            <span class="term-oneline-label">In One Line</span>
+            <p class="term-def">The security badge office of AWS that governs exactly who (or which service) is permitted to access which cloud resources.</p>
+          </div>
+          <p class="term-desc">Enforces least-privilege security by attaching roles and policies to EKS nodes, CI/CD runners, and developers.</p>
+          <div class="term-footer">
+            <a href="aws.html" class="term-guide-link">IAM Essentials &rarr;</a>
+            <button class="copy-term-btn" type="button" data-def="IAM: The security badge office of AWS that governs exactly who (or which service) is permitted to access which cloud resources.">Copy</button>
+          </div>
+        </article>
+
+        <!-- ==================== VPC ==================== -->
+        <article class="term-card" data-cat="networking" data-letter="V" data-keywords="vpc virtual private cloud isolated network cidr subnets">
+          <div class="term-top">
+            <div class="term-title-wrap">
+              <h2 class="term-title">VPC</h2>
+              <span class="term-alias">Virtual Private Cloud</span>
+            </div>
+            <span class="term-badge">Traffic</span>
+          </div>
+          <div class="term-oneline">
+            <span class="term-oneline-label">In One Line</span>
+            <p class="term-def">Your own private, fenced-off estate inside the AWS cloud where you launch and securely isolate your servers and databases.</p>
+          </div>
+          <p class="term-desc">Gives you complete control over IP address ranges, subnets, route tables, network gateways, and stateful firewalls.</p>
+          <div class="term-footer">
+            <a href="aws.html" class="term-guide-link">VPC Networking &rarr;</a>
+            <button class="copy-term-btn" type="button" data-def="VPC: Your own private, fenced-off estate inside the AWS cloud where you launch and securely isolate your servers and databases.">Copy</button>
+          </div>
+        </article>
+
+        <!-- ==================== CI/CD ==================== -->
+        <article class="term-card" data-cat="cicd" data-letter="C" data-keywords="cicd ci cd continuous integration continuous delivery deployment pipeline automation">
+          <div class="term-top">
+            <div class="term-title-wrap">
+              <h2 class="term-title">CI/CD</h2>
+              <span class="term-alias">Continuous Integration &amp; Delivery</span>
+            </div>
+            <span class="term-badge">CI/CD</span>
+          </div>
+          <div class="term-oneline">
+            <span class="term-oneline-label">In One Line</span>
+            <p class="term-def">An automated assembly line that tests, builds, and deploys your code to live servers every single time you push to Git.</p>
+          </div>
+          <p class="term-desc">Catches bugs before they reach production, packages container images, and removes stressful manual Friday night deployments.</p>
+          <div class="term-footer">
+            <a href="cicd.html" class="term-guide-link">CI/CD Guide &rarr;</a>
+            <button class="copy-term-btn" type="button" data-def="CI/CD: An automated assembly line that tests, builds, and deploys your code to live servers every single time you push to Git.">Copy</button>
+          </div>
+        </article>
+
+        <!-- ==================== GITHUB ACTIONS ==================== -->
+        <article class="term-card" data-cat="cicd" data-letter="G" data-keywords="github actions workflows runners yaml automation pipeline">
+          <div class="term-top">
+            <div class="term-title-wrap">
+              <h2 class="term-title">GitHub Actions</h2>
+              <span class="term-alias">Workflow Automation</span>
+            </div>
+            <span class="term-badge">CI/CD</span>
+          </div>
+          <div class="term-oneline">
+            <span class="term-oneline-label">In One Line</span>
+            <p class="term-def">GitHub's built-in automation robot that runs tests, builds Docker containers, and updates your EKS pods when code is merged.</p>
+          </div>
+          <p class="term-desc">Configured with simple YAML files located inside <code>.github/workflows</code> and executed across disposable cloud virtual machines.</p>
+          <div class="term-footer">
+            <a href="cicd.html" class="term-guide-link">Actions CI/CD Guide &rarr;</a>
+            <button class="copy-term-btn" type="button" data-def="GitHub Actions: GitHub's built-in automation robot that runs tests, builds Docker containers, and updates your EKS pods when code is merged.">Copy</button>
+          </div>
+        </article>
+
+        <!-- ==================== TERRAFORM ==================== -->
+        <article class="term-card" data-cat="cicd" data-letter="T" data-keywords="terraform iac infrastructure as code hcl state plan apply hashicorp">
+          <div class="term-top">
+            <div class="term-title-wrap">
+              <h2 class="term-title">Terraform</h2>
+              <span class="term-alias">Infrastructure as Code (IaC)</span>
+            </div>
+            <span class="term-badge">CI/CD</span>
+          </div>
+          <div class="term-oneline">
+            <span class="term-oneline-label">In One Line</span>
+            <p class="term-def">A blueprint tool that lets you write code to automatically build, modify, and destroy cloud servers, VPCs, and EKS clusters safely.</p>
+          </div>
+          <p class="term-desc">Replaces manual console clicking with version-controlled, repeatable text files using the simple workflow: <code>init &rarr; plan &rarr; apply</code>.</p>
+          <div class="term-footer">
+            <a href="terraform.html" class="term-guide-link">Terraform Guide &rarr;</a>
+            <button class="copy-term-btn" type="button" data-def="Terraform: A blueprint tool that lets you write code to automatically build, modify, and destroy cloud servers, VPCs, and EKS clusters safely.">Copy</button>
+          </div>
+        </article>
+
+        <!-- ==================== PROMETHEUS ==================== -->
+        <article class="term-card" data-cat="monitoring" data-letter="P" data-keywords="prometheus metrics monitoring time series scraping alerting tsdb">
+          <div class="term-top">
+            <div class="term-title-wrap">
+              <h2 class="term-title">Prometheus</h2>
+              <span class="term-alias">Metrics Collector &amp; Time-Series DB</span>
+            </div>
+            <span class="term-badge">Observability</span>
+          </div>
+          <div class="term-oneline">
+            <span class="term-oneline-label">In One Line</span>
+            <p class="term-def">A 24/7 cluster doctor that periodically scrapes numbers (CPU, RAM, latency, errors) from your apps and sounds alerts when things go wrong.</p>
+          </div>
+          <p class="term-desc">Stores metric datapoints efficiently in a time-series database and triggers PagerDuty/Slack notifications via Alertmanager.</p>
+          <div class="term-footer">
+            <a href="grafana.html" class="term-guide-link">Monitoring &rarr;</a>
+            <button class="copy-term-btn" type="button" data-def="Prometheus: A 24/7 cluster doctor that periodically scrapes numbers (CPU, RAM, latency, errors) from your apps and sounds alerts when things go wrong.">Copy</button>
+          </div>
+        </article>
+
+        <!-- ==================== GRAFANA ==================== -->
+        <article class="term-card" data-cat="monitoring" data-letter="G" data-keywords="grafana dashboards visualization graphs metrics monitoring ui">
+          <div class="term-top">
+            <div class="term-title-wrap">
+              <h2 class="term-title">Grafana</h2>
+              <span class="term-alias">Visualization &amp; Dashboards</span>
+            </div>
+            <span class="term-badge">Observability</span>
+          </div>
+          <div class="term-oneline">
+            <span class="term-oneline-label">In One Line</span>
+            <p class="term-def">A high-tech control room dashboard that turns raw metrics and logs into real-time visual charts and cluster health graphs.</p>
+          </div>
+          <p class="term-desc">Connects seamlessly to Prometheus, CloudWatch, and Elasticsearch to show response times, active visitors, and pod health.</p>
+          <div class="term-footer">
+            <a href="grafana.html" class="term-guide-link">Grafana Guide &rarr;</a>
+            <button class="copy-term-btn" type="button" data-def="Grafana: A high-tech control room dashboard that turns raw metrics and logs into real-time visual charts and cluster health graphs.">Copy</button>
+          </div>
+        </article>
+
+        <!-- ==================== HELM ==================== -->
+        <article class="term-card" data-cat="kubernetes" data-letter="H" data-keywords="helm charts package manager k8s manifests install">
+          <div class="term-top">
+            <div class="term-title-wrap">
+              <h2 class="term-title">Helm</h2>
+              <span class="term-alias">Kubernetes Package Manager</span>
+            </div>
+            <span class="term-badge">Kubernetes</span>
+          </div>
+          <div class="term-oneline">
+            <span class="term-oneline-label">In One Line</span>
+            <p class="term-def">The "App Store" or <code>npm</code> for Kubernetes that installs complex multi-part tools (databases, ingress, monitoring) with a single command.</p>
+          </div>
+          <p class="term-desc">Packages multiple YAML files into reusable, parameterized templates called Helm Charts that can be versioned and rolled back.</p>
+          <div class="term-footer">
+            <a href="eks.html#control" class="term-guide-link">Helm in EKS &rarr;</a>
+            <button class="copy-term-btn" type="button" data-def="Helm: The 'App Store' or npm for Kubernetes that installs complex multi-part tools (databases, ingress, monitoring) with a single command.">Copy</button>
+          </div>
+        </article>
+
+        <!-- ==================== ETCD ==================== -->
+        <article class="term-card" data-cat="kubernetes" data-letter="E" data-keywords="etcd key-value store brain cluster state raft consensus">
+          <div class="term-top">
+            <div class="term-title-wrap">
+              <h2 class="term-title">etcd</h2>
+              <span class="term-alias">Cluster Brain &amp; Key-Value Store</span>
+            </div>
+            <span class="term-badge">Kubernetes</span>
+          </div>
+          <div class="term-oneline">
+            <span class="term-oneline-label">In One Line</span>
+            <p class="term-def">The single source of truth database in Kubernetes that securely remembers the exact state and location of every pod and node in the cluster.</p>
+          </div>
+          <p class="term-desc">Uses the Raft consensus algorithm so even if server nodes crash, your cluster's configuration state is never corrupted.</p>
+          <div class="term-footer">
+            <a href="eks.html#cluster" class="term-guide-link">EKS Control Plane &rarr;</a>
+            <button class="copy-term-btn" type="button" data-def="etcd: The single source of truth database in Kubernetes that securely remembers the exact state and location of every pod and node in the cluster.">Copy</button>
+          </div>
+        </article>
+
+        <!-- ==================== KARPENTER ==================== -->
+        <article class="term-card" data-cat="kubernetes" data-letter="K" data-keywords="karpenter node autoscaler auto mode just-in-time compute ec2">
+          <div class="term-top">
+            <div class="term-title-wrap">
+              <h2 class="term-title">Karpenter</h2>
+              <span class="term-alias">High-Speed Node Autoscaler</span>
+            </div>
+            <span class="term-badge">Kubernetes</span>
+          </div>
+          <div class="term-oneline">
+            <span class="term-oneline-label">In One Line</span>
+            <p class="term-def">An open-source autoscaler that observes unscheduled pods and boots up custom right-sized EC2 compute in under 45 seconds.</p>
+          </div>
+          <p class="term-desc">Powers modern AWS EKS Auto Mode, bypassing clumsy Auto Scaling Groups by directly choosing instance types matching exact CPU/RAM requests.</p>
+          <div class="term-footer">
+            <a href="eks.html#gui-deploy" class="term-guide-link">Auto Mode &amp; Karpenter &rarr;</a>
+            <button class="copy-term-btn" type="button" data-def="Karpenter: An open-source autoscaler that observes unscheduled pods and boots up custom right-sized EC2 compute in under 45 seconds.">Copy</button>
+          </div>
+        </article>
+
+        <!-- ==================== AWS FARGATE ==================== -->
+        <article class="term-card" data-cat="aws" data-letter="F" data-keywords="fargate serverless containers micro-vm no ec2 pods">
+          <div class="term-top">
+            <div class="term-title-wrap">
+              <h2 class="term-title">AWS Fargate</h2>
+              <span class="term-alias">Serverless Container Compute</span>
+            </div>
+            <span class="term-badge">AWS</span>
+          </div>
+          <div class="term-oneline">
+            <span class="term-oneline-label">In One Line</span>
+            <p class="term-def">A serverless container engine where you run pods without ever configuring, patching, or paying for idle EC2 virtual machines.</p>
+          </div>
+          <p class="term-desc">AWS provisions an isolated micro-VM for each container on-demand, charging you only for the exact seconds CPU and RAM are used.</p>
+          <div class="term-footer">
+            <a href="eks.html#control" class="term-guide-link">Fargate &rarr;</a>
+            <button class="copy-term-btn" type="button" data-def="AWS Fargate: A serverless container engine where you run pods without ever configuring, patching, or paying for idle EC2 virtual machines.">Copy</button>
+          </div>
+        </article>
+
+        <!-- ==================== BASH ==================== -->
+        <article class="term-card" data-cat="cicd" data-letter="B" data-keywords="bash shell scripting terminal automation cli zsh command line">
+          <div class="term-top">
+            <div class="term-title-wrap">
+              <h2 class="term-title">Bash</h2>
+              <span class="term-alias">Bourne Again Shell</span>
+            </div>
+            <span class="term-badge">Linux</span>
+          </div>
+          <div class="term-oneline">
+            <span class="term-oneline-label">In One Line</span>
+            <p class="term-def">The universal command language and interpreter used to talk directly to Unix/Linux systems and automate repetitive server jobs.</p>
+          </div>
+          <p class="term-desc">The standard language used inside deployment pipelines, entrypoint scripts, and everyday terminal troubleshooting.</p>
+          <div class="term-footer">
+            <a href="shell.html" class="term-guide-link">Shell Scripting Guide &rarr;</a>
+            <button class="copy-term-btn" type="button" data-def="Bash: The universal command language and interpreter used to talk directly to Unix/Linux systems and automate repetitive server jobs.">Copy</button>
+          </div>
+        </article>
+
+        <!-- ==================== ROUTE 53 ==================== -->
+        <article class="term-card" data-cat="networking" data-letter="R" data-keywords="route 53 dns domain records nameservers alias traffic">
+          <div class="term-top">
+            <div class="term-title-wrap">
+              <h2 class="term-title">Route 53</h2>
+              <span class="term-alias">AWS Cloud DNS</span>
+            </div>
+            <span class="term-badge">Traffic</span>
+          </div>
+          <div class="term-oneline">
+            <span class="term-oneline-label">In One Line</span>
+            <p class="term-def">The internet's phonebook on AWS that translates human domain names (like <code>myapp.com</code>) into computer IP addresses.</p>
+          </div>
+          <p class="term-desc">Features health-checking, geo-routing, and alias records that seamlessly point apex domains directly to AWS Load Balancers.</p>
+          <div class="term-footer">
+            <a href="aws.html" class="term-guide-link">Route 53 &rarr;</a>
+            <button class="copy-term-btn" type="button" data-def="Route 53: The internet's phonebook on AWS that translates human domain names into computer IP addresses.">Copy</button>
+          </div>
+        </article>
+
+        <!-- ==================== SECURITY GROUP ==================== -->
+        <article class="term-card" data-cat="networking" data-letter="S" data-keywords="security group firewall ports inbound outbound cidr stateful">
+          <div class="term-top">
+            <div class="term-title-wrap">
+              <h2 class="term-title">Security Group</h2>
+              <span class="term-alias">Stateful Virtual Firewall</span>
+            </div>
+            <span class="term-badge">AWS</span>
+          </div>
+          <div class="term-oneline">
+            <span class="term-oneline-label">In One Line</span>
+            <p class="term-def">A virtual security guard standing in front of your EC2 instances and load balancers deciding which ports and IPs are allowed in or out.</p>
+          </div>
+          <p class="term-desc">Stateful by default: if you allow inbound traffic on port 80, the return outbound traffic is automatically permitted.</p>
+          <div class="term-footer">
+            <a href="ec2.html" class="term-guide-link">Security Groups &rarr;</a>
+            <button class="copy-term-btn" type="button" data-def="Security Group: A virtual security guard standing in front of your EC2 instances and load balancers deciding which ports and IPs are allowed in or out.">Copy</button>
+          </div>
+        </article>
+
+        <!-- ==================== DAEMONSET ==================== -->
+        <article class="term-card" data-cat="kubernetes" data-letter="D" data-keywords="daemonset logging monitoring node agent k8s controller">
+          <div class="term-top">
+            <div class="term-title-wrap">
+              <h2 class="term-title">DaemonSet</h2>
+              <span class="term-alias">Node Fleet Controller</span>
+            </div>
+            <span class="term-badge">Kubernetes</span>
+          </div>
+          <div class="term-oneline">
+            <span class="term-oneline-label">In One Line</span>
+            <p class="term-def">A Kubernetes controller that ensures every single worker node in your cluster runs exactly one copy of a specific pod.</p>
+          </div>
+          <p class="term-desc">Essential for node-level infrastructure background jobs like Fluentd/Promtail log collectors, Datadog agents, and kube-proxy.</p>
+          <div class="term-footer">
+            <a href="eks.html#steps" class="term-guide-link">EKS Addons &rarr;</a>
+            <button class="copy-term-btn" type="button" data-def="DaemonSet: A Kubernetes controller that ensures every single worker node in your cluster runs exactly one copy of a specific pod.">Copy</button>
+          </div>
+        </article>
+
+        <!-- ==================== STATEFULSET ==================== -->
+        <article class="term-card" data-cat="kubernetes" data-letter="S" data-keywords="statefulset database persistence ordinal index stable storage pvc">
+          <div class="term-top">
+            <div class="term-title-wrap">
+              <h2 class="term-title">StatefulSet</h2>
+              <span class="term-alias">Stateful App Manager</span>
+            </div>
+            <span class="term-badge">Kubernetes</span>
+          </div>
+          <div class="term-oneline">
+            <span class="term-oneline-label">In One Line</span>
+            <p class="term-def">Manages pods that need fixed network identities, ordered rollouts, and permanent persistent disks (ideal for databases like Postgres and Kafka).</p>
+          </div>
+          <p class="term-desc">Unlike regular Deployments where pods have random hashes, StatefulSet pods get sticky names (e.g., <code>db-0</code>, <code>db-1</code>) that keep their data on restart.</p>
+          <div class="term-footer">
+            <a href="eks.html#deployment" class="term-guide-link">Workload Types &rarr;</a>
+            <button class="copy-term-btn" type="button" data-def="StatefulSet: Manages pods that need fixed network identities, ordered rollouts, and permanent persistent disks.">Copy</button>
+          </div>
+        </article>
+
+        <!-- ==================== CLOUDWATCH ==================== -->
+        <article class="term-card" data-cat="monitoring" data-letter="C" data-keywords="cloudwatch aws logs metrics alarms insights dashboard observability">
+          <div class="term-top">
+            <div class="term-title-wrap">
+              <h2 class="term-title">CloudWatch</h2>
+              <span class="term-alias">AWS Monitoring &amp; Logging</span>
+            </div>
+            <span class="term-badge">Observability</span>
+          </div>
+          <div class="term-oneline">
+            <span class="term-oneline-label">In One Line</span>
+            <p class="term-def">AWS's native surveillance system that aggregates operational metrics, application log streams, and triggers automated alerts.</p>
+          </div>
+          <p class="term-desc">Tracks EC2 CPU utilization, collects EKS cluster audit logs, and can trigger Auto Scaling Groups when thresholds are breached.</p>
+          <div class="term-footer">
+            <a href="aws.html" class="term-guide-link">CloudWatch &rarr;</a>
+            <button class="copy-term-btn" type="button" data-def="CloudWatch: AWS's native surveillance system that aggregates operational metrics, application log streams, and triggers automated alerts.">Copy</button>
+          </div>
+        </article>
+
+        <!-- ==================== NAMESPACE ==================== -->
+        <article class="term-card" data-cat="kubernetes" data-letter="N" data-keywords="namespace multi-tenancy isolation dev prod default kube-system">
+          <div class="term-top">
+            <div class="term-title-wrap">
+              <h2 class="term-title">Namespace</h2>
+              <span class="term-alias">Virtual Cluster Divider</span>
+            </div>
+            <span class="term-badge">Kubernetes</span>
+          </div>
+          <div class="term-oneline">
+            <span class="term-oneline-label">In One Line</span>
+            <p class="term-def">A virtual partition inside a Kubernetes cluster that isolates different teams, apps, or environments (like <code>dev</code> vs <code>production</code>).</p>
+          </div>
+          <p class="term-desc">Prevents naming collisions and allows administrators to set resource quotas and security policies per department.</p>
+          <div class="term-footer">
+            <a href="eks-commands.html#k8s-commands" class="term-guide-link">Namespace Commands &rarr;</a>
+            <button class="copy-term-btn" type="button" data-def="Namespace: A virtual partition inside a Kubernetes cluster that isolates different teams, apps, or environments.">Copy</button>
+          </div>
+        </article>
+
+        <!-- ==================== CONFIGMAP & SECRET ==================== -->
+        <article class="term-card" data-cat="kubernetes" data-letter="C" data-keywords="configmap secret environment variables config env base64 k8s">
+          <div class="term-top">
+            <div class="term-title-wrap">
+              <h2 class="term-title">ConfigMap &amp; Secret</h2>
+              <span class="term-alias">Configuration &amp; Credentials</span>
+            </div>
+            <span class="term-badge">Kubernetes</span>
+          </div>
+          <div class="term-oneline">
+            <span class="term-oneline-label">In One Line</span>
+            <p class="term-def">Injects environment variables, settings, and encrypted credentials into your pods without rebuilding or hardcoding container images.</p>
+          </div>
+          <p class="term-desc">ConfigMaps store plaintext app settings, while Secrets store base64-encoded sensitive keys (API tokens, database passwords).</p>
+          <div class="term-footer">
+            <a href="eks.html#deployment" class="term-guide-link">Configuring Pods &rarr;</a>
+            <button class="copy-term-btn" type="button" data-def="ConfigMap & Secret: Injects environment variables, settings, and encrypted credentials into your pods without rebuilding container images.">Copy</button>
+          </div>
+        </article>
+
+      </div>
+    </div>
+
+    <!-- Keep Learning Section -->
+    <section class="more" aria-label="Other guides">
+      <p class="more__label">Explore the guides</p>
+      <div class="more__grid">
+        <a href="eks-commands.html">
+          <strong>EKS Terminal Cheat Sheet</strong>
+          <span>Copy-paste CLI commands, kubectl diagnostics, and ECR deploys</span>
+          <em>Open Cheat Sheet &rarr;</em>
+        </a>
+        <a href="eks.html">
+          <strong>Amazon EKS Guide</strong>
+          <span>Pods, nodes, restaurants and AWS GUI deployment</span>
+          <em>Read guide &rarr;</em>
+        </a>
+        <a href="diagrams.html">
+          <strong>Architecture Diagrams</strong>
+          <span>Visual architecture diagrams for Docker, EC2, Nginx, ASG</span>
+          <em>View diagrams &rarr;</em>
+        </a>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="sitefoot__lead">
+        <p><strong>Deploybook</strong> &mdash; The complete DevOps guide, from zero to deploy.</p>
+      </div>
+      <p class="sitefoot__fine">DevOps &amp; Cloud Tech Encyclopedia. Designed for instant recall, interview preparation, and clear architectural understanding.</p>
+    </footer>
+
+  </main>
+
+  <script>
+    (function () {
+      // Sidebar drawer logic
+      var body = document.body;
+      var openBtn = document.getElementById('menu-open');
+      var closeBtn = document.getElementById('menu-close');
+      var scrim = document.getElementById('scrim');
+      var drawer = document.getElementById('drawer');
+
+      var wide = window.matchMedia('(min-width: 1025px)');
+      var KEY = 'sidebar-closed';
+      var stored = null;
+      try { stored = localStorage.getItem(KEY); } catch (e) {}
+      if (stored === '1') body.classList.add('side-closed');
+
+      function isOpen() {
+        return wide.matches ? !body.classList.contains('side-closed') : body.classList.contains('menu-open');
+      }
+      function syncAria() {
+        var visible = isOpen();
+        drawer.setAttribute('aria-hidden', String(!visible));
+        openBtn.setAttribute('aria-expanded', String(visible));
+      }
+      function setOpen(open) {
+        if (wide.matches) {
+          body.classList.toggle('side-closed', !open);
+          try { localStorage.setItem(KEY, open ? '0' : '1'); } catch (e) {}
+        } else {
+          body.classList.toggle('menu-open', open);
+          (open ? closeBtn : openBtn).focus();
+        }
+        syncAria();
+      }
+      openBtn.addEventListener('click', function () { setOpen(!isOpen()); });
+      closeBtn.addEventListener('click', function () { setOpen(false); });
+      scrim.addEventListener('click', function () { setOpen(false); });
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && !wide.matches && body.classList.contains('menu-open')) setOpen(false);
+      });
+      var onChange = function () { body.classList.remove('menu-open'); syncAria(); };
+      if (wide.addEventListener) wide.addEventListener('change', onChange); else wide.addListener(onChange);
+      syncAria();
+
+      // Search & Filter System
+      var searchInput = document.getElementById('term-search');
+      var clearBtn = document.getElementById('search-clear');
+      var catBtns = document.querySelectorAll('.cat-btn');
+      var termsGrid = document.getElementById('terms-grid');
+      var cards = Array.from(document.querySelectorAll('.term-card'));
+      var countDisplay = document.getElementById('count-display');
+      var alphaBar = document.getElementById('alpha-bar');
+
+      var currentCat = 'all';
+      var currentSearch = '';
+
+      // Build Alphabet Bar
+      var lettersSet = new Set();
+      cards.forEach(function (card) {
+        var l = card.getAttribute('data-letter');
+        if (l) lettersSet.add(l.toUpperCase());
+      });
+      var sortedLetters = Array.from(lettersSet).sort();
+      sortedLetters.forEach(function (letter) {
+        var link = document.createElement('a');
+        link.className = 'alpha-link';
+        link.href = '#';
+        link.textContent = letter;
+        link.addEventListener('click', function (e) {
+          e.preventDefault();
+          filterByLetter(letter);
+        });
+        alphaBar.appendChild(link);
+      });
+
+      function filterByLetter(letter) {
+        searchInput.value = '';
+        currentSearch = '';
+        clearBtn.style.display = 'none';
+        var visibleCount = 0;
+        cards.forEach(function (card) {
+          var cardLetter = card.getAttribute('data-letter');
+          var matchesCat = (currentCat === 'all' || card.getAttribute('data-cat') === currentCat);
+          if (cardLetter === letter && matchesCat) {
+            card.style.display = 'flex';
+            visibleCount++;
+          } else {
+            card.style.display = 'none';
+          }
+        });
+        countDisplay.textContent = 'Showing ' + visibleCount + ' terms starting with "' + letter + '"';
+      }
+
+      function filterTerms() {
+        var query = searchInput.value.trim().toLowerCase();
+        currentSearch = query;
+        clearBtn.style.display = query ? 'flex' : 'none';
+
+        // Typo tolerance / aliases normalization
+        var normQuery = query
+          .replace(/^kbue\s*ctl$/i, 'kubectl')
+          .replace(/^qube$/i, 'kube')
+          .replace(/^adg$/i, 'asg')
+          .replace(/^loadbalncer$/i, 'loadbalancer');
+
+        var visibleCount = 0;
+
+        cards.forEach(function (card) {
+          var title = card.querySelector('.term-title').textContent.toLowerCase();
+          var alias = (card.querySelector('.term-alias')?.textContent || '').toLowerCase();
+          var def = card.querySelector('.term-def').textContent.toLowerCase();
+          var desc = card.querySelector('.term-desc').textContent.toLowerCase();
+          var keywords = (card.getAttribute('data-keywords') || '').toLowerCase();
+          var cat = card.getAttribute('data-cat');
+
+          var matchesCat = (currentCat === 'all' || cat === currentCat);
+          var matchesSearch = true;
+
+          if (normQuery) {
+            matchesSearch = title.includes(normQuery) ||
+                            alias.includes(normQuery) ||
+                            keywords.includes(normQuery) ||
+                            def.includes(normQuery) ||
+                            desc.includes(normQuery);
+          }
+
+          if (matchesCat && matchesSearch) {
+            card.style.display = 'flex';
+            visibleCount++;
+          } else {
+            card.style.display = 'none';
+          }
+        });
+
+        // Handle empty state
+        var existingNoResults = document.getElementById('no-results-box');
+        if (visibleCount === 0) {
+          if (!existingNoResults) {
+            var noRes = document.createElement('div');
+            noRes.id = 'no-results-box';
+            noRes.className = 'no-results';
+            noRes.innerHTML = '<h3>No terms found</h3><p>We could not find any terms matching "' + query + '".</p><button class="cat-btn" id="reset-filters" type="button">Reset Filters</button>';
+            termsGrid.appendChild(noRes);
+            document.getElementById('reset-filters').addEventListener('click', function () {
+              searchInput.value = '';
+              currentCat = 'all';
+              catBtns.forEach(function (b) { b.classList.toggle('active', b.getAttribute('data-cat') === 'all'); });
+              filterTerms();
+            });
+          }
+        } else if (existingNoResults) {
+          existingNoResults.remove();
+        }
+
+        countDisplay.textContent = 'Showing ' + visibleCount + ' terms' + (currentCat !== 'all' ? ' in ' + currentCat : '');
+      }
+
+      searchInput.addEventListener('input', filterTerms);
+
+      clearBtn.addEventListener('click', function () {
+        searchInput.value = '';
+        searchInput.focus();
+        filterTerms();
+      });
+
+      catBtns.forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          catBtns.forEach(function (b) { b.classList.remove('active'); });
+          btn.classList.add('active');
+          currentCat = btn.getAttribute('data-cat');
+          filterTerms();
+        });
+      });
+
+      // Copy term definition buttons
+      document.querySelectorAll('.copy-term-btn').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          var defText = btn.getAttribute('data-def');
+          if (!defText) return;
+          navigator.clipboard.writeText(defText).then(function () {
+            var orig = btn.textContent;
+            btn.textContent = 'Copied!';
+            btn.classList.add('copied');
+            setTimeout(function () {
+              btn.textContent = orig;
+              btn.classList.remove('copied');
+            }, 1800);
+          }).catch(function (err) {
+            console.error('Copy failed:', err);
+          });
+        });
+      });
+
+    })();
+  </script>
+</body>
+</html>
