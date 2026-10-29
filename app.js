@@ -65,6 +65,18 @@
     });
   });
 
+  var sdPrefix = path === 'index.html' ? '' : 'index.html';
+  var SYSTEM_DESIGN_TOPICS = [
+    { step: 'SD1', href: sdPrefix + '#sd-01', title: 'Core Fundamentals & Trade-Offs', desc: 'Latency, Throughput, Scaling, CAP, SLA/SLO' },
+    { step: 'SD2', href: sdPrefix + '#sd-02', title: 'Networking, DNS & Edge Traffic', desc: 'DNS, Anycast, L4 vs L7 LB, Reverse Proxy, CDN' },
+    { step: 'SD3', href: sdPrefix + '#sd-03', title: 'Caching & Performance',          desc: 'Redis, Cache-Aside, Write-Back, LRU/LFU, Stampede' },
+    { step: 'SD4', href: sdPrefix + '#sd-04', title: 'Databases, Storage & Sharding',  desc: 'SQL vs NoSQL, S3/EBS/EFS, Replication, Sharding' },
+    { step: 'SD5', href: sdPrefix + '#sd-05', title: 'Queues, Streams & Events',       desc: 'Kafka, SQS, RabbitMQ, Pub/Sub, DLQ, Idempotency' },
+    { step: 'SD6', href: sdPrefix + '#sd-06', title: 'Microservices & Resilience',     desc: 'Service Mesh, Rate Limiting, Circuit Breaker, Saga' },
+    { step: 'SD7', href: sdPrefix + '#sd-07', title: 'Cloud Security & Zero-Trust',    desc: 'VPC, OAuth2/OIDC, mTLS, WAF, DDoS, Vault/KMS' },
+    { step: 'SD8', href: sdPrefix + '#sd-08', title: 'High Availability, DR & Cases',  desc: 'Multi-AZ/Region, RPO/RTO, Canary/Blue-Green' }
+  ];
+
   var COMING_SOON = [
     'Linux and networking',
     'Ansible configuration',
@@ -112,14 +124,35 @@
         );
       }).join('');
 
+      var sdHtml =
+        '<div class="drawer__sd-block">' +
+          '<div class="drawer__sd-head">' +
+            '<span class="drawer__sd-avatar" aria-hidden="true">&#9670;</span>' +
+            '<div>' +
+              '<span class="drawer__sd-title">System Design Track</span>' +
+              '<span class="drawer__sd-badge">Coming Soon</span>' +
+            '</div>' +
+          '</div>' +
+          '<ul class="drawer__list drawer__list--sd">' +
+          SYSTEM_DESIGN_TOPICS.map(function (sd) {
+            return (
+              '<li><a href="' + sd.href + '" data-close>' +
+              '<span class="drawer__title"><span class="drawer__step drawer__step--sd">' + sd.step + '</span>' + sd.title + '<span class="drawer__soon-pill">Soon</span></span>' +
+              '<span class="drawer__desc">' + sd.desc + '</span>' +
+              '</a></li>'
+            );
+          }).join('') +
+          '</ul>' +
+        '</div>';
+
       var soonHtml =
-        '<p class="drawer__label">Coming soon</p><ul class="drawer__soon">' +
+        '<p class="drawer__label">More DevOps Coming Soon</p><ul class="drawer__soon">' +
         COMING_SOON.map(function (s) {
           return '<li>' + s + '</li>';
         }).join('') +
         '</ul>';
 
-      navEl.innerHTML = topHtml + groupsHtml + soonHtml;
+      navEl.innerHTML = topHtml + groupsHtml + sdHtml + soonHtml;
 
       // Ensure active sidebar item is visible inside the drawer scroll container
       var activeLink = navEl.querySelector('a[aria-current="page"]');

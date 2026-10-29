@@ -529,11 +529,244 @@ a:hover { text-decoration: underline; }
   color: var(--accent-ink);
 }
 
+.quick__sd {
+  border-color: rgba(192, 132, 252, 0.38) !important;
+  background: linear-gradient(135deg, rgba(168, 85, 247, 0.12), rgba(245, 158, 11, 0.06)) !important;
+}
+
+.quick__sd strong {
+  color: #e9d5ff;
+}
+
 @media (max-width: 720px) {
   .hero-flow__arrow {
     display: none;
   }
   .hero-flow__steps {
     justify-content: flex-start;
+  }
+}
+
+/* ==========================================================
+   Epic System Design Section · Architect Avatar & New Theme
+   Obsidian / Violet-Indigo / Amber-Gold Blueprint Palette
+   ========================================================== */
+
+.sysdesign {
+  position: relative;
+  isolation: isolate;
+  margin-top: 128px;
+  padding: 104px 0 112px;
+  border-top: 1px solid rgba(192, 132, 252, 0.2);
+  border-bottom: 1px solid rgba(192, 132, 252, 0.16);
+  background:
+    radial-gradient(900px 420px at 50% 0%, rgba(168, 85, 247, 0.14), transparent 70%),
+    radial-gradient(700px 360px at 85% 100%, rgba(245, 158, 11, 0.08), transparent 70%),
+    linear-gradient(180deg, #090712 0%, #07080f 100%);
+  scroll-margin-top: 52px;
+}
+
+.sysdesign__glow {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image:
+    linear-gradient(to right, rgba(192, 132, 252, 0.035) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(192, 132, 252, 0.035) 1px, transparent 1px);
+  background-size: 48px 48px;
+  -webkit-mask-image: radial-gradient(ellipse 80% 70% at 50% 35%, #000 30%, transparent 80%);
+  mask-image: radial-gradient(ellipse 80% 70% at 50% 35%, #000 30%, transparent 80%);
+}
+
+.sysdesign__head {
+  max-width: 720px;
+  margin: 0 auto 60px;
+  text-align: center;
+}
+
+.sysdesign__avatar {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.sysdesign__avatar svg {
+  filter: drop-shadow(0 8px 24px rgba(168, 85, 247, 0.35));
+}
+
+.sysdesign__avatar-badge {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: #d8b4fe;
+  padding: 4px 12px;
+  border-radius: 99px;
+  background: rgba(168, 85, 247, 0.14);
+  border: 1px solid rgba(192, 132, 252, 0.3);
+}
+
+.sysdesign__pills {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.sd-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 4px 12px;
+  border-radius: 99px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #cbd5e1;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.sd-pill--soon {
+  color: #fbbf24;
+  background: rgba(245, 158, 11, 0.12);
+  border-color: rgba(245, 158, 11, 0.32);
+}
+
+.sd-pill--soon i {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #f59e0b;
+  box-shadow: 0 0 10px #f59e0b;
+}
+
+.sysdesign__title {
+  margin: 0;
+  font-size: clamp(34px, 5vw, 56px);
+  line-height: 1.06;
+  font-weight: 750;
+  letter-spacing: -0.035em;
+  color: #f8fafc;
+}
+
+.sysdesign__accent {
+  background: linear-gradient(135deg, #e9d5ff 0%, #c084fc 48%, #fbbf24 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.sysdesign__sub {
+  margin: 18px auto 0;
+  max-width: 580px;
+  font-size: 18px;
+  line-height: 1.58;
+  color: #a1a6b8;
+}
+
+.sysdesign__grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+.sd-card {
+  position: relative;
+  padding: 28px 28px 26px;
+  border-radius: 20px;
+  background: linear-gradient(165deg, rgba(23, 18, 38, 0.86) 0%, rgba(13, 14, 22, 0.92) 100%);
+  border: 1px solid rgba(192, 132, 252, 0.18);
+  box-shadow: 0 16px 40px -16px rgba(0, 0, 0, 0.55);
+  transition: transform 0.22s ease, border-color 0.22s ease;
+  scroll-margin-top: 72px;
+}
+
+.sd-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(192, 132, 252, 0.42);
+}
+
+.sd-card__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.sd-card__num {
+  font-family: var(--mono);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: #c084fc;
+}
+
+.sd-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: 99px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: #fbbf24;
+  background: rgba(245, 158, 11, 0.12);
+  border: 1px solid rgba(245, 158, 11, 0.28);
+}
+
+.sd-card__title {
+  margin: 0 0 16px;
+  font-size: 21px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: #f8fafc;
+  line-height: 1.25;
+}
+
+.sd-card__list {
+  margin: 0;
+  padding: 14px 0 0;
+  border-top: 1px solid rgba(192, 132, 252, 0.14);
+  list-style: none;
+  display: grid;
+  gap: 8px;
+}
+
+.sd-card__list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 14.5px;
+  line-height: 1.45;
+  color: #cbd5e1;
+}
+
+.sd-card__list li::before {
+  content: "◆";
+  font-size: 9px;
+  line-height: 20px;
+  color: #c084fc;
+  flex-shrink: 0;
+}
+
+@media (max-width: 900px) {
+  .sysdesign__grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .sysdesign {
+    margin-top: 88px;
+    padding: 72px 0 80px;
+  }
+  .sd-card {
+    padding: 22px 20px;
   }
 }

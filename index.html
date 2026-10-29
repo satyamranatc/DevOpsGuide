@@ -157,7 +157,27 @@
         </li>
       </ul>
 
-      <p class="drawer__label">Coming soon</p>
+      <div class="drawer__sd-block">
+        <div class="drawer__sd-head">
+          <span class="drawer__sd-avatar" aria-hidden="true">&#9670;</span>
+          <div>
+            <span class="drawer__sd-title">System Design Track</span>
+            <span class="drawer__sd-badge">Coming Soon</span>
+          </div>
+        </div>
+        <ul class="drawer__list drawer__list--sd">
+          <li><a href="#sd-01" data-close><span class="drawer__title"><span class="drawer__step drawer__step--sd">SD1</span>Core Fundamentals &amp; Trade-Offs<span class="drawer__soon-pill">Soon</span></span><span class="drawer__desc">Latency, Throughput, Scaling, CAP, SLA/SLO</span></a></li>
+          <li><a href="#sd-02" data-close><span class="drawer__title"><span class="drawer__step drawer__step--sd">SD2</span>Networking, DNS &amp; Edge Traffic<span class="drawer__soon-pill">Soon</span></span><span class="drawer__desc">DNS, Anycast, L4 vs L7 LB, Reverse Proxy, CDN</span></a></li>
+          <li><a href="#sd-03" data-close><span class="drawer__title"><span class="drawer__step drawer__step--sd">SD3</span>Caching &amp; Performance<span class="drawer__soon-pill">Soon</span></span><span class="drawer__desc">Redis, Cache-Aside, Write-Back, LRU/LFU, Stampede</span></a></li>
+          <li><a href="#sd-04" data-close><span class="drawer__title"><span class="drawer__step drawer__step--sd">SD4</span>Databases, Storage &amp; Sharding<span class="drawer__soon-pill">Soon</span></span><span class="drawer__desc">SQL vs NoSQL, S3/EBS/EFS, Replication, Sharding</span></a></li>
+          <li><a href="#sd-05" data-close><span class="drawer__title"><span class="drawer__step drawer__step--sd">SD5</span>Queues, Streams &amp; Events<span class="drawer__soon-pill">Soon</span></span><span class="drawer__desc">Kafka, SQS, RabbitMQ, Pub/Sub, DLQ, Idempotency</span></a></li>
+          <li><a href="#sd-06" data-close><span class="drawer__title"><span class="drawer__step drawer__step--sd">SD6</span>Microservices &amp; Resilience<span class="drawer__soon-pill">Soon</span></span><span class="drawer__desc">Service Mesh, Rate Limiting, Circuit Breaker, Saga</span></a></li>
+          <li><a href="#sd-07" data-close><span class="drawer__title"><span class="drawer__step drawer__step--sd">SD7</span>Cloud Security &amp; Zero-Trust<span class="drawer__soon-pill">Soon</span></span><span class="drawer__desc">VPC, OAuth2/OIDC, mTLS, WAF, DDoS, Vault/KMS</span></a></li>
+          <li><a href="#sd-08" data-close><span class="drawer__title"><span class="drawer__step drawer__step--sd">SD8</span>High Availability, DR &amp; Cases<span class="drawer__soon-pill">Soon</span></span><span class="drawer__desc">Multi-AZ/Region, RPO/RTO, Canary/Blue-Green</span></a></li>
+        </ul>
+      </div>
+
+      <p class="drawer__label">More DevOps Coming Soon</p>
       <ul class="drawer__soon">
         <li>Linux and networking</li>
         <li>Ansible configuration</li>
@@ -245,6 +265,7 @@
             <li><a href="diagrams.html" class="quick__featured"><strong>Diagrams</strong><span>Visual cheatsheet</span></a></li>
             <li><a href="encyclopedia.html" class="quick__featured"><strong>Encyclopedia</strong><span>50+ DevOps terms</span></a></li>
             <li><a href="k8s-encyclopedia.html" class="quick__featured"><strong>K8s &amp; EKS Dict</strong><span>85+ Phase 1–10 terms</span></a></li>
+            <li><a href="#system-design" class="quick__sd"><strong>System Design</strong><span>New Track &middot; Coming Soon</span></a></li>
             <li><a href="github.html"><strong>Git &amp; GitHub</strong><span>8 min read</span></a></li>
             <li><a href="shell.html"><strong>Shell scripting</strong><span>12 min read</span></a></li>
             <li><a href="aws.html"><strong>AWS essentials</strong><span>14 min read</span></a></li>
@@ -803,6 +824,190 @@
           <p class="stage__count">6 guides</p>
         </article>
 
+      </div>
+    </section>
+
+    <!-- ===== NEW AVATAR & THEME: SYSTEM DESIGN FOR DEVOPS (COMING SOON) ===== -->
+    <section class="sysdesign" id="system-design" aria-labelledby="sysdesign-title">
+      <div class="sysdesign__glow" aria-hidden="true"></div>
+      <div class="wrap">
+
+        <!-- Architect Avatar & Header -->
+        <div class="sysdesign__head reveal">
+          <div class="sysdesign__avatar" aria-hidden="true">
+            <svg viewBox="0 0 64 64" width="44" height="44" fill="none">
+              <rect x="6" y="6" width="52" height="52" rx="14" stroke="url(#sdGrad)" stroke-width="2" fill="rgba(168,85,247,0.08)"/>
+              <circle cx="32" cy="20" r="5" stroke="#c084fc" stroke-width="2"/>
+              <circle cx="18" cy="44" r="5" stroke="#f59e0b" stroke-width="2"/>
+              <circle cx="46" cy="44" r="5" stroke="#38bdf8" stroke-width="2"/>
+              <line x1="29" y1="24" x2="21" y2="39" stroke="rgba(192,132,252,0.7)" stroke-width="1.75" stroke-dasharray="3 2"/>
+              <line x1="35" y1="24" x2="43" y2="39" stroke="rgba(192,132,252,0.7)" stroke-width="1.75" stroke-dasharray="3 2"/>
+              <line x1="23" y1="44" x2="41" y2="44" stroke="rgba(245,158,11,0.7)" stroke-width="1.75"/>
+              <defs>
+                <linearGradient id="sdGrad" x1="0" y1="0" x2="64" y2="64" gradientUnits="userSpaceOnUse">
+                  <stop stop-color="#c084fc"/>
+                  <stop offset="0.5" stop-color="#818cf8"/>
+                  <stop offset="1" stop-color="#f59e0b"/>
+                </linearGradient>
+              </defs>
+            </svg>
+            <span class="sysdesign__avatar-badge">ARCHITECT AVATAR &middot; EDITION 02</span>
+          </div>
+
+          <div class="sysdesign__pills">
+            <span class="sd-pill sd-pill--soon"><i aria-hidden="true"></i> Coming Soon</span>
+            <span class="sd-pill">8 Core Modules</span>
+            <span class="sd-pill">48 Essential Topics</span>
+          </div>
+
+          <h2 id="sysdesign-title" class="sysdesign__title">
+            System Design <span class="sysdesign__accent">for DevOps Engineers.</span>
+          </h2>
+          <p class="sysdesign__sub">
+            The complete syllabus of architecture fundamentals every DevOps &amp; Cloud engineer must know to design scalable, fault-tolerant production systems.
+          </p>
+        </div>
+
+        <!-- 8 System Design Topic Modules (Topics Only · Coming Soon) -->
+        <div class="sysdesign__grid">
+
+          <!-- Module 01 -->
+          <article class="sd-card reveal" id="sd-01">
+            <div class="sd-card__top">
+              <span class="sd-card__num">SD · 01</span>
+              <span class="sd-tag">Coming Soon</span>
+            </div>
+            <h3 class="sd-card__title">Core Fundamentals &amp; Trade-Offs</h3>
+            <ul class="sd-card__list">
+              <li>Latency vs Throughput vs Bandwidth</li>
+              <li>Vertical Scaling (Scale Up) vs Horizontal Scaling (Scale Out)</li>
+              <li>CAP Theorem (Consistency, Availability, Partition Tolerance)</li>
+              <li>PACELC Theorem</li>
+              <li>SLA, SLO &amp; SLI (The "Five 9s": 99.9% to 99.999%)</li>
+              <li>Stateful vs Stateless Architecture</li>
+            </ul>
+          </article>
+
+          <!-- Module 02 -->
+          <article class="sd-card reveal" data-d="1" id="sd-02">
+            <div class="sd-card__top">
+              <span class="sd-card__num">SD · 02</span>
+              <span class="sd-tag">Coming Soon</span>
+            </div>
+            <h3 class="sd-card__title">Networking, DNS &amp; Edge Traffic</h3>
+            <ul class="sd-card__list">
+              <li>DNS Resolution, TTL &amp; Geo/Latency Routing Policies</li>
+              <li>Anycast vs Unicast Routing</li>
+              <li>L4 (TCP/UDP) vs L7 (HTTP/HTTPS) Load Balancing</li>
+              <li>Load Balancing Algorithms (Round Robin, Least Conn, Consistent Hash)</li>
+              <li>Reverse Proxy vs Forward Proxy vs API Gateway</li>
+              <li>CDN (Content Delivery Networks) &amp; Edge SSL Termination</li>
+            </ul>
+          </article>
+
+          <!-- Module 03 -->
+          <article class="sd-card reveal" data-d="2" id="sd-03">
+            <div class="sd-card__top">
+              <span class="sd-card__num">SD · 03</span>
+              <span class="sd-tag">Coming Soon</span>
+            </div>
+            <h3 class="sd-card__title">Caching &amp; Performance Engineering</h3>
+            <ul class="sd-card__list">
+              <li>Browser, CDN, Reverse Proxy &amp; Database Caching Layers</li>
+              <li>In-Memory Data Stores (Redis &amp; Memcached Clusters)</li>
+              <li>Cache-Aside, Read-Through, Write-Through &amp; Write-Back</li>
+              <li>Cache Eviction Policies (LRU, LFU &amp; TTL Expiration)</li>
+              <li>Cache Stampede (Thundering Herd) &amp; Cache Penetration</li>
+              <li>Content Compression (Brotli, Gzip) &amp; HTTP/2 vs HTTP/3 (QUIC)</li>
+            </ul>
+          </article>
+
+          <!-- Module 04 -->
+          <article class="sd-card reveal" id="sd-04">
+            <div class="sd-card__top">
+              <span class="sd-card__num">SD · 04</span>
+              <span class="sd-tag">Coming Soon</span>
+            </div>
+            <h3 class="sd-card__title">Databases, Storage &amp; Data At Scale</h3>
+            <ul class="sd-card__list">
+              <li>Relational (SQL / ACID) vs NoSQL (Key-Value, Document, Wide-Column)</li>
+              <li>Object Storage (S3) vs Block Storage (EBS) vs File Storage (EFS/NFS)</li>
+              <li>Leader-Follower (Master-Replica) &amp; Multi-Leader Replication</li>
+              <li>Read Replicas, Connection Pooling &amp; Database Proxies</li>
+              <li>Database Sharding (Horizontal Partitioning) &amp; Consistent Hashing</li>
+              <li>Indexing, B-Trees, LSM Trees &amp; Write-Ahead Logging (WAL)</li>
+            </ul>
+          </article>
+
+          <!-- Module 05 -->
+          <article class="sd-card reveal" data-d="1" id="sd-05">
+            <div class="sd-card__top">
+              <span class="sd-card__num">SD · 05</span>
+              <span class="sd-tag">Coming Soon</span>
+            </div>
+            <h3 class="sd-card__title">Queues, Streams &amp; Event-Driven Systems</h3>
+            <ul class="sd-card__list">
+              <li>Synchronous (REST, gRPC, GraphQL) vs Asynchronous Messaging</li>
+              <li>Message Queues (RabbitMQ, Amazon SQS)</li>
+              <li>Event Streaming Platforms (Apache Kafka, Amazon Kinesis)</li>
+              <li>Pub/Sub Architecture, Fan-Out &amp; Worker Consumers</li>
+              <li>Dead-Letter Queues (DLQ), Backpressure &amp; Exponential Backoff</li>
+              <li>Idempotency Keys &amp; Exactly-Once vs At-Least-Once Delivery</li>
+            </ul>
+          </article>
+
+          <!-- Module 06 -->
+          <article class="sd-card reveal" data-d="2" id="sd-06">
+            <div class="sd-card__top">
+              <span class="sd-card__num">SD · 06</span>
+              <span class="sd-tag">Coming Soon</span>
+            </div>
+            <h3 class="sd-card__title">Microservices, Resilience &amp; Traffic Control</h3>
+            <ul class="sd-card__list">
+              <li>Monolith vs Modular Monolith vs Microservices</li>
+              <li>Service Discovery, Service Mesh (Istio / Linkerd) &amp; Sidecars</li>
+              <li>Rate Limiting Algorithms (Token Bucket, Leaky Bucket, Sliding Window)</li>
+              <li>Circuit Breaker, Retry, Timeout &amp; Bulkhead Isolation Patterns</li>
+              <li>Distributed Transactions &amp; The Saga Pattern</li>
+              <li>Health Checks, Graceful Shutdown &amp; Load Shedding</li>
+            </ul>
+          </article>
+
+          <!-- Module 07 -->
+          <article class="sd-card reveal" id="sd-07">
+            <div class="sd-card__top">
+              <span class="sd-card__num">SD · 07</span>
+              <span class="sd-tag">Coming Soon</span>
+            </div>
+            <h3 class="sd-card__title">Cloud Security, Identity &amp; Zero-Trust</h3>
+            <ul class="sd-card__list">
+              <li>Zero-Trust VPC Topology (Public/Private Subnets, NAT, Bastion, Peering)</li>
+              <li>Authentication vs Authorization (OAuth 2.0, OIDC, JWT, RBAC)</li>
+              <li>Mutual TLS (mTLS), Service-to-Service Encryption &amp; PKI</li>
+              <li>DDoS Mitigation, WAF (Web Application Firewall) &amp; Bot Protection</li>
+              <li>Secrets Management (Vault, AWS Secrets Manager) &amp; KMS Encryption</li>
+              <li>Supply Chain Security, Image Signing &amp; Audit Logging</li>
+            </ul>
+          </article>
+
+          <!-- Module 08 -->
+          <article class="sd-card reveal" data-d="1" id="sd-08">
+            <div class="sd-card__top">
+              <span class="sd-card__num">SD · 08</span>
+              <span class="sd-tag">Coming Soon</span>
+            </div>
+            <h3 class="sd-card__title">High Availability, DR &amp; Real-World Blueprints</h3>
+            <ul class="sd-card__list">
+              <li>Single Point of Failure (SPOF) Elimination &amp; Multi-AZ / Multi-Region</li>
+              <li>Disaster Recovery Tiers (Backup, Pilot Light, Warm Standby, Active-Active)</li>
+              <li>RPO (Recovery Point Objective) vs RTO (Recovery Time Objective)</li>
+              <li>Zero-Downtime Rollouts (Blue/Green, Canary, Rolling, Feature Flags)</li>
+              <li>Three Pillars of Observability (Metrics, Logs, OpenTelemetry Traces)</li>
+              <li>Case Studies: Global URL Shortener, Rate Limiter, Notification Engine &amp; Multi-Region EKS</li>
+            </ul>
+          </article>
+
+        </div>
       </div>
     </section>
 

@@ -170,6 +170,72 @@ body.menu-open .drawer { transform: none; visibility: visible; }
   color: #fff;
 }
 
+/* System Design Track (Architect Avatar Theme in Sidebar) */
+.drawer__sd-block {
+  margin: 18px 0 12px;
+  padding: 12px 10px 8px;
+  border-radius: 14px;
+  background: linear-gradient(165deg, rgba(168, 85, 247, 0.11) 0%, rgba(245, 158, 11, 0.05) 100%);
+  border: 1px solid rgba(192, 132, 252, 0.24);
+}
+.drawer__sd-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 2px 6px 10px;
+  margin-bottom: 6px;
+  border-bottom: 1px solid rgba(192, 132, 252, 0.16);
+}
+.drawer__sd-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(135deg, rgba(168, 85, 247, 0.28), rgba(245, 158, 11, 0.24));
+  border: 1px solid rgba(216, 180, 254, 0.4);
+  color: #f59e0b;
+  font-size: 13px;
+  flex-shrink: 0;
+}
+.drawer__sd-title {
+  display: block;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #e9d5ff;
+  line-height: 1.2;
+}
+.drawer__sd-badge {
+  display: inline-block;
+  margin-top: 2px;
+  font-size: 10.5px;
+  font-weight: 600;
+  color: #fbbf24;
+}
+.drawer__list--sd a:hover {
+  background: rgba(168, 85, 247, 0.14);
+  border-color: rgba(192, 132, 252, 0.25);
+}
+.drawer__step--sd {
+  background: rgba(168, 85, 247, 0.2);
+  color: #d8b4fe;
+  border: 1px solid rgba(192, 132, 252, 0.3);
+}
+.drawer__soon-pill {
+  margin-left: auto;
+  padding: 1px 6px;
+  border-radius: 99px;
+  font-size: 9.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #fbbf24;
+  background: rgba(245, 158, 11, 0.14);
+  border: 1px solid rgba(245, 158, 11, 0.28);
+}
+
 .drawer__soon { margin: 0 0 12px; padding: 0 10px; list-style: none; }
 .drawer__soon li {
   padding: 4px 0;
