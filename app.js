@@ -1,7 +1,8 @@
 /* ==========================================================
    Deploybook · Shared Site Application Script (app.js)
    - Synchronizes navigation drawer & footer across all pages
-   - Manages responsive off-canvas sidebar state & ARIA
+   - Organizes sidebar options into clear learning tracks
+   - Manages responsive off-canvas sidebar state, scroll & ARIA
    - Enhances all code blocks with one-click Copy buttons
    - Handles scroll reveals & interactive checklists
    ========================================================== */
@@ -18,26 +19,51 @@
      ---------------------------------------------------------- */
   var TOP_LINKS = [
     { href: 'index.html', title: 'Home', desc: null },
-    { href: path === 'index.html' ? '#roadmap' : 'index.html#roadmap', title: 'Full roadmap', desc: 'All 9 stages at a glance', closeOnMobile: true },
-    { href: 'diagrams.html', title: 'Architecture Diagrams', desc: 'Docker, EC2, Nginx, ASG \u00b7 Visuals' },
-    { href: 'encyclopedia.html', title: 'Tech Encyclopedia', desc: '1-line definitions for 50+ DevOps terms' }
+    { href: path === 'index.html' ? '#roadmap' : 'index.html#roadmap', title: 'Full roadmap', desc: 'All 9 stages at a glance' },
+    { href: 'diagrams.html', title: 'Architecture Diagrams', desc: 'Docker, EC2, Nginx, K8s \u00b7 Visuals' },
+    { href: 'encyclopedia.html', title: 'Tech Encyclopedia', desc: '1-line definitions for 50+ DevOps terms' },
+    { href: 'k8s-encyclopedia.html', title: 'K8s & EKS Encyclopedia', desc: '85+ Phase 1\u201310 definitions & 4 diagrams' }
   ];
 
-  var GUIDES = [
-    { step: '1',  href: 'github.html',        title: 'Git & GitHub',             desc: 'Save, share and team up on code \u00b7 8 min' },
-    { step: '2',  href: 'shell.html',         title: 'Shell scripting',          desc: 'Automate tasks with Bash \u00b7 12 min' },
-    { step: '3',  href: 'aws.html',           title: 'AWS essentials',           desc: 'Servers, storage and security \u00b7 14 min' },
-    { step: '4',  href: 'ec2.html',           title: 'EC2 servers',              desc: 'Launch and connect to your first server \u00b7 15 min' },
-    { step: '5',  href: 'docker.html',        title: 'Docker',                   desc: 'Images, containers and commands \u00b7 12 min' },
-    { step: '6',  href: 'nginx.html',         title: 'Nginx',                    desc: 'Web server, proxy and HTTPS \u00b7 14 min' },
-    { step: '7',  href: 'cicd.html',          title: 'CI/CD with GitHub Actions',desc: 'Auto-deploy React + Express \u00b7 20 min' },
-    { step: '8a', href: 'kubernetes.html',    title: 'Kubernetes Basics',        desc: 'Phases 1\u20134: Architecture, Pods & YAML \u00b7 14 min' },
-    { step: '8b', href: 'k8s-workloads.html', title: 'K8s Workloads & Net',      desc: 'Phases 5\u20138: Services, Ingress, EBS & Probes \u00b7 16 min' },
-    { step: '8c', href: 'eks.html',           title: 'Amazon EKS & Projects',    desc: 'Phases 9\u201310: EKS, HPA, Helm & 8 Projects \u00b7 15 min' },
-    { step: '>_', href: 'eks-commands.html',  title: 'EKS CLI Cheat Sheet',      desc: 'Terminal commands & ECR deploy \u00b7 10 min' },
-    { step: '9',  href: 'terraform.html',     title: 'Terraform',                desc: 'Infrastructure as Code \u00b7 15 min' },
-    { step: '10', href: 'grafana.html',       title: 'Grafana',                  desc: 'Dashboards & monitoring \u00b7 13 min' }
+  var GUIDE_GROUPS = [
+    {
+      label: 'Foundations, Cloud & Containers',
+      items: [
+        { step: '01', href: 'github.html', title: 'Git & GitHub',      desc: 'Save, share and team up on code \u00b7 8 min' },
+        { step: '02', href: 'shell.html',  title: 'Shell scripting',   desc: 'Automate tasks with Bash \u00b7 12 min' },
+        { step: '03', href: 'aws.html',    title: 'AWS essentials',    desc: 'Regions, VPC, IAM and billing \u00b7 14 min' },
+        { step: '04', href: 'ec2.html',    title: 'EC2 servers',       desc: 'Launch and SSH into a server \u00b7 15 min' },
+        { step: '05', href: 'docker.html', title: 'Docker',            desc: 'Images, containers and CLI \u00b7 12 min' },
+        { step: '06', href: 'nginx.html',  title: 'Nginx & HTTPS',     desc: 'Web server, reverse proxy & SSL \u00b7 14 min' }
+      ]
+    },
+    {
+      label: 'Kubernetes (10-Phase Syllabus)',
+      items: [
+        { step: 'K1', href: 'kubernetes.html',       title: 'Kubernetes Basics',      desc: 'Phases 1\u20134: Architecture, Pods & YAML \u00b7 14 min' },
+        { step: 'K2', href: 'k8s-workloads.html',    title: 'K8s Workloads & Net',    desc: 'Phases 5\u20138: Services, Ingress, EBS & Probes \u00b7 16 min' },
+        { step: 'K3', href: 'eks.html',              title: 'Amazon EKS & Projects',  desc: 'Phases 9\u201310: EKS, HPA, Helm & 8 Labs \u00b7 15 min' },
+        { step: '>_', href: 'eks-commands.html',     title: 'EKS CLI Cheat Sheet',    desc: 'kubectl commands & ECR deploy \u00b7 10 min' },
+        { step: 'AZ', href: 'k8s-encyclopedia.html', title: 'K8s & EKS Encyclopedia', desc: 'Phase 1\u201310 terms, Top 15 & 4 diagrams' }
+      ]
+    },
+    {
+      label: 'CI/CD, IaC & Monitoring',
+      items: [
+        { step: '07', href: 'cicd.html',      title: 'CI/CD Actions',  desc: 'Auto-deploy React + Express \u00b7 20 min' },
+        { step: '09', href: 'terraform.html', title: 'Terraform IaC',  desc: 'Build cloud from code \u00b7 15 min' },
+        { step: '10', href: 'grafana.html',   title: 'Grafana',        desc: 'Dashboards, PromQL & alerts \u00b7 13 min' }
+      ]
+    }
   ];
+
+  // Flattened list for footer reading order
+  var ALL_GUIDES = [];
+  GUIDE_GROUPS.forEach(function (group) {
+    group.items.forEach(function (item) {
+      ALL_GUIDES.push(item);
+    });
+  });
 
   var COMING_SOON = [
     'Linux and networking',
@@ -54,28 +80,58 @@
   if (drawer) {
     var navEl = drawer.querySelector('nav');
     if (navEl) {
-      var topHtml = '<ul class="drawer__list">' + TOP_LINKS.map(function (item) {
-        var isCurrent = (item.href === path) ? ' aria-current="page"' : '';
-        var closeAttr = item.closeOnMobile ? ' data-close' : '';
-        var descHtml = item.desc ? '<span class="drawer__desc">' + item.desc + '</span>' : '';
-        return '<li><a href="' + item.href + '"' + isCurrent + closeAttr + '>' +
-          '<span class="drawer__title">' + item.title + '</span>' +
-          descHtml + '</a></li>';
-      }).join('') + '</ul>';
+      var topHtml =
+        '<p class="drawer__label">Overview &amp; References</p>' +
+        '<ul class="drawer__list">' +
+        TOP_LINKS.map(function (item) {
+          var isCurrent = item.href === path ? ' aria-current="page"' : '';
+          var descHtml = item.desc ? '<span class="drawer__desc">' + item.desc + '</span>' : '';
+          return (
+            '<li><a href="' + item.href + '"' + isCurrent + ' data-close>' +
+            '<span class="drawer__title">' + item.title + '</span>' +
+            descHtml +
+            '</a></li>'
+          );
+        }).join('') +
+        '</ul>';
 
-      var guidesHtml = '<p class="drawer__label">Read in this order</p><ul class="drawer__list">' + GUIDES.map(function (g) {
-        var isCurrent = (g.href === path) ? ' aria-current="page"' : '';
-        return '<li><a href="' + g.href + '"' + isCurrent + '>' +
-          '<span class="drawer__title"><span class="drawer__step">' + g.step + '</span>' + g.title + '</span>' +
-          '<span class="drawer__desc">' + g.desc + '</span>' +
-          '</a></li>';
-      }).join('') + '</ul>';
+      var groupsHtml = GUIDE_GROUPS.map(function (group) {
+        return (
+          '<p class="drawer__label">' + group.label + '</p>' +
+          '<ul class="drawer__list">' +
+          group.items.map(function (g) {
+            var isCurrent = g.href === path ? ' aria-current="page"' : '';
+            return (
+              '<li><a href="' + g.href + '"' + isCurrent + ' data-close>' +
+              '<span class="drawer__title"><span class="drawer__step">' + g.step + '</span>' + g.title + '</span>' +
+              '<span class="drawer__desc">' + g.desc + '</span>' +
+              '</a></li>'
+            );
+          }).join('') +
+          '</ul>'
+        );
+      }).join('');
 
-      var soonHtml = '<p class="drawer__label">Coming soon</p><ul class="drawer__soon">' + COMING_SOON.map(function (s) {
-        return '<li>' + s + '</li>';
-      }).join('') + '</ul>';
+      var soonHtml =
+        '<p class="drawer__label">Coming soon</p><ul class="drawer__soon">' +
+        COMING_SOON.map(function (s) {
+          return '<li>' + s + '</li>';
+        }).join('') +
+        '</ul>';
 
-      navEl.innerHTML = topHtml + guidesHtml + soonHtml;
+      navEl.innerHTML = topHtml + groupsHtml + soonHtml;
+
+      // Ensure active sidebar item is visible inside the drawer scroll container
+      var activeLink = navEl.querySelector('a[aria-current="page"]');
+      if (activeLink && path !== 'index.html') {
+        window.requestAnimationFrame(function () {
+          var navRect = navEl.getBoundingClientRect();
+          var linkRect = activeLink.getBoundingClientRect();
+          if (linkRect.bottom > navRect.bottom || linkRect.top < navRect.top) {
+            navEl.scrollTop = activeLink.offsetTop - navEl.clientHeight / 3;
+          }
+        });
+      }
     }
   }
 
@@ -83,14 +139,17 @@
   if (footer) {
     footer.classList.add('sitefoot');
     var fineEl = footer.querySelector('.sitefoot__fine');
-    var fineText = fineEl ? fineEl.innerHTML : 'Simplified on purpose. Real systems have more moving parts, but these ideas are the foundation for all of them.';
+    var fineText = fineEl
+      ? fineEl.innerHTML
+      : 'Simplified on purpose. Real systems have more moving parts, but these ideas are the foundation for all of them.';
 
-    var footerListHtml = GUIDES.map(function (g) {
-      var isCurrent = (g.href === path) ? ' aria-current="page"' : '';
-      return '<li><a href="' + g.href + '"' + isCurrent + '>' + g.title + '</a></li>';
-    }).join('') +
-    '<li><a href="diagrams.html"' + (path === 'diagrams.html' ? ' aria-current="page"' : '') + '>Architecture Diagrams</a></li>' +
-    '<li><a href="encyclopedia.html"' + (path === 'encyclopedia.html' ? ' aria-current="page"' : '') + '>Tech Encyclopedia</a></li>';
+    var footerListHtml =
+      ALL_GUIDES.map(function (g) {
+        var isCurrent = g.href === path ? ' aria-current="page"' : '';
+        return '<li><a href="' + g.href + '"' + isCurrent + '>' + g.title + '</a></li>';
+      }).join('') +
+      '<li><a href="diagrams.html"' + (path === 'diagrams.html' ? ' aria-current="page"' : '') + '>Architecture Diagrams</a></li>' +
+      '<li><a href="encyclopedia.html"' + (path === 'encyclopedia.html' ? ' aria-current="page"' : '') + '>Tech Encyclopedia</a></li>';
 
     footer.innerHTML =
       '<div class="sitefoot__inner">' +
@@ -108,7 +167,7 @@
   }
 
   /* ----------------------------------------------------------
-     3. Sidebar Drawer Toggle & Accessibility
+     3. Sidebar Drawer Toggle, Scroll Protection & Accessibility
      ---------------------------------------------------------- */
   var openBtn = document.getElementById('menu-open');
   var closeBtn = document.getElementById('menu-close');
@@ -124,38 +183,60 @@
     function isOpen() {
       return wide.matches ? !body.classList.contains('side-closed') : body.classList.contains('menu-open');
     }
+
     function syncAria() {
       var visible = isOpen();
       drawer.setAttribute('aria-hidden', String(!visible));
       openBtn.setAttribute('aria-expanded', String(visible));
     }
-    function setOpen(open) {
+
+    function focusSafe(el) {
+      if (!el || typeof el.focus !== 'function') return;
+      try {
+        el.focus({ preventScroll: true });
+      } catch (e) {
+        el.focus();
+      }
+    }
+
+    function setOpen(open, restoreFocus) {
       if (wide.matches) {
         body.classList.toggle('side-closed', !open);
         try { localStorage.setItem(KEY, open ? '0' : '1'); } catch (e) {}
       } else {
         body.classList.toggle('menu-open', open);
-        (open ? closeBtn : openBtn).focus();
+        if (restoreFocus !== false) {
+          focusSafe(open ? closeBtn : openBtn);
+        }
       }
       syncAria();
     }
 
-    openBtn.addEventListener('click', function () { setOpen(!isOpen()); });
-    closeBtn.addEventListener('click', function () { setOpen(false); });
-    scrim.addEventListener('click', function () { setOpen(false); });
+    openBtn.addEventListener('click', function () { setOpen(!isOpen(), true); });
+    closeBtn.addEventListener('click', function () { setOpen(false, true); });
+    scrim.addEventListener('click', function () { setOpen(false, true); });
 
     drawer.querySelectorAll('[data-close]').forEach(function (a) {
-      a.addEventListener('click', function () { if (!wide.matches) setOpen(false); });
+      a.addEventListener('click', function () {
+        if (!wide.matches) {
+          // Do not steal focus when navigating to an anchor link (#roadmap)
+          setOpen(false, false);
+        }
+      });
     });
 
     document.addEventListener('keydown', function (e) {
       if (e.key === 'Escape' && !wide.matches && body.classList.contains('menu-open')) {
-        setOpen(false);
+        setOpen(false, true);
       }
     });
 
-    var onChange = function () { body.classList.remove('menu-open'); syncAria(); };
-    if (wide.addEventListener) wide.addEventListener('change', onChange); else wide.addListener(onChange);
+    var onChange = function () {
+      body.classList.remove('menu-open');
+      syncAria();
+    };
+    if (wide.addEventListener) wide.addEventListener('change', onChange);
+    else wide.addListener(onChange);
     syncAria();
   }
 
@@ -178,7 +259,6 @@
     });
   }
 
-  // Existing .cmd-box__copy buttons (e.g. eks-commands.html)
   document.querySelectorAll('.cmd-box__copy').forEach(function (btn) {
     attachCopyHandler(btn, function () {
       var targetId = btn.getAttribute('data-target');
@@ -187,7 +267,6 @@
     });
   });
 
-  // Auto-enhance standalone <pre class="code"> across all guides with a clean copy button
   document.querySelectorAll('pre.code').forEach(function (pre) {
     if (pre.closest('.cmd-box')) return;
     var wrapper = document.createElement('div');
@@ -220,7 +299,7 @@
             io.unobserve(en.target);
           }
         });
-      }, { threshold: 0.1, rootMargin: '0px 0px -32px 0px' });
+      }, { threshold: 0.02, rootMargin: '0px 0px -10px 0px' });
       revealItems.forEach(function (el) { io.observe(el); });
     } else {
       revealItems.forEach(function (el) { el.classList.add('in'); });

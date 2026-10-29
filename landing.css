@@ -17,7 +17,7 @@ body.home {
 
   background: var(--bg);
   color: var(--text);
-  overflow-x: hidden;
+  overflow-x: clip;
 }
 
 /* Fade-in on scroll (only when JS is running) */

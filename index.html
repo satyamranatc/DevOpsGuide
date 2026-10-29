@@ -34,9 +34,10 @@
     </div>
 
     <nav aria-label="Guides">
+      <p class="drawer__label">Overview &amp; References</p>
       <ul class="drawer__list">
         <li>
-          <a href="index.html" aria-current="page">
+          <a href="index.html" aria-current="page" data-close>
             <span class="drawer__title">Home</span>
           </a>
         </li>
@@ -47,85 +48,111 @@
           </a>
         </li>
         <li>
-          <a href="diagrams.html">
+          <a href="diagrams.html" data-close>
             <span class="drawer__title">Architecture Diagrams</span>
-            <span class="drawer__desc">Docker, EC2, Nginx, ASG &middot; Visuals</span>
+            <span class="drawer__desc">Docker, EC2, Nginx, K8s &middot; Visuals</span>
           </a>
         </li>
         <li>
-          <a href="encyclopedia.html">
-            <span class="drawer__title">&#128218; Tech Encyclopedia</span>
+          <a href="encyclopedia.html" data-close>
+            <span class="drawer__title">Tech Encyclopedia</span>
             <span class="drawer__desc">1-line definitions for 50+ DevOps terms</span>
           </a>
         </li>
       </ul>
 
-      <p class="drawer__label">Read in this order</p>
+      <p class="drawer__label">Foundations, Cloud &amp; Containers</p>
       <ul class="drawer__list">
         <li>
-          <a href="github.html">
-            <span class="drawer__title"><span class="drawer__step">1</span>Git &amp; GitHub</span>
+          <a href="github.html" data-close>
+            <span class="drawer__title"><span class="drawer__step">01</span>Git &amp; GitHub</span>
             <span class="drawer__desc">Save, share and team up on code &middot; 8 min</span>
           </a>
         </li>
         <li>
-          <a href="shell.html">
-            <span class="drawer__title"><span class="drawer__step">2</span>Shell scripting</span>
+          <a href="shell.html" data-close>
+            <span class="drawer__title"><span class="drawer__step">02</span>Shell scripting</span>
             <span class="drawer__desc">Automate tasks with Bash &middot; 12 min</span>
           </a>
         </li>
         <li>
-          <a href="aws.html">
-            <span class="drawer__title"><span class="drawer__step">3</span>AWS essentials</span>
-            <span class="drawer__desc">Servers, storage and security &middot; 14 min</span>
+          <a href="aws.html" data-close>
+            <span class="drawer__title"><span class="drawer__step">03</span>AWS essentials</span>
+            <span class="drawer__desc">Regions, VPC, IAM and billing &middot; 14 min</span>
           </a>
         </li>
         <li>
-          <a href="ec2.html">
-            <span class="drawer__title"><span class="drawer__step">4</span>EC2 servers</span>
-            <span class="drawer__desc">Launch and connect to your first server &middot; 15 min</span>
+          <a href="ec2.html" data-close>
+            <span class="drawer__title"><span class="drawer__step">04</span>EC2 servers</span>
+            <span class="drawer__desc">Launch and SSH into a server &middot; 15 min</span>
           </a>
         </li>
         <li>
-          <a href="docker.html">
-            <span class="drawer__title"><span class="drawer__step">5</span>Docker</span>
-            <span class="drawer__desc">Images, containers and commands &middot; 12 min</span>
+          <a href="docker.html" data-close>
+            <span class="drawer__title"><span class="drawer__step">05</span>Docker</span>
+            <span class="drawer__desc">Images, containers and CLI &middot; 12 min</span>
           </a>
         </li>
         <li>
-          <a href="nginx.html">
-            <span class="drawer__title"><span class="drawer__step">6</span>Nginx</span>
-            <span class="drawer__desc">Web server, proxy and HTTPS &middot; 14 min</span>
+          <a href="nginx.html" data-close>
+            <span class="drawer__title"><span class="drawer__step">06</span>Nginx &amp; HTTPS</span>
+            <span class="drawer__desc">Web server, reverse proxy &amp; SSL &middot; 14 min</span>
+          </a>
+        </li>
+      </ul>
+
+      <p class="drawer__label">Kubernetes (10-Phase Syllabus)</p>
+      <ul class="drawer__list">
+        <li>
+          <a href="kubernetes.html" data-close>
+            <span class="drawer__title"><span class="drawer__step">K1</span>Kubernetes Basics</span>
+            <span class="drawer__desc">Phases 1–4: Architecture, Pods &amp; YAML &middot; 14 min</span>
           </a>
         </li>
         <li>
-          <a href="cicd.html">
-            <span class="drawer__title"><span class="drawer__step">7</span>CI/CD with GitHub Actions</span>
+          <a href="k8s-workloads.html" data-close>
+            <span class="drawer__title"><span class="drawer__step">K2</span>K8s Workloads &amp; Net</span>
+            <span class="drawer__desc">Phases 5–8: Services, Ingress, EBS &amp; Probes &middot; 16 min</span>
+          </a>
+        </li>
+        <li>
+          <a href="eks.html" data-close>
+            <span class="drawer__title"><span class="drawer__step">K3</span>Amazon EKS &amp; Projects</span>
+            <span class="drawer__desc">Phases 9–10: EKS, HPA, Helm &amp; 8 Labs &middot; 15 min</span>
+          </a>
+        </li>
+        <li>
+          <a href="eks-commands.html" data-close>
+            <span class="drawer__title"><span class="drawer__step">&gt;_</span>EKS CLI Cheat Sheet</span>
+            <span class="drawer__desc">kubectl commands &amp; ECR deploy &middot; 10 min</span>
+          </a>
+        </li>
+        <li>
+          <a href="k8s-encyclopedia.html" data-close>
+            <span class="drawer__title"><span class="drawer__step">AZ</span>K8s &amp; EKS Encyclopedia</span>
+            <span class="drawer__desc">Phase 1–10 terms, Top 15 &amp; 4 diagrams</span>
+          </a>
+        </li>
+      </ul>
+
+      <p class="drawer__label">CI/CD, IaC &amp; Monitoring</p>
+      <ul class="drawer__list">
+        <li>
+          <a href="cicd.html" data-close>
+            <span class="drawer__title"><span class="drawer__step">07</span>CI/CD Actions</span>
             <span class="drawer__desc">Auto-deploy React + Express &middot; 20 min</span>
           </a>
         </li>
         <li>
-          <a href="eks.html">
-            <span class="drawer__title"><span class="drawer__step">8</span>EKS</span>
-            <span class="drawer__desc">Kubernetes on AWS, explained &middot; 14 min</span>
+          <a href="terraform.html" data-close>
+            <span class="drawer__title"><span class="drawer__step">09</span>Terraform IaC</span>
+            <span class="drawer__desc">Build cloud from code &middot; 15 min</span>
           </a>
         </li>
         <li>
-          <a href="eks-commands.html">
-            <span class="drawer__title"><span class="drawer__step">&gt;_</span>EKS Cheat Sheet</span>
-            <span class="drawer__desc">Terminal commands &amp; ECR deploy &middot; 10 min</span>
-          </a>
-        </li>
-        <li>
-          <a href="terraform.html">
-            <span class="drawer__title"><span class="drawer__step">9</span>Terraform</span>
-            <span class="drawer__desc">Infrastructure as Code &middot; 15 min</span>
-          </a>
-        </li>
-        <li>
-          <a href="grafana.html">
+          <a href="grafana.html" data-close>
             <span class="drawer__title"><span class="drawer__step">10</span>Grafana</span>
-            <span class="drawer__desc">Dashboards &amp; monitoring &middot; 13 min</span>
+            <span class="drawer__desc">Dashboards, PromQL &amp; alerts &middot; 13 min</span>
           </a>
         </li>
       </ul>
@@ -136,7 +163,7 @@
         <li>Ansible configuration</li>
         <li>Prometheus &amp; Alertmanager</li>
         <li>Security with Vault</li>
-        <li>Reliability</li>
+        <li>Reliability &amp; SRE</li>
       </ul>
     </nav>
 
@@ -217,6 +244,7 @@
           <ul class="quick__list">
             <li><a href="diagrams.html" class="quick__featured"><strong>Diagrams</strong><span>Visual cheatsheet</span></a></li>
             <li><a href="encyclopedia.html" class="quick__featured"><strong>Encyclopedia</strong><span>50+ DevOps terms</span></a></li>
+            <li><a href="k8s-encyclopedia.html" class="quick__featured"><strong>K8s &amp; EKS Dict</strong><span>85+ Phase 1–10 terms</span></a></li>
             <li><a href="github.html"><strong>Git &amp; GitHub</strong><span>8 min read</span></a></li>
             <li><a href="shell.html"><strong>Shell scripting</strong><span>12 min read</span></a></li>
             <li><a href="aws.html"><strong>AWS essentials</strong><span>14 min read</span></a></li>
@@ -700,8 +728,9 @@
             <li class="is-live"><a href="eks.html#devops">Phase 10: Amazon EKS, HPA &amp; Helm <span class="pill">Live</span></a></li>
             <li class="is-live"><a href="eks.html#projects">8 Practical Beginner Projects <span class="pill">Live</span></a></li>
             <li class="is-live"><a href="eks-commands.html">EKS Terminal &amp; ECR Cheat Sheet <span class="pill">Live</span></a></li>
+            <li class="is-live"><a href="k8s-encyclopedia.html">K8s &amp; EKS Encyclopedia (Phases 1–10) <span class="pill">Live</span></a></li>
           </ul>
-          <p class="stage__count">10 phases · 4 guides · All live</p>
+          <p class="stage__count">10 phases · 5 guides &amp; references · All live</p>
         </article>
 
         <article class="stage reveal" data-d="1">

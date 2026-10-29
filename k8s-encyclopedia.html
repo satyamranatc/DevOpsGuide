@@ -1,0 +1,1778 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Kubernetes &amp; Amazon EKS Encyclopedia — Phase-by-Phase Definitions &amp; Diagrams</title>
+  <meta name="description" content="Complete beginner-friendly Kubernetes & Amazon EKS encyclopedia organized across all 10 DevOps phases: 85+ simple definitions, 15 must-know terms, architecture diagrams, and kubectl commands.">
+  <meta name="color-scheme" content="dark">
+  <meta name="theme-color" content="#05060a">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="guide.css">
+  <link rel="stylesheet" href="sidebar.css">
+</head>
+<body class="guide">
+
+  <!-- Top bar -->
+  <header class="topbar">
+    <div class="topbar__inner">
+      <div class="topbar__left">
+        <button class="menu-btn" id="menu-open" type="button" aria-controls="drawer" aria-expanded="false">
+          <span class="menu-btn__bars" aria-hidden="true"></span>
+          Menu
+        </button>
+        <a class="topbar__brand" href="index.html">Deploybook</a>
+      </div>
+      <nav class="topbar__nav" aria-label="Jump to">
+        <a href="#top-15">Top 15 Terms</a>
+        <a href="#visual-models">4 Diagrams</a>
+        <a href="#search-area">All 10 Phases</a>
+        <a href="#kubectl-ref">kubectl CLI</a>
+        <a href="#learning-path">Learning Path</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Off-canvas drawer menu (hydrated by app.js) -->
+  <div class="scrim" id="scrim"></div>
+  <aside class="drawer" id="drawer" aria-label="Site menu">
+    <div class="drawer__head">
+      <a class="drawer__brand" href="index.html">Deploybook</a>
+      <button class="drawer__close" id="menu-close" type="button" aria-label="Hide sidebar">&times;</button>
+    </div>
+    <nav aria-label="Guides"></nav>
+    <p class="drawer__foot">Short guides in plain English, written for people who are just starting out.</p>
+  </aside>
+
+  <main id="top">
+
+    <!-- Hero -->
+    <section class="ency-hero">
+      <p class="eyebrow">&#9096; Kubernetes &amp; Amazon EKS Reference</p>
+      <h1>K8s &amp; EKS Encyclopedia.<br>Phase by Phase.</h1>
+      <p class="hero__lead">Every Kubernetes and Amazon EKS term from the 10-Phase DevOps syllabus explained in one simple sentence—complete with visual architecture diagrams, the top 15 must-know terms, and debugging commands.</p>
+      <p class="hero__meta">85+ K8s &amp; EKS definitions &middot; 4 Architecture Diagrams &middot; 10 Phases &middot; Instant Search</p>
+
+      <div class="diag-pills" style="margin-top:28px;">
+        <a class="diag-pill" href="#top-15"><span class="diag-pill__num">15</span> Must-Know Terms</a>
+        <a class="diag-pill" href="#visual-models"><span class="diag-pill__num">SVG</span> 4 Visual Diagrams</a>
+        <a class="diag-pill" href="#search-area"><span class="diag-pill__num">P1–P10</span> Phase-by-Phase Glossary</a>
+        <a class="diag-pill" href="#kubectl-ref"><span class="diag-pill__num">&gt;_</span> kubectl &amp; Debug CLI</a>
+        <a class="diag-pill" href="#learning-path"><span class="diag-pill__num">AWS</span> Practical Learning Path</a>
+      </div>
+    </section>
+
+    <!-- ==================== SECTION 1: TOP 15 ESSENTIAL TERMS ==================== -->
+    <section class="article" id="top-15" style="max-width:1040px; padding-top:24px;">
+      <span class="section__num">Start Here · The Core 15</span>
+      <h2>15 Essential Kubernetes &amp; EKS Terms to Remember First</h2>
+      <p>If you are just starting out in DevOps, memorize these <strong>15 foundational building blocks</strong> first. Almost every Kubernetes YAML file and AWS architecture diagram is made of these pieces.</p>
+
+      <table class="cheat-table">
+        <thead>
+          <tr>
+            <th style="width:56px;">No.</th>
+            <th style="width:190px;">Term</th>
+            <th style="width:250px;">Remember It As</th>
+            <th>Plain-English Definition</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>01</strong></td>
+            <td><code>Cluster</code></td>
+            <td><strong>The complete Kubernetes environment</strong></td>
+            <td>A group of machines (Control Plane + Worker Nodes) working together as one system to run containers.</td>
+          </tr>
+          <tr>
+            <td><strong>02</strong></td>
+            <td><code>Node</code></td>
+            <td><strong>A machine in the cluster</strong></td>
+            <td>A physical or virtual server (like an AWS EC2 instance) that provides CPU and RAM to run Pods.</td>
+          </tr>
+          <tr>
+            <td><strong>03</strong></td>
+            <td><code>Pod</code></td>
+            <td><strong>The smallest deployable unit</strong></td>
+            <td>A thin wrapper around one or more containers that shares a single IP address and storage volume.</td>
+          </tr>
+          <tr>
+            <td><strong>04</strong></td>
+            <td><code>Container</code></td>
+            <td><strong>The application runtime box</strong></td>
+            <td>Your packaged app and its libraries running inside a Pod (powered by containerd or Docker).</td>
+          </tr>
+          <tr>
+            <td><strong>05</strong></td>
+            <td><code>Deployment</code></td>
+            <td><strong>Manages application Pods</strong></td>
+            <td>The resource you write to declare how many copies of your Pod should run and how to update them safely.</td>
+          </tr>
+          <tr>
+            <td><strong>06</strong></td>
+            <td><code>ReplicaSet</code></td>
+            <td><strong>Maintains desired Pod count</strong></td>
+            <td>The background watchdog managed by a Deployment that immediately starts a new Pod if one crashes.</td>
+          </tr>
+          <tr>
+            <td><strong>07</strong></td>
+            <td><code>Service</code></td>
+            <td><strong>Stable network access to Pods</strong></td>
+            <td>A permanent IP address and DNS name in front of short-lived Pods so traffic always finds healthy copies.</td>
+          </tr>
+          <tr>
+            <td><strong>08</strong></td>
+            <td><code>Namespace</code></td>
+            <td><strong>Organizes cluster resources</strong></td>
+            <td>A virtual sub-cluster (like folders for <code>dev</code>, <code>staging</code>, and <code>prod</code>) inside one physical cluster.</td>
+          </tr>
+          <tr>
+            <td><strong>09</strong></td>
+            <td><code>ConfigMap</code></td>
+            <td><strong>Stores non-sensitive settings</strong></td>
+            <td>Holds plain-text configuration (like URLs, feature flags, or ports) decoupled from your container image.</td>
+          </tr>
+          <tr>
+            <td><strong>10</strong></td>
+            <td><code>Secret</code></td>
+            <td><strong>Stores sensitive credentials</strong></td>
+            <td>Holds passwords, API keys, and TLS certificates separately from code so they are never hardcoded.</td>
+          </tr>
+          <tr>
+            <td><strong>11</strong></td>
+            <td><code>kubectl</code></td>
+            <td><strong>Communicates with Kubernetes</strong></td>
+            <td>The command-line remote control used to inspect, deploy, scale, and debug cluster resources.</td>
+          </tr>
+          <tr>
+            <td><strong>12</strong></td>
+            <td><code>YAML</code></td>
+            <td><strong>Defines resource configuration</strong></td>
+            <td>The human-readable text format used to write Kubernetes manifest files declaring your desired state.</td>
+          </tr>
+          <tr>
+            <td><strong>13</strong></td>
+            <td><code>Ingress</code></td>
+            <td><strong>HTTP/HTTPS routing rules</strong></td>
+            <td>The smart front-door router that directs domain names and URL paths (like <code>/api</code>) to internal Services.</td>
+          </tr>
+          <tr>
+            <td><strong>14</strong></td>
+            <td><code>HPA</code></td>
+            <td><strong>Auto-adjusts Pod replicas</strong></td>
+            <td>Horizontal Pod Autoscaler—adds more Pods when CPU/memory spikes and scales down when traffic drops.</td>
+          </tr>
+          <tr>
+            <td><strong>15</strong></td>
+            <td><code>Amazon EKS</code></td>
+            <td><strong>AWS's managed Kubernetes service</strong></td>
+            <td>Runs and patches the Kubernetes Control Plane for you across multiple AWS Availability Zones.</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ==================== SECTION 2: 4 VISUAL ARCHITECTURE DIAGRAMS ==================== -->
+    <section class="diagram-section" id="visual-models" style="max-width:1080px;">
+      <div class="diagram-head" style="max-width:760px;">
+        <span class="section__num">Visual Mental Models</span>
+        <h2>4 Diagrams That Explain Every Term</h2>
+        <p>Before diving into the 10-phase dictionary below, use these four diagrams to see how Control Plane components, Services, Storage, and Pod lifecycles fit together inside Amazon EKS.</p>
+      </div>
+
+      <!-- DIAGRAM 1: Cluster & Node Architecture (Phases 1-3) -->
+      <div class="diagram" style="margin-bottom:32px;">
+        <p style="margin:0 0 14px; font-size:13px; font-weight:700; color:var(--accent-ink); letter-spacing:0.04em; text-transform:uppercase;">Diagram 01 · Phases 1–3 · Cluster, Control Plane &amp; Worker Node Architecture</p>
+        <svg viewBox="0 0 920 330" role="img" aria-label="Kubernetes Cluster Architecture showing Control Plane and Worker Nodes">
+          <!-- Outer Cluster Box -->
+          <rect class="d-cluster" x="12" y="12" width="896" height="306" rx="18"/>
+          <text class="d-small" x="32" y="38">KUBERNETES CLUSTER (AMAZON EKS)</text>
+
+          <!-- Left: Control Plane -->
+          <rect class="d-control" x="32" y="54" width="340" height="244" rx="14"/>
+          <text class="d-on-dark" x="52" y="82">CONTROL PLANE (AWS Managed)</text>
+          <text class="d-on-dark2" x="52" y="100">Makes global decisions &amp; maintains desired state</text>
+
+          <rect class="d-box" x="52" y="116" width="142" height="72" rx="10"/>
+          <text class="d-title" x="66" y="142">API Server</text>
+          <text class="d-sub" x="66" y="162">Front door for</text>
+          <text class="d-sub" x="66" y="177">kubectl &amp; YAML</text>
+
+          <rect class="d-box" x="210" y="116" width="142" height="72" rx="10"/>
+          <text class="d-title" x="224" y="142">etcd</text>
+          <text class="d-sub" x="224" y="162">Key-value store</text>
+          <text class="d-sub" x="224" y="177">of cluster state</text>
+
+          <rect class="d-box" x="52" y="204" width="142" height="72" rx="10"/>
+          <text class="d-title" x="66" y="230">Scheduler</text>
+          <text class="d-sub" x="66" y="250">Picks best Node</text>
+          <text class="d-sub" x="66" y="265">for new Pods</text>
+
+          <rect class="d-box" x="210" y="204" width="142" height="72" rx="10"/>
+          <text class="d-title" x="224" y="230">Controller Mgr</text>
+          <text class="d-sub" x="224" y="250">Runs ReplicaSet</text>
+          <text class="d-sub" x="224" y="265">&amp; Node loops</text>
+
+          <!-- Arrow from API Server to Worker Node -->
+          <line class="d-line" x1="372" y1="152" x2="416" y2="152"/>
+          <polygon class="d-arrow" points="420,152 410,147 410,157"/>
+
+          <!-- Right: Worker Node -->
+          <rect class="d-node" x="424" y="54" width="464" height="244" rx="14"/>
+          <text class="d-title" x="444" y="82">WORKER NODE (EC2 Instance in Node Group)</text>
+          <text class="d-sub" x="444" y="100">Runs your actual application containers</text>
+
+          <!-- Node Agents -->
+          <rect class="d-box" x="444" y="116" width="130" height="58" rx="8"/>
+          <text class="d-title" x="458" y="140">Kubelet</text>
+          <text class="d-sub" x="458" y="158">Node agent</text>
+
+          <rect class="d-box" x="588" y="116" width="130" height="58" rx="8"/>
+          <text class="d-title" x="602" y="140">Kube-proxy</text>
+          <text class="d-sub" x="602" y="158">Service network</text>
+
+          <rect class="d-box" x="732" y="116" width="136" height="58" rx="8"/>
+          <text class="d-title" x="746" y="140">containerd</text>
+          <text class="d-sub" x="746" y="158">Container runtime</text>
+
+          <!-- Pods inside Worker Node -->
+          <rect class="d-pod" x="444" y="190" width="204" height="90" rx="10"/>
+          <text class="d-podtitle" x="460" y="214">POD 1 (10.244.1.14)</text>
+          <rect class="d-box" x="460" y="224" width="172" height="44" rx="6"/>
+          <text class="d-title" x="474" y="250">Container: web-app:v1</text>
+
+          <rect class="d-pod" x="664" y="190" width="204" height="90" rx="10"/>
+          <text class="d-podtitle" x="680" y="214">POD 2 (10.244.1.15)</text>
+          <rect class="d-box" x="680" y="224" width="172" height="44" rx="6"/>
+          <text class="d-title" x="694" y="250">Container: web-app:v1</text>
+        </svg>
+      </div>
+
+      <!-- DIAGRAM 2: Networking, Service Types & Ingress (Phases 5-6) -->
+      <div class="diagram" style="margin-bottom:32px;">
+        <p style="margin:0 0 14px; font-size:13px; font-weight:700; color:var(--accent-ink); letter-spacing:0.04em; text-transform:uppercase;">Diagram 02 · Phases 5–6 · Services, Ingress, DNS &amp; Traffic Flow</p>
+        <svg viewBox="0 0 920 220" role="img" aria-label="Traffic flow from Users through Ingress and LoadBalancer to ClusterIP Service and Pods">
+          <!-- Users -->
+          <rect class="d-box" x="16" y="70" width="130" height="80" rx="12"/>
+          <text class="d-title" x="34" y="104">Users / HTTPS</text>
+          <text class="d-sub" x="34" y="126">app.example.com</text>
+
+          <line class="d-line" x1="146" y1="110" x2="186" y2="110"/>
+          <polygon class="d-arrow" points="190,110 180,105 180,115"/>
+
+          <!-- Ingress / LoadBalancer -->
+          <rect class="d-lb" x="192" y="54" width="196" height="112" rx="12"/>
+          <text class="d-title" x="210" y="84">Ingress + LoadBalancer</text>
+          <text class="d-sub" x="210" y="106">AWS ALB / NLB</text>
+          <text class="d-sub" x="210" y="126">Routes /api &amp; /web</text>
+          <text class="d-sub" x="210" y="146">via Ingress Controller</text>
+
+          <line class="d-line" x1="388" y1="110" x2="428" y2="110"/>
+          <polygon class="d-arrow" points="432,110 422,105 422,115"/>
+
+          <!-- Service (ClusterIP / CoreDNS) -->
+          <rect class="d-node" x="434" y="54" width="206" height="112" rx="12"/>
+          <text class="d-title" x="452" y="84">Service (ClusterIP)</text>
+          <text class="d-sub" x="452" y="106">Stable VIP + CoreDNS</text>
+          <text class="d-sub" x="452" y="126">Selector: app=payment</text>
+          <text class="d-sub" x="452" y="146">Port 80 &rarr; TargetPort 3000</text>
+
+          <line class="d-line" x1="640" y1="82" x2="686" y2="62"/>
+          <line class="d-line" x1="640" y1="138" x2="686" y2="158"/>
+
+          <!-- Matching Pods -->
+          <rect class="d-pod" x="690" y="24" width="210" height="74" rx="10"/>
+          <text class="d-podtitle" x="708" y="52">Pod Replica #1</text>
+          <text class="d-sub" x="708" y="74">Label: app=payment (:3000)</text>
+
+          <rect class="d-pod" x="690" y="122" width="210" height="74" rx="10"/>
+          <text class="d-podtitle" x="708" y="150">Pod Replica #2</text>
+          <text class="d-sub" x="708" y="172">Label: app=payment (:3000)</text>
+        </svg>
+      </div>
+
+      <!-- DIAGRAM 3: Persistent Storage & Config (Phases 7-8) -->
+      <div class="diagram" style="margin-bottom:32px;">
+        <p style="margin:0 0 14px; font-size:13px; font-weight:700; color:var(--accent-ink); letter-spacing:0.04em; text-transform:uppercase;">Diagram 03 · Phases 7–8 · Persistent Storage (PVC &rarr; PV &rarr; AWS EBS) &amp; Config</p>
+        <svg viewBox="0 0 920 210" role="img" aria-label="Kubernetes Storage chain from Pod Volume to PVC, PV, StorageClass, and Amazon EBS">
+          <!-- Pod -->
+          <rect class="d-pod" x="16" y="42" width="200" height="126" rx="12"/>
+          <text class="d-podtitle" x="34" y="70">Application Pod</text>
+          <text class="d-sub" x="34" y="94">+ ConfigMap (Env vars)</text>
+          <text class="d-sub" x="34" y="114">+ Secret (DB password)</text>
+          <text class="d-sub" x="34" y="138">Mounts /var/lib/data</text>
+
+          <line class="d-line" x1="216" y1="105" x2="256" y2="105"/>
+          <polygon class="d-arrow" points="260,105 250,100 250,110"/>
+
+          <!-- PVC -->
+          <rect class="d-node" x="262" y="52" width="186" height="106" rx="12"/>
+          <text class="d-title" x="280" y="84">PVC (Claim)</text>
+          <text class="d-sub" x="280" y="106">"I need 20Gi of</text>
+          <text class="d-sub" x="280" y="124">ReadWriteOnce disk"</text>
+
+          <line class="d-line" x1="448" y1="105" x2="488" y2="105"/>
+          <polygon class="d-arrow" points="492,105 482,100 482,110"/>
+
+          <!-- PV + StorageClass -->
+          <rect class="d-node" x="494" y="52" width="196" height="106" rx="12"/>
+          <text class="d-title" x="512" y="84">PV + StorageClass</text>
+          <text class="d-sub" x="512" y="106">StorageClass: gp3</text>
+          <text class="d-sub" x="512" y="124">Auto-provisions volume</text>
+
+          <line class="d-line" x1="690" y1="105" x2="730" y2="105"/>
+          <polygon class="d-arrow" points="734,105 724,100 724,110"/>
+
+          <!-- Amazon EBS -->
+          <rect class="d-lb" x="736" y="52" width="168" height="106" rx="12"/>
+          <text class="d-title" x="754" y="84">Amazon EBS</text>
+          <text class="d-sub" x="754" y="106">AWS Block Storage</text>
+          <text class="d-sub" x="754" y="124">Survives Pod restarts</text>
+        </svg>
+      </div>
+
+      <!-- DIAGRAM 4: Pod Lifecycle, Probes, Troubleshooting & HPA (Phases 8-10) -->
+      <div class="diagram">
+        <p style="margin:0 0 14px; font-size:13px; font-weight:700; color:var(--accent-ink); letter-spacing:0.04em; text-transform:uppercase;">Diagram 04 · Phases 8–10 · Pod Lifecycle, Health Probes, Troubleshooting &amp; HPA</p>
+        <svg viewBox="0 0 920 210" role="img" aria-label="Pod lifecycle from Pending to Running with Probes and HPA scaling, or error states">
+          <!-- Pending -->
+          <rect class="d-box" x="16" y="56" width="176" height="98" rx="12"/>
+          <text class="d-title" x="34" y="86">1. Pending</text>
+          <text class="d-sub" x="34" y="108">Scheduler finds Node</text>
+          <text class="d-sub" x="34" y="128">Pulls image from ECR</text>
+
+          <line class="d-line" x1="192" y1="105" x2="232" y2="105"/>
+          <polygon class="d-arrow" points="236,105 226,100 226,110"/>
+
+          <!-- Running + Probes -->
+          <rect class="d-pod" x="238" y="42" width="230" height="126" rx="12"/>
+          <text class="d-podtitle" x="256" y="70">2. Running (Healthy)</text>
+          <text class="d-sub" x="256" y="94">&#10003; Startup Probe: booted</text>
+          <text class="d-sub" x="256" y="114">&#10003; Readiness Probe: gets traffic</text>
+          <text class="d-sub" x="256" y="134">&#10003; Liveness Probe: stays alive</text>
+
+          <line class="d-line" x1="468" y1="105" x2="508" y2="105"/>
+          <polygon class="d-arrow" points="512,105 502,100 502,110"/>
+
+          <!-- HPA Auto-Scaling -->
+          <rect class="d-node" x="514" y="42" width="190" height="126" rx="12"/>
+          <text class="d-title" x="532" y="70">3. HPA Scaling</text>
+          <text class="d-sub" x="532" y="94">Watches CPU / RAM</text>
+          <text class="d-sub" x="532" y="114">Scales 2 &rarr; 10 Pods</text>
+          <text class="d-sub" x="532" y="134">Zero-downtime Rollout</text>
+
+          <!-- Troubleshooting Box -->
+          <rect class="d-lb" x="724" y="42" width="180" height="126" rx="12"/>
+          <text class="d-title" x="740" y="70">Common Errors</text>
+          <text class="d-sub" x="740" y="94">&#9888; ImagePullBackOff</text>
+          <text class="d-sub" x="740" y="112">(Bad ECR tag / IAM)</text>
+          <text class="d-sub" x="740" y="134">&#9888; CrashLoopBackOff</text>
+          <text class="d-sub" x="740" y="152">(App crash on boot)</text>
+        </svg>
+      </div>
+    </section>
+
+    <!-- ==================== SECTION 3: SEARCHABLE 10-PHASE ENCYCLOPEDIA ==================== -->
+    <div class="ency-controls" id="search-area" style="margin-top:72px;">
+      <div class="sec-head" style="margin-bottom:28px;">
+        <p class="eyebrow">All 10 Syllabus Phases</p>
+        <h2 style="margin:0; font-size:clamp(28px, 4vw, 40px);">Phase-by-Phase Definitions</h2>
+        <p style="margin:10px auto 0; color:var(--text-2); max-width:600px;">Filter by syllabus phase or type any Kubernetes, kubectl, or Amazon EKS term below.</p>
+      </div>
+
+      <!-- Search Input -->
+      <div class="search-wrapper">
+        <span class="search-icon" aria-hidden="true">&#128269;</span>
+        <input type="text" id="term-search" class="search-input" placeholder="Search any K8s or EKS term (e.g., pod, kubelet, etcd, pvc, ingress, crashloopbackoff, hpa, eks)..." autocomplete="off" spellcheck="false">
+        <button id="search-clear" class="search-clear" type="button" aria-label="Clear search">&times;</button>
+      </div>
+
+      <!-- Phase Filters -->
+      <div class="cat-filters" id="cat-filters" role="group" aria-label="Filter terms by syllabus phase">
+        <button class="cat-btn active" data-cat="all" type="button">All 10 Phases</button>
+        <button class="cat-btn" data-cat="phase-1" type="button">P1 · Intro</button>
+        <button class="cat-btn" data-cat="phase-2" type="button">P2 · Architecture</button>
+        <button class="cat-btn" data-cat="phase-3" type="button">P3 · Components</button>
+        <button class="cat-btn" data-cat="phase-4" type="button">P4 · Setup &amp; YAML</button>
+        <button class="cat-btn" data-cat="phase-5" type="button">P5 · Deploying &amp; Services</button>
+        <button class="cat-btn" data-cat="phase-6" type="button">P6 · Networking</button>
+        <button class="cat-btn" data-cat="phase-7" type="button">P7 · Storage &amp; EBS</button>
+        <button class="cat-btn" data-cat="phase-8" type="button">P8 · Config &amp; Probes</button>
+        <button class="cat-btn" data-cat="phase-9" type="button">P9 · Troubleshooting</button>
+        <button class="cat-btn" data-cat="phase-10" type="button">P10 · EKS &amp; DevOps</button>
+      </div>
+
+      <!-- Alphabet Navigation -->
+      <div class="alpha-bar" id="alpha-bar" aria-label="Jump to letter">
+        <span style="font-size:11px;color:var(--text-3);line-height:24px;margin-right:6px;">A–Z:</span>
+      </div>
+    </div>
+
+    <!-- Terms Grid Container -->
+    <div class="ency-wrap">
+      <div class="results-count">
+        <span id="count-display">Loading terms...</span>
+        <span style="font-size: 12px; color: var(--text-3);">Click "Copy" on any card to copy its note</span>
+      </div>
+
+      <div class="terms-grid" id="terms-grid"></div>
+    </div>
+
+    <!-- ==================== SECTION 4: KUBECTL & DEBUGGING COMMANDS ==================== -->
+    <section class="article" id="kubectl-ref" style="max-width:1040px; padding-top:32px;">
+      <span class="section__num">Phase 4 &amp; Phase 9 · CLI Reference</span>
+      <h2>Important kubectl &amp; Troubleshooting Commands</h2>
+      <p>These are the daily terminal commands you will use to inspect nodes, deploy YAML manifests, read logs, and debug failing Pods.</p>
+
+      <table class="cheat-table">
+        <thead>
+          <tr>
+            <th style="width:340px;">Command</th>
+            <th>Simple Definition</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>kubectl get pods</code></td>
+            <td>Lists Pods in the current namespace along with their status and restart count.</td>
+          </tr>
+          <tr>
+            <td><code>kubectl get pods -o wide</code></td>
+            <td>Lists Pods with extra details including their internal IP address and assigned Worker Node.</td>
+          </tr>
+          <tr>
+            <td><code>kubectl get nodes</code></td>
+            <td>Lists all Worker Nodes in the cluster and shows whether they are <code>Ready</code>.</td>
+          </tr>
+          <tr>
+            <td><code>kubectl get deployments</code></td>
+            <td>Lists Deployments in the current namespace and shows how many replicas are ready.</td>
+          </tr>
+          <tr>
+            <td><code>kubectl get services</code></td>
+            <td>Lists Services and their internal ClusterIP, NodePort, or external LoadBalancer URL.</td>
+          </tr>
+          <tr>
+            <td><code>kubectl apply -f file.yaml</code></td>
+            <td>Creates or updates Kubernetes resources based on a YAML manifest file.</td>
+          </tr>
+          <tr>
+            <td><code>kubectl delete -f file.yaml</code></td>
+            <td>Deletes the Kubernetes resources defined in that YAML manifest file.</td>
+          </tr>
+          <tr>
+            <td><code>kubectl describe pod &lt;pod-name&gt;</code></td>
+            <td>Displays detailed configuration and recent cluster Events for a Pod (essential for debugging <code>Pending</code> or <code>ImagePullBackOff</code>).</td>
+          </tr>
+          <tr>
+            <td><code>kubectl logs &lt;pod-name&gt;</code></td>
+            <td>Prints the stdout/stderr logs from a container inside a Pod (add <code>--previous</code> if the container crashed).</td>
+          </tr>
+          <tr>
+            <td><code>kubectl exec -it &lt;pod-name&gt; -- sh</code></td>
+            <td>Opens an interactive shell inside a running container so you can inspect files or test network connectivity.</td>
+          </tr>
+          <tr>
+            <td><code>kubectl get events --sort-by=.metadata.creationTimestamp</code></td>
+            <td>Shows a chronological timeline of cluster events (scheduling, image pulls, probe failures).</td>
+          </tr>
+          <tr>
+            <td><code>kubectl rollout status deployment/&lt;name&gt;</code></td>
+            <td>Watches a rolling update in real time until all new Pods are healthy.</td>
+          </tr>
+          <tr>
+            <td><code>kubectl rollout history deployment/&lt;name&gt;</code></td>
+            <td>Lists past revisions of a Deployment so you can audit or roll back changes.</td>
+          </tr>
+          <tr>
+            <td><code>kubectl rollout undo deployment/&lt;name&gt;</code></td>
+            <td>Immediately rolls a Deployment back to its previous working version.</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ==================== SECTION 5: RECOMMENDED PRACTICAL LEARNING PATH ==================== -->
+    <section class="article" id="learning-path" style="max-width:1040px; padding-top:48px;">
+      <span class="section__num">AWS &amp; DevOps Roadmap</span>
+      <h2>Recommended Practical Learning Order</h2>
+      <p>Since you are learning DevOps with AWS, practice these concepts in this exact 8-step sequence. Click any step to jump straight to that hands-on guide:</p>
+
+      <div class="flow-grid" style="grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));">
+        <a class="flow-card" href="kubernetes.html#phase-3" style="text-decoration:none;">
+          <div class="flow-card__step">Step 01 · Architecture</div>
+          <div class="flow-card__title">Container vs Pod vs Node</div>
+          <p class="flow-card__desc">Understand how a container sits inside a Pod, which runs on a Worker Node managed by the Control Plane.</p>
+        </a>
+        <a class="flow-card" href="k8s-workloads.html#phase-5" style="text-decoration:none;">
+          <div class="flow-card__step">Step 02 · Workloads</div>
+          <div class="flow-card__title">Deployments &amp; Replicas</div>
+          <p class="flow-card__desc">Write a Deployment YAML file and run 3 self-healing replicas of your application.</p>
+        </a>
+        <a class="flow-card" href="k8s-workloads.html#phase-6" style="text-decoration:none;">
+          <div class="flow-card__step">Step 03 · Networking</div>
+          <div class="flow-card__title">Expose with a Service</div>
+          <p class="flow-card__desc">Use ClusterIP, NodePort, LoadBalancer, and Ingress to route browser traffic to your Pods.</p>
+        </a>
+        <a class="flow-card" href="eks-commands.html#ecr-deploy" style="text-decoration:none;">
+          <div class="flow-card__step">Step 04 · Amazon ECR &amp; EKS</div>
+          <div class="flow-card__title">Deploy React from ECR</div>
+          <p class="flow-card__desc">Push your Docker image to Amazon ECR and deploy it to an Amazon EKS cluster.</p>
+        </a>
+        <a class="flow-card" href="k8s-workloads.html#phase-5" style="text-decoration:none;">
+          <div class="flow-card__step">Step 05 · Zero-Downtime</div>
+          <div class="flow-card__title">Rollout &amp; Rollback</div>
+          <p class="flow-card__desc">Perform a rolling image update and practice rolling back immediately when a bug appears.</p>
+        </a>
+        <a class="flow-card" href="eks.html#troubleshooting" style="text-decoration:none;">
+          <div class="flow-card__step">Step 06 · Debugging</div>
+          <div class="flow-card__title">Troubleshoot Failing Pods</div>
+          <p class="flow-card__desc">Diagnose and fix Pending, ImagePullBackOff, and CrashLoopBackOff states using logs and events.</p>
+        </a>
+        <a class="flow-card" href="k8s-workloads.html#phase-8" style="text-decoration:none;">
+          <div class="flow-card__step">Step 07 · Scaling &amp; Safety</div>
+          <div class="flow-card__title">HPA, Requests &amp; Probes</div>
+          <p class="flow-card__desc">Configure CPU/Memory requests and limits, Readiness/Liveness probes, and Horizontal Pod Autoscaler.</p>
+        </a>
+        <a class="flow-card" href="eks.html#projects" style="text-decoration:none;">
+          <div class="flow-card__step">Step 08 · Full Automation</div>
+          <div class="flow-card__title">CI/CD &amp; 8 Beginner Labs</div>
+          <p class="flow-card__desc">Connect GitHub Actions to ECR and EKS and complete all 8 practical beginner projects.</p>
+        </a>
+      </div>
+
+      <div class="guide-banner" style="margin-top:36px;">
+        <div class="guide-banner__text">
+          <h4>Official Kubernetes Documentation</h4>
+          <p>Use the official Kubernetes reference alongside these guides to explore configuration schemas and API objects in depth.</p>
+        </div>
+        <a class="guide-banner__link" href="https://kubernetes.io/docs/home/" target="_blank" rel="noopener noreferrer">kubernetes.io/docs &rarr;</a>
+      </div>
+    </section>
+
+    <!-- Keep learning -->
+    <section class="more" aria-label="Continue the Kubernetes Track">
+      <p class="more__label">Continue across the Kubernetes &amp; EKS Track</p>
+      <div class="more__grid">
+        <a href="kubernetes.html">
+          <strong>Part 1 · K8s Basics</strong>
+          <span>Phases 1–4: Architecture, Pods, Setup &amp; YAML</span>
+          <em>Read Part 1 &rarr;</em>
+        </a>
+        <a href="k8s-workloads.html">
+          <strong>Part 2 · Workloads &amp; Net</strong>
+          <span>Phases 5–8: Services, Ingress, EBS &amp; Probes</span>
+          <em>Read Part 2 &rarr;</em>
+        </a>
+        <a href="eks.html">
+          <strong>Part 3 · Amazon EKS</strong>
+          <span>Phases 9–10: Troubleshooting, HPA &amp; 8 Labs</span>
+          <em>Read Part 3 &rarr;</em>
+        </a>
+        <a href="eks-commands.html">
+          <strong>EKS CLI Cheat Sheet</strong>
+          <span>Step-by-step kubectl &amp; ECR terminal commands</span>
+          <em>Open CLI Reference &rarr;</em>
+        </a>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="footer sitefoot"></footer>
+
+  <script src="app.js"></script>
+  <script>
+    (function () {
+      'use strict';
+
+      var K8S_TERMS = [
+        /* ==================== PHASE 1: INTRODUCTION ==================== */
+        {
+          term: 'Kubernetes (K8s)',
+          alias: 'Phase 1 · Container Orchestrator',
+          cat: 'phase-1',
+          badge: 'Phase 1 · Intro',
+          def: 'An open-source container orchestration platform used to deploy, scale, and manage containerized applications.',
+          desc: 'Originally designed by Google and now maintained by the CNCF. "K8s" is short for K + 8 letters + s.',
+          link: 'kubernetes.html#phase-1',
+          linkText: 'Phase 1 Guide →',
+          kw: 'kubernetes k8s orchestrator cluster google cncf'
+        },
+        {
+          term: 'Container Orchestration',
+          alias: 'Phase 1 · Automated Fleet Management',
+          cat: 'phase-1',
+          badge: 'Phase 1 · Intro',
+          def: 'The automated management of containers, including deployment, scaling, networking, and recovery.',
+          desc: 'Instead of manually SSHing into 20 servers to start Docker containers, orchestration schedules and heals them automatically.',
+          link: 'kubernetes.html#phase-1',
+          linkText: 'Phase 1 Guide →',
+          kw: 'container orchestration automation scheduling scaling healing'
+        },
+        {
+          term: 'Docker',
+          alias: 'Phase 1 · Container Packaging Platform',
+          cat: 'phase-1',
+          badge: 'Phase 1 · Intro',
+          def: 'A platform used to build, package, and run applications inside isolated containers.',
+          desc: 'You use Docker to build your application image before handing that image to Kubernetes to run at scale.',
+          link: 'docker.html',
+          linkText: 'Docker Guide →',
+          kw: 'docker container image build package'
+        },
+        {
+          term: 'Kubernetes vs Docker',
+          alias: 'Phase 1 · Core Distinction',
+          cat: 'phase-1',
+          badge: 'Phase 1 · Intro',
+          def: 'Docker helps create and run containers on one machine, while Kubernetes manages containerized applications across a cluster of machines.',
+          desc: 'They are teammates, not competitors: Docker packages the box; Kubernetes runs the cargo ship fleet.',
+          link: 'kubernetes.html#phase-1',
+          linkText: 'Phase 1 Guide →',
+          kw: 'kubernetes vs docker difference comparison'
+        },
+        {
+          term: 'Kubernetes Cluster',
+          alias: 'Phase 1 · Complete Environment',
+          cat: 'phase-1',
+          badge: 'Phase 1 · Intro',
+          def: 'A group of machines that work together to run and manage containerized applications.',
+          desc: 'Consists of a Control Plane (the brain) and one or more Worker Nodes (the muscle).',
+          link: 'kubernetes.html#phase-2',
+          linkText: 'Phase 2 Guide →',
+          kw: 'kubernetes cluster environment machines nodes control plane'
+        },
+        {
+          term: 'Kubernetes Use Cases',
+          alias: 'Phase 1 · Why Teams Use K8s',
+          cat: 'phase-1',
+          badge: 'Phase 1 · Intro',
+          def: 'Common applications of Kubernetes include microservices, scalable web applications, automated deployments, and self-healing systems.',
+          desc: 'Ideal when your app needs zero-downtime rollouts, multi-server high availability, and automatic traffic scaling.',
+          link: 'kubernetes.html#phase-1',
+          linkText: 'Phase 1 Guide →',
+          kw: 'use cases microservices scalable web apps self healing'
+        },
+
+        /* ==================== PHASE 2: ARCHITECTURE ==================== */
+        {
+          term: 'Control Plane',
+          alias: 'Phase 2 · Cluster Brain',
+          cat: 'phase-2',
+          badge: 'Phase 2 · Architecture',
+          def: 'The part of Kubernetes that manages the cluster and makes decisions about scheduling and maintaining applications.',
+          desc: 'Houses the API Server, etcd, Scheduler, and Controller Manager. In Amazon EKS, AWS runs the Control Plane for you.',
+          link: 'kubernetes.html#phase-2',
+          linkText: 'Phase 2 Guide →',
+          kw: 'control plane master node brain eks managed'
+        },
+        {
+          term: 'Worker Node',
+          alias: 'Phase 2 · Application Server',
+          cat: 'phase-2',
+          badge: 'Phase 2 · Architecture',
+          def: 'A machine that runs application workloads inside a Kubernetes cluster.',
+          desc: 'Each Worker Node runs Kubelet, Kube-proxy, and a Container Runtime to execute your Pods.',
+          link: 'kubernetes.html#phase-2',
+          linkText: 'Phase 2 Guide →',
+          kw: 'worker node ec2 server machine workload'
+        },
+        {
+          term: 'API Server (kube-apiserver)',
+          alias: 'Phase 2 · Cluster Front Door',
+          cat: 'phase-2',
+          badge: 'Phase 2 · Architecture',
+          def: 'The component that exposes the Kubernetes API and acts as the main entry point for cluster management requests.',
+          desc: 'Every kubectl command and internal component talks exclusively through the API Server, which validates and authenticates requests.',
+          link: 'kubernetes.html#phase-2',
+          linkText: 'Phase 2 Guide →',
+          kw: 'api server kube-apiserver front door rest entrypoint'
+        },
+        {
+          term: 'Scheduler (kube-scheduler)',
+          alias: 'Phase 2 · Pod Placement Engine',
+          cat: 'phase-2',
+          badge: 'Phase 2 · Architecture',
+          def: 'The component that selects a suitable worker node for newly created Pods.',
+          desc: 'Checks each Node’s available CPU, memory, and constraints before assigning a Pending Pod to a healthy Worker Node.',
+          link: 'kubernetes.html#phase-2',
+          linkText: 'Phase 2 Guide →',
+          kw: 'scheduler kube-scheduler placement cpu memory node'
+        },
+        {
+          term: 'Controller Manager',
+          alias: 'Phase 2 · Desired State Watchdog',
+          cat: 'phase-2',
+          badge: 'Phase 2 · Architecture',
+          def: 'The component that runs controllers to maintain the desired state of the cluster.',
+          desc: 'Continuously compares the actual state of the cluster against your desired YAML state and fixes any drift.',
+          link: 'kubernetes.html#phase-2',
+          linkText: 'Phase 2 Guide →',
+          kw: 'controller manager kube-controller-manager reconciliation loop'
+        },
+        {
+          term: 'etcd',
+          alias: 'Phase 2 · Cluster Database',
+          cat: 'phase-2',
+          badge: 'Phase 2 · Architecture',
+          def: 'A distributed key-value store that holds Kubernetes cluster configuration and state data.',
+          desc: 'The single source of truth for every object, Secret, ConfigMap, and Pod state inside the cluster.',
+          link: 'kubernetes.html#phase-2',
+          linkText: 'Phase 2 Guide →',
+          kw: 'etcd key value store database state backup'
+        },
+        {
+          term: 'Kubelet',
+          alias: 'Phase 2 · Worker Node Agent',
+          cat: 'phase-2',
+          badge: 'Phase 2 · Architecture',
+          def: 'An agent on each worker node that ensures assigned Pods and their containers are running as expected.',
+          desc: 'Receives Pod specs from the API Server, instructs the container runtime to start them, and reports health back.',
+          link: 'kubernetes.html#phase-2',
+          linkText: 'Phase 2 Guide →',
+          kw: 'kubelet node agent worker health'
+        },
+        {
+          term: 'Kube-proxy',
+          alias: 'Phase 2 · Node Network Rules',
+          cat: 'phase-2',
+          badge: 'Phase 2 · Architecture',
+          def: 'A node-level network component that implements Service networking rules across the cluster.',
+          desc: 'Maintains iptables or IPVS forwarding rules on each Node so traffic sent to a Service IP reaches healthy Pods.',
+          link: 'kubernetes.html#phase-2',
+          linkText: 'Phase 2 Guide →',
+          kw: 'kube-proxy network proxy iptables ipvs service routing'
+        },
+        {
+          term: 'Container Runtime',
+          alias: 'Phase 2 · Container Engine (containerd)',
+          cat: 'phase-2',
+          badge: 'Phase 2 · Architecture',
+          def: 'Software responsible for running containers on a node, such as containerd or CRI-O.',
+          desc: 'Pulls container images from registries like ECR and starts or stops the actual Linux container processes.',
+          link: 'kubernetes.html#phase-2',
+          linkText: 'Phase 2 Guide →',
+          kw: 'container runtime containerd cri-o docker engine'
+        },
+
+        /* ==================== PHASE 3: ESSENTIAL COMPONENTS ==================== */
+        {
+          term: 'Pod',
+          alias: 'Phase 3 · Smallest Deployable Unit',
+          cat: 'phase-3',
+          badge: 'Phase 3 · Components',
+          def: 'The smallest deployable unit in Kubernetes, containing one or more closely related containers.',
+          desc: 'Kubernetes never runs a raw container directly—it always wraps it inside a Pod with its own cluster IP address.',
+          link: 'kubernetes.html#phase-3',
+          linkText: 'Phase 3 Guide →',
+          kw: 'pod smallest unit container wrapper ip'
+        },
+        {
+          term: 'Node',
+          alias: 'Phase 3 · Compute Machine',
+          cat: 'phase-3',
+          badge: 'Phase 3 · Components',
+          def: 'A machine, either physical or virtual, that provides computing resources to a Kubernetes cluster.',
+          desc: 'In AWS EKS, Nodes are typically Amazon EC2 instances or serverless AWS Fargate profiles.',
+          link: 'kubernetes.html#phase-3',
+          linkText: 'Phase 3 Guide →',
+          kw: 'node server ec2 machine compute'
+        },
+        {
+          term: 'Deployment',
+          alias: 'Phase 3 · Stateless App Manager',
+          cat: 'phase-3',
+          badge: 'Phase 3 · Components',
+          def: 'A Kubernetes resource that manages application Pods and supports scaling, rolling updates, and rollbacks.',
+          desc: 'You almost always create a Deployment rather than naked Pods so Kubernetes can update and heal your app automatically.',
+          link: 'kubernetes.html#phase-3',
+          linkText: 'Phase 3 Guide →',
+          kw: 'deployment rollout replica scaling stateless'
+        },
+        {
+          term: 'ReplicaSet',
+          alias: 'Phase 3 · Replica Count Enforcer',
+          cat: 'phase-3',
+          badge: 'Phase 3 · Components',
+          def: 'A Kubernetes resource that maintains a specified number of matching Pod replicas running at all times.',
+          desc: 'Created and managed automatically behind the scenes whenever you apply a Deployment.',
+          link: 'kubernetes.html#phase-3',
+          linkText: 'Phase 3 Guide →',
+          kw: 'replicaset replicas desired count healing'
+        },
+        {
+          term: 'Service',
+          alias: 'Phase 3 · Stable Network Endpoint',
+          cat: 'phase-3',
+          badge: 'Phase 3 · Components',
+          def: 'A Kubernetes resource that provides a stable IP address and DNS name for accessing a group of Pods.',
+          desc: 'Because Pod IPs change every time a Pod restarts, a Service gives callers one permanent address that load-balances across healthy Pods.',
+          link: 'kubernetes.html#phase-3',
+          linkText: 'Phase 3 Guide →',
+          kw: 'service svc endpoint stable ip dns load balance'
+        },
+        {
+          term: 'Namespace',
+          alias: 'Phase 3 · Virtual Cluster Folder',
+          cat: 'phase-3',
+          badge: 'Phase 3 · Components',
+          def: 'A way to logically organize and separate resources within a single Kubernetes cluster.',
+          desc: 'Teams use namespaces like dev, staging, prod, and kube-system to isolate workloads and apply resource quotas.',
+          link: 'kubernetes.html#phase-3',
+          linkText: 'Phase 3 Guide →',
+          kw: 'namespace ns isolation virtual cluster folder'
+        },
+        {
+          term: 'Label',
+          alias: 'Phase 3 · Key-Value Tag',
+          cat: 'phase-3',
+          badge: 'Phase 3 · Components',
+          def: 'A key-value pair attached to a Kubernetes object (such as app: frontend) to identify and organize it.',
+          desc: 'Labels are how Services and Deployments know which Pods belong to which application.',
+          link: 'kubernetes.html#phase-3',
+          linkText: 'Phase 3 Guide →',
+          kw: 'label tag key value metadata'
+        },
+        {
+          term: 'Selector',
+          alias: 'Phase 3 · Label Filter Query',
+          cat: 'phase-3',
+          badge: 'Phase 3 · Components',
+          def: 'A condition used by Services and Deployments to find and group Kubernetes objects based on their labels.',
+          desc: 'For example, a Service with selector app: backend automatically routes traffic to all Pods carrying the label app: backend.',
+          link: 'kubernetes.html#phase-3',
+          linkText: 'Phase 3 Guide →',
+          kw: 'selector matchlabels filter query service'
+        },
+        {
+          term: 'ConfigMap',
+          alias: 'Phase 3 · Non-Sensitive Config Store',
+          cat: 'phase-3',
+          badge: 'Phase 3 · Components',
+          def: 'A Kubernetes resource used to store non-sensitive configuration data separately from application code.',
+          desc: 'Injected into Pods as environment variables or mounted config files so you never rebuild images just to change a setting.',
+          link: 'k8s-workloads.html#phase-8',
+          linkText: 'Phase 8 Guide →',
+          kw: 'configmap cm configuration environment variables settings'
+        },
+        {
+          term: 'Secret',
+          alias: 'Phase 3 · Sensitive Credential Store',
+          cat: 'phase-3',
+          badge: 'Phase 3 · Components',
+          def: 'A Kubernetes resource designed to store sensitive information, such as passwords, tokens, and TLS keys.',
+          desc: 'Base64-encoded by default; in production Amazon EKS, enable KMS envelope encryption and strict RBAC access controls.',
+          link: 'k8s-workloads.html#phase-8',
+          linkText: 'Phase 8 Guide →',
+          kw: 'secret password token api key credentials tls'
+        },
+
+        /* ==================== PHASE 4: INSTALLATION & SETUP ==================== */
+        {
+          term: 'kubectl',
+          alias: 'Phase 4 · Kubernetes CLI Tool',
+          cat: 'phase-4',
+          badge: 'Phase 4 · Setup & YAML',
+          def: 'The command-line tool used to communicate with and manage a Kubernetes cluster.',
+          desc: 'Reads your local ~/.kube/config file and sends authenticated requests to the cluster API Server.',
+          link: 'kubernetes.html#phase-4',
+          linkText: 'Phase 4 Guide →',
+          kw: 'kubectl cli command line tool koob-control'
+        },
+        {
+          term: 'Minikube',
+          alias: 'Phase 4 · Local Single-Node K8s',
+          cat: 'phase-4',
+          badge: 'Phase 4 · Setup & YAML',
+          def: 'A tool that runs a local single-node Kubernetes cluster on your laptop for learning and development.',
+          desc: 'Lets you practice kubectl commands and test YAML manifests for free without an AWS bill.',
+          link: 'kubernetes.html#phase-4',
+          linkText: 'Phase 4 Guide →',
+          kw: 'minikube local cluster laptop practice'
+        },
+        {
+          term: 'Kind (Kubernetes in Docker)',
+          alias: 'Phase 4 · Docker-Based Local Cluster',
+          cat: 'phase-4',
+          badge: 'Phase 4 · Setup & YAML',
+          def: 'A lightweight tool that runs local Kubernetes clusters using Docker containers as simulated nodes.',
+          desc: 'Starts in seconds and supports multi-node local clusters, making it popular for testing CI pipelines.',
+          link: 'kubernetes.html#phase-4',
+          linkText: 'Phase 4 Guide →',
+          kw: 'kind kubernetes in docker local cluster testing'
+        },
+        {
+          term: 'Amazon EKS',
+          alias: 'Phase 4 · Elastic Kubernetes Service',
+          cat: 'phase-4',
+          badge: 'Phase 4 · Setup & YAML',
+          def: 'A managed Kubernetes service provided by AWS that runs the Kubernetes Control Plane for you.',
+          desc: 'Integrates natively with AWS IAM, VPC networking, Application Load Balancers, Amazon ECR, and EBS volumes.',
+          link: 'eks.html',
+          linkText: 'Amazon EKS Guide →',
+          kw: 'amazon eks elastic kubernetes service aws managed'
+        },
+        {
+          term: 'Kubeconfig (~/.kube/config)',
+          alias: 'Phase 4 · Cluster Connection File',
+          cat: 'phase-4',
+          badge: 'Phase 4 · Setup & YAML',
+          def: 'A configuration file that tells kubectl which Kubernetes cluster to connect to and how to authenticate.',
+          desc: 'For Amazon EKS, running aws eks update-kubeconfig --name <cluster> automatically writes this file for you.',
+          link: 'eks-commands.html#kubeconfig',
+          linkText: 'EKS CLI Guide →',
+          kw: 'kubeconfig config context authentication cluster connection'
+        },
+        {
+          term: 'YAML',
+          alias: 'Phase 4 · Declarative Config Format',
+          cat: 'phase-4',
+          badge: 'Phase 4 · Setup & YAML',
+          def: 'A human-readable data format commonly used to define Kubernetes resources and their desired configurations.',
+          desc: 'Uses indentation (spaces, never tabs) to structure key-value fields cleanly.',
+          link: 'kubernetes.html#phase-4',
+          linkText: 'Phase 4 Guide →',
+          kw: 'yaml configuration format indentation declarative'
+        },
+        {
+          term: 'Manifest File',
+          alias: 'Phase 4 · Resource Blueprint (.yaml)',
+          cat: 'phase-4',
+          badge: 'Phase 4 · Setup & YAML',
+          def: 'A file, written in YAML, that describes the desired configuration of one or more Kubernetes resources.',
+          desc: 'Every Kubernetes manifest contains four root fields: apiVersion, kind, metadata, and spec.',
+          link: 'kubernetes.html#phase-4',
+          linkText: 'Phase 4 Guide →',
+          kw: 'manifest file yaml apiversion kind metadata spec'
+        },
+
+        /* ==================== PHASE 5: DEPLOYING APPLICATIONS & SERVICES ==================== */
+        {
+          term: 'Container Image',
+          alias: 'Phase 5 · Read-Only App Template',
+          cat: 'phase-5',
+          badge: 'Phase 5 · Deploying',
+          def: 'A packaged, read-only template containing an application and all its required files, libraries, and dependencies.',
+          desc: 'Tagged with versions (e.g., my-app:v1.2.0) so Kubernetes knows the exact snapshot to run inside each Pod.',
+          link: 'k8s-workloads.html#phase-5',
+          linkText: 'Phase 5 Guide →',
+          kw: 'container image template tag docker ecr'
+        },
+        {
+          term: 'Container Registry',
+          alias: 'Phase 5 · Image Storage Hub',
+          cat: 'phase-5',
+          badge: 'Phase 5 · Deploying',
+          def: 'A service that stores and distributes container images, such as Docker Hub or Amazon ECR.',
+          desc: 'Worker Nodes pull your container images from the registry whenever a Deployment starts new Pods.',
+          link: 'eks-commands.html#ecr-deploy',
+          linkText: 'ECR Deploy Guide →',
+          kw: 'container registry docker hub amazon ecr ghcr'
+        },
+        {
+          term: 'Replica',
+          alias: 'Phase 5 · Running Pod Copy',
+          cat: 'phase-5',
+          badge: 'Phase 5 · Deploying',
+          def: 'An individual running copy of an application Pod.',
+          desc: 'Running multiple replicas (e.g., replicas: 3) ensures high availability if a container crashes or a Node reboots.',
+          link: 'k8s-workloads.html#phase-5',
+          linkText: 'Phase 5 Guide →',
+          kw: 'replica copy pod instance high availability'
+        },
+        {
+          term: 'Scaling',
+          alias: 'Phase 5 · Adjusting Capacity',
+          cat: 'phase-5',
+          badge: 'Phase 5 · Deploying',
+          def: 'Increasing or decreasing the number of application Pod instances or the computing resources available to them.',
+          desc: 'Can be done manually (kubectl scale) or automatically based on load using Horizontal Pod Autoscaler (HPA).',
+          link: 'k8s-workloads.html#phase-5',
+          linkText: 'Phase 5 Guide →',
+          kw: 'scaling horizontal vertical replicas capacity'
+        },
+        {
+          term: 'Rollout',
+          alias: 'Phase 5 · Deployment Update Process',
+          cat: 'phase-5',
+          badge: 'Phase 5 · Deploying',
+          def: 'The process of applying and tracking changes (such as a new container image version) to a Deployment.',
+          desc: 'Monitored with kubectl rollout status deployment/<name> to verify all new Pods pass readiness checks.',
+          link: 'k8s-workloads.html#phase-5',
+          linkText: 'Phase 5 Guide →',
+          kw: 'rollout release deployment update status'
+        },
+        {
+          term: 'Rolling Update',
+          alias: 'Phase 5 · Zero-Downtime Upgrade',
+          cat: 'phase-5',
+          badge: 'Phase 5 · Deploying',
+          def: 'The default Kubernetes update strategy that gradually replaces old application Pods with new ones one by one.',
+          desc: 'Ensures users never experience downtime during a release because old Pods stay active until new Pods are Ready.',
+          link: 'k8s-workloads.html#phase-5',
+          linkText: 'Phase 5 Guide →',
+          kw: 'rolling update zero downtime strategy maxsurge maxunavailable'
+        },
+        {
+          term: 'Rollback',
+          alias: 'Phase 5 · Instant Version Revert',
+          cat: 'phase-5',
+          badge: 'Phase 5 · Deploying',
+          def: 'Reverting a Deployment back to a previous working revision when an update introduces a bug or crash.',
+          desc: 'Executed in one second via kubectl rollout undo deployment/<name>.',
+          link: 'k8s-workloads.html#phase-5',
+          linkText: 'Phase 5 Guide →',
+          kw: 'rollback undo revert previous revision'
+        },
+        {
+          term: 'Desired State',
+          alias: 'Phase 5 · What Your YAML Declares',
+          cat: 'phase-5',
+          badge: 'Phase 5 · Deploying',
+          def: 'The exact configuration that Kubernetes is instructed to maintain, such as 3 replicas of image v2.',
+          desc: 'Stored in etcd after you run kubectl apply -f.',
+          link: 'k8s-workloads.html#phase-5',
+          linkText: 'Phase 5 Guide →',
+          kw: 'desired state declarative yaml spec'
+        },
+        {
+          term: 'Actual State',
+          alias: 'Phase 5 · Current Live Condition',
+          cat: 'phase-5',
+          badge: 'Phase 5 · Deploying',
+          def: 'The real-time condition of the cluster and its running resources right now.',
+          desc: 'If Actual State (2 Pods running) differs from Desired State (3 Pods), Kubernetes automatically creates 1 new Pod.',
+          link: 'k8s-workloads.html#phase-5',
+          linkText: 'Phase 5 Guide →',
+          kw: 'actual state current condition status reconciliation'
+        },
+        {
+          term: 'Self-Healing',
+          alias: 'Phase 5 · Automatic Recovery',
+          cat: 'phase-5',
+          badge: 'Phase 5 · Deploying',
+          def: 'Kubernetes’ ability to automatically replace failed Pods, restart crashed containers, and reschedule workloads off dead Nodes.',
+          desc: 'Keeps applications online at 3 AM without waking up an engineer.',
+          link: 'k8s-workloads.html#phase-5',
+          linkText: 'Phase 5 Guide →',
+          kw: 'self healing automatic recovery restart reschedule'
+        },
+        {
+          term: 'ClusterIP',
+          alias: 'Phase 5 · Internal-Only Service Type',
+          cat: 'phase-5',
+          badge: 'Phase 5 · Deploying',
+          def: 'The default Service type that exposes Pods through an internal IP address reachable only inside the cluster.',
+          desc: 'Used for backend APIs, caches (Redis), and databases that should never be exposed directly to the public internet.',
+          link: 'k8s-workloads.html#phase-6',
+          linkText: 'Phase 6 Guide →',
+          kw: 'clusterip internal service type default'
+        },
+        {
+          term: 'NodePort',
+          alias: 'Phase 5 · Static Port on Every Node',
+          cat: 'phase-5',
+          badge: 'Phase 5 · Deploying',
+          def: 'A Service type that exposes an application on a static port (between 30000–32767) on each Worker Node’s IP address.',
+          desc: 'Useful for quick testing on Minikube or as a target behind an external load balancer.',
+          link: 'k8s-workloads.html#phase-6',
+          linkText: 'Phase 6 Guide →',
+          kw: 'nodeport 30000 32767 service type port'
+        },
+        {
+          term: 'LoadBalancer (Service)',
+          alias: 'Phase 5 · Cloud External Load Balancer',
+          cat: 'phase-5',
+          badge: 'Phase 5 · Deploying',
+          def: 'A Service type that provisions an external cloud load balancer (such as an AWS NLB/ALB) to route public internet traffic to your Pods.',
+          desc: 'Gives your Service a public DNS URL or static IP address so users can access it from any browser.',
+          link: 'k8s-workloads.html#phase-6',
+          linkText: 'Phase 6 Guide →',
+          kw: 'loadbalancer service type aws elb alb nlb external ip'
+        },
+        {
+          term: 'Ingress',
+          alias: 'Phase 5 · HTTP/HTTPS Routing Rules',
+          cat: 'phase-5',
+          badge: 'Phase 5 · Deploying',
+          def: 'A Kubernetes resource that defines rules for routing external HTTP and HTTPS traffic (by domain or path) to internal Services.',
+          desc: 'Lets one cloud Load Balancer serve dozens of microservices (e.g., /api → backend-svc, / → frontend-svc).',
+          link: 'k8s-workloads.html#phase-6',
+          linkText: 'Phase 6 Guide →',
+          kw: 'ingress http https routing host path tls'
+        },
+
+        /* ==================== PHASE 6: KUBERNETES NETWORKING ==================== */
+        {
+          term: 'Pod-to-Pod Communication',
+          alias: 'Phase 6 · Flat Cluster Network',
+          cat: 'phase-6',
+          badge: 'Phase 6 · Networking',
+          def: 'Direct network communication between any two Pods in a cluster without needing NAT (Network Address Translation).',
+          desc: 'In Amazon EKS, the AWS VPC CNI plugin gives every Pod a real IP address from your AWS VPC subnet.',
+          link: 'k8s-workloads.html#phase-6',
+          linkText: 'Phase 6 Guide →',
+          kw: 'pod to pod communication flat network cni vpc'
+        },
+        {
+          term: 'Service Discovery',
+          alias: 'Phase 6 · Finding Services by Name',
+          cat: 'phase-6',
+          badge: 'Phase 6 · Networking',
+          def: 'The automatic process by which Pods find and talk to other Services using stable DNS names instead of hardcoded IP addresses.',
+          desc: 'A frontend Pod can simply call http://payment-service.default.svc.cluster.local.',
+          link: 'k8s-workloads.html#phase-6',
+          linkText: 'Phase 6 Guide →',
+          kw: 'service discovery dns lookup name resolution'
+        },
+        {
+          term: 'DNS (CoreDNS)',
+          alias: 'Phase 6 · Cluster Phonebook',
+          cat: 'phase-6',
+          badge: 'Phase 6 · Networking',
+          def: 'The internal cluster DNS server (CoreDNS) that automatically translates Kubernetes Service names into their ClusterIP addresses.',
+          desc: 'Runs as Pods inside the kube-system namespace.',
+          link: 'k8s-workloads.html#phase-6',
+          linkText: 'Phase 6 Guide →',
+          kw: 'dns coredns phonebook svc.cluster.local'
+        },
+        {
+          term: 'Network Policy',
+          alias: 'Phase 6 · Pod Firewall Rules',
+          cat: 'phase-6',
+          badge: 'Phase 6 · Networking',
+          def: 'A Kubernetes resource used to restrict which Pods are allowed to send or receive network traffic from other Pods or IPs.',
+          desc: 'For example, a Network Policy can ensure only the backend API Pod is allowed to talk to the database Pod on port 5432.',
+          link: 'k8s-workloads.html#phase-6',
+          linkText: 'Phase 6 Guide →',
+          kw: 'network policy firewall ingress egress zero trust'
+        },
+        {
+          term: 'Port / TargetPort',
+          alias: 'Phase 6 · Network Endpoints',
+          cat: 'phase-6',
+          badge: 'Phase 6 · Networking',
+          def: 'A numbered network endpoint: port is where the Service listens, and targetPort is the port your container process listens on.',
+          desc: 'For example, a Service can listen on port 80 and forward traffic to targetPort 3000 inside your Node.js Pod.',
+          link: 'k8s-workloads.html#phase-6',
+          linkText: 'Phase 6 Guide →',
+          kw: 'port targetPort nodePort containerPort'
+        },
+        {
+          term: 'Ingress Controller',
+          alias: 'Phase 6 · Active Reverse Proxy',
+          cat: 'phase-6',
+          badge: 'Phase 6 · Networking',
+          def: 'The actual load-balancing software (such as AWS Load Balancer Controller or NGINX Ingress Controller) that fulfills Ingress YAML rules.',
+          desc: 'An Ingress YAML file does nothing on its own unless an Ingress Controller is installed in the cluster.',
+          link: 'k8s-workloads.html#phase-6',
+          linkText: 'Phase 6 Guide →',
+          kw: 'ingress controller aws load balancer controller nginx'
+        },
+
+        /* ==================== PHASE 7: KUBERNETES STORAGE ==================== */
+        {
+          term: 'Volume',
+          alias: 'Phase 7 · Mounted Container Directory',
+          cat: 'phase-7',
+          badge: 'Phase 7 · Storage',
+          def: 'A storage directory mounted into a Pod’s containers so files can be shared or persisted.',
+          desc: 'Its lifecycle depends on the volume type (e.g., emptyDir is temporary, while persistentVolumeClaim survives Pod deletion).',
+          link: 'k8s-workloads.html#phase-7',
+          linkText: 'Phase 7 Guide →',
+          kw: 'volume mount emptydir storage directory'
+        },
+        {
+          term: 'PersistentVolume (PV)',
+          alias: 'Phase 7 · Cluster Storage Resource',
+          cat: 'phase-7',
+          badge: 'Phase 7 · Storage',
+          def: 'A piece of provisioned storage in the cluster (such as an AWS EBS disk) that exists independently of any single Pod.',
+          desc: 'Created either manually by an administrator or dynamically via a StorageClass.',
+          link: 'k8s-workloads.html#phase-7',
+          linkText: 'Phase 7 Guide →',
+          kw: 'persistentvolume pv disk storage cluster'
+        },
+        {
+          term: 'PersistentVolumeClaim (PVC)',
+          alias: 'Phase 7 · Storage Request Ticket',
+          cat: 'phase-7',
+          badge: 'Phase 7 · Storage',
+          def: 'A request for persistent storage (size and access mode) made by a Pod or developer.',
+          desc: 'Your Pod mounts the PVC, and Kubernetes binds that PVC to a matching PersistentVolume.',
+          link: 'k8s-workloads.html#phase-7',
+          linkText: 'Phase 7 Guide →',
+          kw: 'persistentvolumeclaim pvc claim request storage'
+        },
+        {
+          term: 'StorageClass',
+          alias: 'Phase 7 · Dynamic Disk Provisioner',
+          cat: 'phase-7',
+          badge: 'Phase 7 · Storage',
+          def: 'A resource that defines classes of storage (like gp3 SSD vs io2) and automatically provisions volumes when a PVC is created.',
+          desc: 'Eliminates the need for admins to pre-create disks manually before developers deploy stateful apps.',
+          link: 'k8s-workloads.html#phase-7',
+          linkText: 'Phase 7 Guide →',
+          kw: 'storageclass sc dynamic provisioning gp3 ebs csi'
+        },
+        {
+          term: 'Persistent Storage',
+          alias: 'Phase 7 · Data That Survives Restarts',
+          cat: 'phase-7',
+          badge: 'Phase 7 · Storage',
+          def: 'Storage that retains data even when individual containers crash, restart, or move to another Worker Node.',
+          desc: 'Essential for databases, message queues, and file uploads.',
+          link: 'k8s-workloads.html#phase-7',
+          linkText: 'Phase 7 Guide →',
+          kw: 'persistent storage stateful database durability'
+        },
+        {
+          term: 'Amazon EBS (with EBS CSI Driver)',
+          alias: 'Phase 7 · AWS Block Storage for EKS',
+          cat: 'phase-7',
+          badge: 'Phase 7 · Storage',
+          def: 'AWS Elastic Block Store volumes attached to EC2 Worker Nodes and managed in EKS via the Amazon EBS CSI Driver.',
+          desc: 'Provides high-performance SSD block storage (gp3) for PersistentVolumeClaims inside Amazon EKS.',
+          link: 'k8s-workloads.html#phase-7',
+          linkText: 'Phase 7 Guide →',
+          kw: 'amazon ebs elastic block store csi driver gp3 eks'
+        },
+
+        /* ==================== PHASE 8: CONFIGURATION & RESOURCE MANAGEMENT ==================== */
+        {
+          term: 'Environment Variable',
+          alias: 'Phase 8 · Process Config Value',
+          cat: 'phase-8',
+          badge: 'Phase 8 · Config & Probes',
+          def: 'A named key-value setting (like NODE_ENV=production) passed into a container at startup to configure its behavior.',
+          desc: 'Can be defined directly in the Pod spec or loaded from a ConfigMap or Secret.',
+          link: 'k8s-workloads.html#phase-8',
+          linkText: 'Phase 8 Guide →',
+          kw: 'environment variable env configmap secret'
+        },
+        {
+          term: 'CPU Request',
+          alias: 'Phase 8 · Guaranteed Minimum CPU',
+          cat: 'phase-8',
+          badge: 'Phase 8 · Config & Probes',
+          def: 'The minimum amount of CPU capacity (e.g., 250m = 0.25 vCPU) Kubernetes reserves for a container when scheduling it onto a Node.',
+          desc: 'The Scheduler uses CPU Requests to ensure a Node is never overbooked.',
+          link: 'k8s-workloads.html#phase-8',
+          linkText: 'Phase 8 Guide →',
+          kw: 'cpu request resources scheduling millicores'
+        },
+        {
+          term: 'Memory Request',
+          alias: 'Phase 8 · Guaranteed Minimum RAM',
+          cat: 'phase-8',
+          badge: 'Phase 8 · Config & Probes',
+          def: 'The minimum amount of RAM (e.g., 256Mi) requested and reserved for scheduling a container onto a Worker Node.',
+          desc: 'Helps the Scheduler place Pods only on Nodes with enough free memory.',
+          link: 'k8s-workloads.html#phase-8',
+          linkText: 'Phase 8 Guide →',
+          kw: 'memory request ram resources scheduling mib'
+        },
+        {
+          term: 'CPU Limit',
+          alias: 'Phase 8 · Maximum CPU Ceiling',
+          cat: 'phase-8',
+          badge: 'Phase 8 · Config & Probes',
+          def: 'The maximum CPU usage a container is allowed to consume; if the container tries to use more, its CPU is throttled.',
+          desc: 'Prevents a single runaway container from starving every other Pod on the same Node.',
+          link: 'k8s-workloads.html#phase-8',
+          linkText: 'Phase 8 Guide →',
+          kw: 'cpu limit throttling ceiling resources'
+        },
+        {
+          term: 'Memory Limit',
+          alias: 'Phase 8 · Maximum RAM Ceiling (OOMKill)',
+          cat: 'phase-8',
+          badge: 'Phase 8 · Config & Probes',
+          def: 'The hard maximum RAM a container is allowed to use; exceeding it causes the Linux kernel to terminate the container (OOMKilled).',
+          desc: 'Protects the Worker Node from running out of system memory due to a memory leak.',
+          link: 'k8s-workloads.html#phase-8',
+          linkText: 'Phase 8 Guide →',
+          kw: 'memory limit oomkilled ram ceiling'
+        },
+        {
+          term: 'Liveness Probe',
+          alias: 'Phase 8 · Deadlock / Freeze Detector',
+          cat: 'phase-8',
+          badge: 'Phase 8 · Config & Probes',
+          def: 'A periodic health check (HTTP, TCP, or command) used by Kubelet to determine whether a stuck container should be restarted.',
+          desc: 'If an app deadlocks and stops responding to /healthz, the Liveness Probe restarts the container automatically.',
+          link: 'k8s-workloads.html#phase-8',
+          linkText: 'Phase 8 Guide →',
+          kw: 'liveness probe health check restart deadlock'
+        },
+        {
+          term: 'Readiness Probe',
+          alias: 'Phase 8 · Traffic Gatekeeper',
+          cat: 'phase-8',
+          badge: 'Phase 8 · Config & Probes',
+          def: 'A periodic health check used to determine whether a container is ready to accept user traffic from a Service.',
+          desc: 'If a Pod is still warming up its cache or connecting to a database, failing Readiness removes it from the Service load balancer without killing it.',
+          link: 'k8s-workloads.html#phase-8',
+          linkText: 'Phase 8 Guide →',
+          kw: 'readiness probe traffic ready service endpoint'
+        },
+        {
+          term: 'Startup Probe',
+          alias: 'Phase 8 · Slow-Boot Protection',
+          cat: 'phase-8',
+          badge: 'Phase 8 · Config & Probes',
+          def: 'A health check that verifies whether an application has finished its initial boot sequence before Liveness Probes take over.',
+          desc: 'Prevents slow-starting legacy or Java apps from being killed prematurely by Liveness Probes during startup.',
+          link: 'k8s-workloads.html#phase-8',
+          linkText: 'Phase 8 Guide →',
+          kw: 'startup probe slow boot initialization health check'
+        },
+        {
+          term: 'Resource Quota',
+          alias: 'Phase 8 · Namespace Budget Cap',
+          cat: 'phase-8',
+          badge: 'Phase 8 · Config & Probes',
+          def: 'A Kubernetes policy object that limits the total aggregate CPU, memory, or object count a team’s Namespace can consume.',
+          desc: 'Ensures one dev team cannot accidentally consume 100% of the cluster capacity.',
+          link: 'k8s-workloads.html#phase-8',
+          linkText: 'Phase 8 Guide →',
+          kw: 'resource quota resourcequota namespace limit budget'
+        },
+
+        /* ==================== PHASE 9: TROUBLESHOOTING ==================== */
+        {
+          term: 'Pod Lifecycle',
+          alias: 'Phase 9 · Stages of a Pod',
+          cat: 'phase-9',
+          badge: 'Phase 9 · Troubleshooting',
+          def: 'The sequence of phases a Pod transitions through from creation to termination: Pending, Running, Succeeded, Failed, or Unknown.',
+          desc: 'Inspecting the Pod phase is always step #1 when debugging with kubectl get pods.',
+          link: 'eks.html#troubleshooting',
+          linkText: 'Phase 9 Guide →',
+          kw: 'pod lifecycle phase status state'
+        },
+        {
+          term: 'Pending (Pod Phase)',
+          alias: 'Phase 9 · Waiting to Schedule or Pull',
+          cat: 'phase-9',
+          badge: 'Phase 9 · Troubleshooting',
+          def: 'A Pod phase indicating that the Pod has been accepted by the cluster but has not yet been scheduled to a Node or finished pulling images.',
+          desc: 'Usually caused by insufficient CPU/Memory on Nodes or an unbound PersistentVolumeClaim.',
+          link: 'eks.html#troubleshooting',
+          linkText: 'Phase 9 Guide →',
+          kw: 'pending pod phase unschedulable insufficient cpu memory'
+        },
+        {
+          term: 'Running (Pod Phase)',
+          alias: 'Phase 9 · Bound & Executing',
+          cat: 'phase-9',
+          badge: 'Phase 9 · Troubleshooting',
+          def: 'A Pod phase indicating that the Pod is bound to a Worker Node and at least one container is currently running or starting.',
+          desc: 'Also check the READY column (e.g., 1/1) to confirm the Running Pod has passed its Readiness Probe.',
+          link: 'eks.html#troubleshooting',
+          linkText: 'Phase 9 Guide →',
+          kw: 'running pod phase ready executing'
+        },
+        {
+          term: 'Succeeded (Pod Phase)',
+          alias: 'Phase 9 · Completed Cleanly (Exit 0)',
+          cat: 'phase-9',
+          badge: 'Phase 9 · Troubleshooting',
+          def: 'A Pod phase indicating that all containers in the Pod finished their task with exit code 0 and will not be restarted.',
+          desc: 'Common for batch Jobs and CronJobs that run a script once and exit.',
+          link: 'eks.html#troubleshooting',
+          linkText: 'Phase 9 Guide →',
+          kw: 'succeeded completed exit 0 job batch'
+        },
+        {
+          term: 'Failed (Pod Phase)',
+          alias: 'Phase 9 · Terminated with Error',
+          cat: 'phase-9',
+          badge: 'Phase 9 · Troubleshooting',
+          def: 'A Pod phase indicating that all containers in the Pod have stopped and at least one exited with a non-zero error code.',
+          desc: 'Inspect the failure reason using kubectl logs <pod> and kubectl describe pod <pod>.',
+          link: 'eks.html#troubleshooting',
+          linkText: 'Phase 9 Guide →',
+          kw: 'failed error non-zero exit code terminated'
+        },
+        {
+          term: 'ImagePullBackOff / ErrImagePull',
+          alias: 'Phase 9 · Cannot Download Image',
+          cat: 'phase-9',
+          badge: 'Phase 9 · Troubleshooting',
+          def: 'A container waiting state indicating that Kubernetes cannot pull the container image from the registry and is backing off retries.',
+          desc: 'Caused by a typo in the image name/tag, a private registry without credentials, or missing Amazon ECR IAM permissions on the Node.',
+          link: 'eks.html#troubleshooting',
+          linkText: 'Phase 9 Guide →',
+          kw: 'imagepullbackoff errimagepull registry ecr tag iam'
+        },
+        {
+          term: 'CrashLoopBackOff',
+          alias: 'Phase 9 · Container Starts & Immediately Dies',
+          cat: 'phase-9',
+          badge: 'Phase 9 · Troubleshooting',
+          def: 'A waiting state indicating that a container repeatedly starts, crashes, and is delayed by Kubernetes before the next restart attempt.',
+          desc: 'Usually caused by a missing environment variable, a failed database connection on boot, a bad command in Dockerfile, or an aggressive Liveness Probe.',
+          link: 'eks.html#troubleshooting',
+          linkText: 'Phase 9 Guide →',
+          kw: 'crashloopbackoff crash loop restart logs previous'
+        },
+        {
+          term: 'Events',
+          alias: 'Phase 9 · Cluster Activity Timeline',
+          cat: 'phase-9',
+          badge: 'Phase 9 · Troubleshooting',
+          def: 'Timestamped records of important occurrences in the cluster, such as scheduling decisions, volume mounts, image pulls, and probe failures.',
+          desc: 'Viewed at the bottom of kubectl describe pod <name> or via kubectl get events.',
+          link: 'eks.html#troubleshooting',
+          linkText: 'Phase 9 Guide →',
+          kw: 'events timeline describe warning normal debugging'
+        },
+        {
+          term: 'Logs',
+          alias: 'Phase 9 · Container Output Stream',
+          cat: 'phase-9',
+          badge: 'Phase 9 · Troubleshooting',
+          def: 'The standard output (stdout) and error (stderr) messages printed by your application inside a container.',
+          desc: 'Fetched with kubectl logs <pod-name> (or kubectl logs <pod-name> --previous for a crashed container).',
+          link: 'eks.html#troubleshooting',
+          linkText: 'Phase 9 Guide →',
+          kw: 'logs stdout stderr debugging kubectl logs'
+        },
+        {
+          term: 'Troubleshooting',
+          alias: 'Phase 9 · The 4-Step K8s Debug Flow',
+          cat: 'phase-9',
+          badge: 'Phase 9 · Troubleshooting',
+          def: 'The systematic process of diagnosing cluster issues: 1) get pods, 2) describe pod, 3) logs, and 4) exec into the container.',
+          desc: 'Solves 95% of Kubernetes workload and networking problems in minutes.',
+          link: 'eks.html#troubleshooting',
+          linkText: 'Phase 9 Guide →',
+          kw: 'troubleshooting debugging diagnose fix'
+        },
+
+        /* ==================== PHASE 10: KUBERNETES, EKS & DEVOPS ==================== */
+        {
+          term: 'CI/CD',
+          alias: 'Phase 10 · Automated Build & Release Pipeline',
+          cat: 'phase-10',
+          badge: 'Phase 10 · EKS & DevOps',
+          def: 'Continuous Integration and Continuous Delivery/Deployment: practices that automate testing, building images, and deploying to Kubernetes.',
+          desc: 'Connects GitHub Actions or GitLab CI directly to Amazon ECR and Amazon EKS.',
+          link: 'cicd.html',
+          linkText: 'CI/CD Guide →',
+          kw: 'cicd continuous integration delivery deployment pipeline'
+        },
+        {
+          term: 'Continuous Integration (CI)',
+          alias: 'Phase 10 · Automated Code Merge & Test',
+          cat: 'phase-10',
+          badge: 'Phase 10 · EKS & DevOps',
+          def: 'The practice of frequently merging developer code changes and automatically running unit tests and Docker builds on every commit.',
+          desc: 'Catches broken code immediately before an image is ever pushed to Amazon ECR.',
+          link: 'cicd.html',
+          linkText: 'CI/CD Guide →',
+          kw: 'continuous integration ci testing build'
+        },
+        {
+          term: 'Continuous Delivery vs Deployment',
+          alias: 'Phase 10 · Automated Release Stages',
+          cat: 'phase-10',
+          badge: 'Phase 10 · EKS & DevOps',
+          def: 'Continuous Delivery keeps every build ready to deploy with one click; Continuous Deployment pushes every passing build to production automatically.',
+          desc: 'Both rely on Kubernetes Rolling Updates and Readiness Probes to ship safely.',
+          link: 'cicd.html',
+          linkText: 'CI/CD Guide →',
+          kw: 'continuous delivery continuous deployment cd release'
+        },
+        {
+          term: 'Horizontal Pod Autoscaler (HPA)',
+          alias: 'Phase 10 · Automatic Pod Scaling',
+          cat: 'phase-10',
+          badge: 'Phase 10 · EKS & DevOps',
+          def: 'A Kubernetes resource that automatically increases or decreases the number of Pod replicas based on CPU, memory, or custom metrics.',
+          desc: 'Works alongside the Kubernetes Metrics Server to handle traffic spikes hands-free.',
+          link: 'eks.html#devops',
+          linkText: 'Phase 10 Guide →',
+          kw: 'hpa horizontal pod autoscaler autoscale cpu metrics'
+        },
+        {
+          term: 'Helm',
+          alias: 'Phase 10 · The Kubernetes Package Manager',
+          cat: 'phase-10',
+          badge: 'Phase 10 · EKS & DevOps',
+          def: 'A package manager for Kubernetes that bundles multiple YAML manifests into reusable, parameterized packages called Charts.',
+          desc: 'Lets you install complex stacks like Prometheus, Grafana, or NGINX Ingress with a single helm install command.',
+          link: 'eks.html#devops',
+          linkText: 'Phase 10 Guide →',
+          kw: 'helm chart package manager values.yaml release'
+        },
+        {
+          term: 'Prometheus',
+          alias: 'Phase 10 · Time-Series Metrics Collector',
+          cat: 'phase-10',
+          badge: 'Phase 10 · EKS & DevOps',
+          def: 'An open-source monitoring and alerting system that scrapes and stores numerical time-series metrics from Kubernetes Nodes and Pods.',
+          desc: 'Queries metrics using PromQL and triggers alerts via Alertmanager.',
+          link: 'grafana.html',
+          linkText: 'Grafana & Prometheus Guide →',
+          kw: 'prometheus metrics monitoring scraping promql'
+        },
+        {
+          term: 'Grafana',
+          alias: 'Phase 10 · Live Observability Dashboards',
+          cat: 'phase-10',
+          badge: 'Phase 10 · EKS & DevOps',
+          def: 'A visualization platform that connects to Prometheus and CloudWatch to display live cluster CPU, memory, latency, and error dashboards.',
+          desc: 'Gives engineering teams a real-time visual cockpit for their EKS clusters.',
+          link: 'grafana.html',
+          linkText: 'Grafana Guide →',
+          kw: 'grafana dashboard visualization monitoring observability'
+        },
+        {
+          term: 'Microservices',
+          alias: 'Phase 10 · Modular Service Architecture',
+          cat: 'phase-10',
+          badge: 'Phase 10 · EKS & DevOps',
+          def: 'An architectural style where an application is built as a collection of small, independent services that communicate over APIs.',
+          desc: 'Each microservice runs in its own Kubernetes Deployment and can be scaled or updated independently.',
+          link: 'eks.html#projects',
+          linkText: 'Full-Stack K8s Lab →',
+          kw: 'microservices architecture independent services api'
+        },
+        {
+          term: 'High Availability (HA)',
+          alias: 'Phase 10 · Fault-Tolerant Design',
+          cat: 'phase-10',
+          badge: 'Phase 10 · EKS & DevOps',
+          def: 'Designing a system to stay online without interruption even when individual containers, servers, or entire data centers fail.',
+          desc: 'Achieved in EKS by running multiple Pod replicas spread across multiple AWS Availability Zones.',
+          link: 'eks.html',
+          linkText: 'EKS Guide →',
+          kw: 'high availability ha fault tolerance multi-az uptime'
+        },
+        {
+          term: 'Load Balancing',
+          alias: 'Phase 10 · Even Traffic Distribution',
+          cat: 'phase-10',
+          badge: 'Phase 10 · EKS & DevOps',
+          def: 'Distributing incoming network traffic evenly across multiple healthy Pod replicas or Worker Nodes.',
+          desc: 'Handled externally by AWS ALB/NLB and internally by Kubernetes Services.',
+          link: 'k8s-workloads.html#phase-6',
+          linkText: 'Phase 6 Guide →',
+          kw: 'load balancing traffic distribution alb nlb service'
+        },
+        {
+          term: 'Auto Scaling (HPA + Cluster Autoscaler / Karpenter)',
+          alias: 'Phase 10 · Two-Layer Elasticity in EKS',
+          cat: 'phase-10',
+          badge: 'Phase 10 · EKS & DevOps',
+          def: 'Automatically adjusting both the number of Pods (via HPA) and the number of underlying EC2 Worker Nodes (via Karpenter or Cluster Autoscaler).',
+          desc: 'Ensures your cluster scales out during peak traffic and scales in at night to save AWS costs.',
+          link: 'eks.html#devops',
+          linkText: 'Phase 10 Guide →',
+          kw: 'auto scaling hpa cluster autoscaler karpenter elasticity'
+        },
+        {
+          term: 'Amazon ECR (Elastic Container Registry)',
+          alias: 'Phase 10 · AWS Private Image Registry',
+          cat: 'phase-10',
+          badge: 'Phase 10 · EKS & DevOps',
+          def: 'A fully managed AWS container image registry used to store, scan, and serve Docker images directly to Amazon EKS.',
+          desc: 'Authenticates seamlessly with EKS Worker Nodes using AWS IAM roles.',
+          link: 'eks-commands.html#ecr-deploy',
+          linkText: 'ECR to EKS Guide →',
+          kw: 'amazon ecr elastic container registry docker image aws'
+        },
+        {
+          term: 'Amazon EC2',
+          alias: 'Phase 10 · EKS Worker Node VMs',
+          cat: 'phase-10',
+          badge: 'Phase 10 · EKS & DevOps',
+          def: 'Amazon Elastic Compute Cloud—the virtual servers that act as Worker Nodes inside an Amazon EKS cluster.',
+          desc: 'You choose the instance size (e.g., t3.medium, m6i.large) based on your Pods’ CPU and memory needs.',
+          link: 'ec2.html',
+          linkText: 'EC2 Guide →',
+          kw: 'amazon ec2 virtual server instance worker node'
+        },
+        {
+          term: 'Managed Node Group',
+          alias: 'Phase 10 · AWS-Managed Worker Pool',
+          cat: 'phase-10',
+          badge: 'Phase 10 · EKS & DevOps',
+          def: 'In Amazon EKS, a group of EC2 Worker Nodes whose provisioning, AMI patching, and graceful draining are automated by AWS.',
+          desc: 'Uses an AWS Auto Scaling Group under the hood so you can scale node counts with a single command.',
+          link: 'eks.html',
+          linkText: 'EKS Guide →',
+          kw: 'node group managed node group eks ec2 autoscaling'
+        },
+        {
+          term: 'eksctl',
+          alias: 'Phase 10 · Official Amazon EKS CLI',
+          cat: 'phase-10',
+          badge: 'Phase 10 · EKS & DevOps',
+          def: 'A simple command-line tool (eksctl create cluster) that provisions a complete Amazon EKS cluster, VPC, and Managed Node Group in one command.',
+          desc: 'Generates the underlying AWS CloudFormation stacks automatically.',
+          link: 'eks.html',
+          linkText: 'EKS Setup Guide →',
+          kw: 'eksctl cli create cluster aws eks'
+        },
+        {
+          term: 'IRSA (IAM Roles for Service Accounts)',
+          alias: 'Phase 10 · Pod-Level AWS Permissions',
+          cat: 'phase-10',
+          badge: 'Phase 10 · EKS & DevOps',
+          def: 'An Amazon EKS feature that lets you attach fine-grained AWS IAM permissions (like S3 or DynamoDB access) to a specific Kubernetes ServiceAccount instead of the entire EC2 Node.',
+          desc: 'Follows least-privilege security so only authorized Pods can access specific AWS resources.',
+          link: 'eks.html',
+          linkText: 'EKS Guide →',
+          kw: 'irsa iam roles for service accounts oidc security aws eks'
+        }
+      ];
+
+      var termsGrid = document.getElementById('terms-grid');
+      var searchInput = document.getElementById('term-search');
+      var clearBtn = document.getElementById('search-clear');
+      var catBtns = Array.prototype.slice.call(document.querySelectorAll('.cat-filters .cat-btn'));
+      var alphaBar = document.getElementById('alpha-bar');
+      var countDisplay = document.getElementById('count-display');
+
+      var currentCat = 'all';
+
+      // Render cards
+      function renderCards() {
+        var html = K8S_TERMS.map(function (item) {
+          var firstLetter = item.term.charAt(0).toUpperCase();
+          var copyText = item.term + ': ' + item.def;
+          return (
+            '<article class="term-card" data-cat="' + item.cat + '" data-letter="' + firstLetter + '" data-keywords="' + item.kw + '">' +
+              '<div class="term-top">' +
+                '<div class="term-title-wrap">' +
+                  '<h3 class="term-title">' + item.term + '</h3>' +
+                  '<span class="term-alias">' + item.alias + '</span>' +
+                '</div>' +
+                '<span class="term-badge">' + item.badge + '</span>' +
+              '</div>' +
+              '<div class="term-oneline">' +
+                '<span class="term-oneline-label">Simple Definition</span>' +
+                '<p class="term-def">' + item.def + '</p>' +
+              '</div>' +
+              '<p class="term-desc">' + item.desc + '</p>' +
+              '<div class="term-footer">' +
+                '<a href="' + item.link + '" class="term-guide-link">' + item.linkText + '</a>' +
+                '<button class="copy-term-btn" type="button" data-def="' + copyText.replace(/"/g, '&quot;') + '">Copy</button>' +
+              '</div>' +
+            '</article>'
+          );
+        }).join('');
+        termsGrid.innerHTML = html;
+      }
+
+      renderCards();
+
+      var cards = Array.prototype.slice.call(termsGrid.querySelectorAll('.term-card'));
+
+      // Build A-Z bar
+      var lettersSet = new Set();
+      cards.forEach(function (card) {
+        var l = card.getAttribute('data-letter');
+        if (l) lettersSet.add(l.toUpperCase());
+      });
+      Array.from(lettersSet).sort().forEach(function (letter) {
+        var link = document.createElement('a');
+        link.className = 'alpha-link';
+        link.href = '#';
+        link.textContent = letter;
+        link.addEventListener('click', function (e) {
+          e.preventDefault();
+          searchInput.value = '';
+          clearBtn.style.display = 'none';
+          var visibleCount = 0;
+          cards.forEach(function (c) {
+            var matchL = c.getAttribute('data-letter') === letter;
+            var matchC = currentCat === 'all' || c.getAttribute('data-cat') === currentCat;
+            if (matchL && matchC) {
+              c.style.display = 'flex';
+              visibleCount++;
+            } else {
+              c.style.display = 'none';
+            }
+          });
+          countDisplay.textContent = 'Showing ' + visibleCount + ' terms starting with "' + letter + '"';
+        });
+        alphaBar.appendChild(link);
+      });
+
+      function filterTerms() {
+        var query = searchInput.value.trim().toLowerCase();
+        clearBtn.style.display = query ? 'flex' : 'none';
+        var visibleCount = 0;
+
+        cards.forEach(function (card) {
+          var title = card.querySelector('.term-title').textContent.toLowerCase();
+          var alias = card.querySelector('.term-alias').textContent.toLowerCase();
+          var def = card.querySelector('.term-def').textContent.toLowerCase();
+          var desc = card.querySelector('.term-desc').textContent.toLowerCase();
+          var kw = (card.getAttribute('data-keywords') || '').toLowerCase();
+          var cat = card.getAttribute('data-cat');
+
+          var matchesCat = currentCat === 'all' || cat === currentCat;
+          var matchesSearch =
+            !query ||
+            title.indexOf(query) !== -1 ||
+            alias.indexOf(query) !== -1 ||
+            def.indexOf(query) !== -1 ||
+            desc.indexOf(query) !== -1 ||
+            kw.indexOf(query) !== -1;
+
+          if (matchesCat && matchesSearch) {
+            card.style.display = 'flex';
+            visibleCount++;
+          } else {
+            card.style.display = 'none';
+          }
+        });
+
+        countDisplay.textContent = 'Showing ' + visibleCount + ' of ' + cards.length + ' Kubernetes & EKS terms';
+      }
+
+      filterTerms();
+
+      searchInput.addEventListener('input', filterTerms);
+      clearBtn.addEventListener('click', function () {
+        searchInput.value = '';
+        searchInput.focus();
+        filterTerms();
+      });
+
+      catBtns.forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          catBtns.forEach(function (b) { b.classList.remove('active'); });
+          btn.classList.add('active');
+          currentCat = btn.getAttribute('data-cat') || 'all';
+          filterTerms();
+        });
+      });
+
+      // Bind Copy buttons
+      termsGrid.addEventListener('click', function (e) {
+        var btn = e.target.closest('.copy-term-btn');
+        if (!btn) return;
+        var defText = btn.getAttribute('data-def');
+        if (!defText || !navigator.clipboard) return;
+        navigator.clipboard.writeText(defText).then(function () {
+          var orig = btn.textContent;
+          btn.textContent = 'Copied!';
+          btn.classList.add('copied');
+          setTimeout(function () {
+            btn.textContent = orig;
+            btn.classList.remove('copied');
+          }, 1600);
+        });
+      });
+    })();
+  </script>
+</body>
+</html>
+
