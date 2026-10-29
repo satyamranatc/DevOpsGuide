@@ -857,7 +857,7 @@ docker compose up -d</pre>
           <span class="oneline__label">If you remember one thing</span>
           <p>Automate the boring, error-prone steps once, and every push after that is safe, fast and identical.</p>
         </div>
-        <p style="margin-top:28px;"><a href="eks.html">Next: EKS, run containers at scale with Kubernetes &rarr;</a></p>
+        <p style="margin-top:28px;"><a href="kubernetes.html">Next: Kubernetes Basics &amp; Architecture (10-Phase Syllabus) &rarr;</a></p>
       </section>
 
     </article>
@@ -867,77 +867,15 @@ docker compose up -d</pre>
     <p class="more__label">Keep learning</p>
     <div class="more__grid">
       <a href="nginx.html"><strong>Nginx</strong><span>Web server, proxy and HTTPS.</span><em>&larr; Previous guide</em></a>
-      <a href="eks.html"><strong>EKS</strong><span>Kubernetes on AWS, explained.</span><em>Next guide &rarr;</em></a>
-      <a href="index.html"><strong>All guides</strong><span>See the full roadmap from zero to deploy.</span><em>Back to home &rarr;</em></a>
+      <a href="kubernetes.html"><strong>Kubernetes Basics</strong><span>Phases 1–4: Control Plane, Nodes, Pods &amp; YAML.</span><em>Next guide &rarr;</em></a>
+      <a href="eks.html"><strong>Amazon EKS</strong><span>Phases 9–10: Cloud K8s, HPA &amp; 8 Projects.</span><em>Cloud Production &rarr;</em></a>
     </div>
   </nav>
 
   <footer class="footer sitefoot">
-    <div class="sitefoot__inner">
-      <div class="sitefoot__brand">
-        <a href="index.html">Deploybook</a>
-        <p>Plain-English DevOps guides, from your first commit to a live app.</p>
-        <a class="sitefoot__home" href="index.html#roadmap">See the full roadmap &rarr;</a>
-      </div>
-      <nav aria-label="All guides">
-        <p class="sitefoot__label">All guides, in reading order</p>
-        <ol>
-          <li><a href="github.html">Git &amp; GitHub</a></li>
-          <li><a href="aws.html">AWS essentials</a></li>
-          <li><a href="ec2.html">EC2 servers</a></li>
-          <li><a href="docker.html">Docker</a></li>
-          <li><a href="nginx.html">Nginx</a></li>
-          <li><a href="cicd.html" aria-current="page">CI/CD with GitHub Actions</a></li>
-          <li><a href="eks.html">EKS</a></li>
-        </ol>
-      </nav>
-    </div>
     <p class="sitefoot__fine">A beginner’s guide to CI/CD with GitHub Actions. Simplified on purpose. Real pipelines have more moving parts, but these ideas are the foundation for all of them.</p>
   </footer>
 
-  <script>
-    (function () {
-      var body = document.body;
-      var openBtn = document.getElementById('menu-open');
-      var closeBtn = document.getElementById('menu-close');
-      var scrim = document.getElementById('scrim');
-      var drawer = document.getElementById('drawer');
-
-      // Sidebar: open by default on large screens, slide-in on small ones
-      var wide = window.matchMedia('(min-width: 1025px)');
-      var KEY = 'sidebar-closed';
-      var stored = null;
-      try { stored = localStorage.getItem(KEY); } catch (e) {}
-      if (stored === '1') body.classList.add('side-closed');
-
-      function isOpen() {
-        return wide.matches ? !body.classList.contains('side-closed') : body.classList.contains('menu-open');
-      }
-      function syncAria() {
-        var visible = isOpen();
-        drawer.setAttribute('aria-hidden', String(!visible));
-        openBtn.setAttribute('aria-expanded', String(visible));
-      }
-      function setOpen(open) {
-        if (wide.matches) {
-          body.classList.toggle('side-closed', !open);
-          try { localStorage.setItem(KEY, open ? '0' : '1'); } catch (e) {}
-        } else {
-          body.classList.toggle('menu-open', open);
-          (open ? closeBtn : openBtn).focus();
-        }
-        syncAria();
-      }
-      openBtn.addEventListener('click', function () { setOpen(!isOpen()); });
-      closeBtn.addEventListener('click', function () { setOpen(false); });
-      scrim.addEventListener('click', function () { setOpen(false); });
-      document.addEventListener('keydown', function (e) {
-        if (e.key === 'Escape' && !wide.matches && body.classList.contains('menu-open')) setOpen(false);
-      });
-      var onChange = function () { body.classList.remove('menu-open'); syncAria(); };
-      if (wide.addEventListener) wide.addEventListener('change', onChange); else wide.addListener(onChange);
-      syncAria();
-    })();
-  </script>
+  <script src="app.js"></script>
 </body>
 </html>

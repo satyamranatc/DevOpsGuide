@@ -1,0 +1,259 @@
+/* ==========================================================
+   Deploybook · Shared Site Application Script (app.js)
+   - Synchronizes navigation drawer & footer across all pages
+   - Manages responsive off-canvas sidebar state & ARIA
+   - Enhances all code blocks with one-click Copy buttons
+   - Handles scroll reveals & interactive checklists
+   ========================================================== */
+
+(function () {
+  'use strict';
+
+  var body = document.body;
+  var path = (window.location.pathname.split('/').pop() || 'index.html').toLowerCase();
+  if (path === '' || path === '/') path = 'index.html';
+
+  /* ----------------------------------------------------------
+     1. Canonical Navigation Data (Single Source of Truth)
+     ---------------------------------------------------------- */
+  var TOP_LINKS = [
+    { href: 'index.html', title: 'Home', desc: null },
+    { href: path === 'index.html' ? '#roadmap' : 'index.html#roadmap', title: 'Full roadmap', desc: 'All 9 stages at a glance', closeOnMobile: true },
+    { href: 'diagrams.html', title: 'Architecture Diagrams', desc: 'Docker, EC2, Nginx, ASG \u00b7 Visuals' },
+    { href: 'encyclopedia.html', title: 'Tech Encyclopedia', desc: '1-line definitions for 50+ DevOps terms' }
+  ];
+
+  var GUIDES = [
+    { step: '1',  href: 'github.html',        title: 'Git & GitHub',             desc: 'Save, share and team up on code \u00b7 8 min' },
+    { step: '2',  href: 'shell.html',         title: 'Shell scripting',          desc: 'Automate tasks with Bash \u00b7 12 min' },
+    { step: '3',  href: 'aws.html',           title: 'AWS essentials',           desc: 'Servers, storage and security \u00b7 14 min' },
+    { step: '4',  href: 'ec2.html',           title: 'EC2 servers',              desc: 'Launch and connect to your first server \u00b7 15 min' },
+    { step: '5',  href: 'docker.html',        title: 'Docker',                   desc: 'Images, containers and commands \u00b7 12 min' },
+    { step: '6',  href: 'nginx.html',         title: 'Nginx',                    desc: 'Web server, proxy and HTTPS \u00b7 14 min' },
+    { step: '7',  href: 'cicd.html',          title: 'CI/CD with GitHub Actions',desc: 'Auto-deploy React + Express \u00b7 20 min' },
+    { step: '8a', href: 'kubernetes.html',    title: 'Kubernetes Basics',        desc: 'Phases 1\u20134: Architecture, Pods & YAML \u00b7 14 min' },
+    { step: '8b', href: 'k8s-workloads.html', title: 'K8s Workloads & Net',      desc: 'Phases 5\u20138: Services, Ingress, EBS & Probes \u00b7 16 min' },
+    { step: '8c', href: 'eks.html',           title: 'Amazon EKS & Projects',    desc: 'Phases 9\u201310: EKS, HPA, Helm & 8 Projects \u00b7 15 min' },
+    { step: '>_', href: 'eks-commands.html',  title: 'EKS CLI Cheat Sheet',      desc: 'Terminal commands & ECR deploy \u00b7 10 min' },
+    { step: '9',  href: 'terraform.html',     title: 'Terraform',                desc: 'Infrastructure as Code \u00b7 15 min' },
+    { step: '10', href: 'grafana.html',       title: 'Grafana',                  desc: 'Dashboards & monitoring \u00b7 13 min' }
+  ];
+
+  var COMING_SOON = [
+    'Linux and networking',
+    'Ansible configuration',
+    'Prometheus & Alertmanager',
+    'Security with Vault',
+    'Reliability & SRE'
+  ];
+
+  /* ----------------------------------------------------------
+     2. Render Unified Sidebar Drawer & Footer
+     ---------------------------------------------------------- */
+  var drawer = document.getElementById('drawer');
+  if (drawer) {
+    var navEl = drawer.querySelector('nav');
+    if (navEl) {
+      var topHtml = '<ul class="drawer__list">' + TOP_LINKS.map(function (item) {
+        var isCurrent = (item.href === path) ? ' aria-current="page"' : '';
+        var closeAttr = item.closeOnMobile ? ' data-close' : '';
+        var descHtml = item.desc ? '<span class="drawer__desc">' + item.desc + '</span>' : '';
+        return '<li><a href="' + item.href + '"' + isCurrent + closeAttr + '>' +
+          '<span class="drawer__title">' + item.title + '</span>' +
+          descHtml + '</a></li>';
+      }).join('') + '</ul>';
+
+      var guidesHtml = '<p class="drawer__label">Read in this order</p><ul class="drawer__list">' + GUIDES.map(function (g) {
+        var isCurrent = (g.href === path) ? ' aria-current="page"' : '';
+        return '<li><a href="' + g.href + '"' + isCurrent + '>' +
+          '<span class="drawer__title"><span class="drawer__step">' + g.step + '</span>' + g.title + '</span>' +
+          '<span class="drawer__desc">' + g.desc + '</span>' +
+          '</a></li>';
+      }).join('') + '</ul>';
+
+      var soonHtml = '<p class="drawer__label">Coming soon</p><ul class="drawer__soon">' + COMING_SOON.map(function (s) {
+        return '<li>' + s + '</li>';
+      }).join('') + '</ul>';
+
+      navEl.innerHTML = topHtml + guidesHtml + soonHtml;
+    }
+  }
+
+  var footer = document.querySelector('footer.footer');
+  if (footer) {
+    footer.classList.add('sitefoot');
+    var fineEl = footer.querySelector('.sitefoot__fine');
+    var fineText = fineEl ? fineEl.innerHTML : 'Simplified on purpose. Real systems have more moving parts, but these ideas are the foundation for all of them.';
+
+    var footerListHtml = GUIDES.map(function (g) {
+      var isCurrent = (g.href === path) ? ' aria-current="page"' : '';
+      return '<li><a href="' + g.href + '"' + isCurrent + '>' + g.title + '</a></li>';
+    }).join('') +
+    '<li><a href="diagrams.html"' + (path === 'diagrams.html' ? ' aria-current="page"' : '') + '>Architecture Diagrams</a></li>' +
+    '<li><a href="encyclopedia.html"' + (path === 'encyclopedia.html' ? ' aria-current="page"' : '') + '>Tech Encyclopedia</a></li>';
+
+    footer.innerHTML =
+      '<div class="sitefoot__inner">' +
+        '<div class="sitefoot__brand">' +
+          '<a href="index.html">Deploybook</a>' +
+          '<p>Plain-English DevOps guides, from your first commit to a live cloud application.</p>' +
+          '<a class="sitefoot__home" href="index.html#roadmap">See the full roadmap &rarr;</a>' +
+        '</div>' +
+        '<nav aria-label="All guides">' +
+          '<p class="sitefoot__label">All guides &amp; references, in reading order</p>' +
+          '<ol>' + footerListHtml + '</ol>' +
+        '</nav>' +
+      '</div>' +
+      '<p class="sitefoot__fine">' + fineText + '</p>';
+  }
+
+  /* ----------------------------------------------------------
+     3. Sidebar Drawer Toggle & Accessibility
+     ---------------------------------------------------------- */
+  var openBtn = document.getElementById('menu-open');
+  var closeBtn = document.getElementById('menu-close');
+  var scrim = document.getElementById('scrim');
+
+  if (openBtn && closeBtn && scrim && drawer) {
+    var wide = window.matchMedia('(min-width: 1025px)');
+    var KEY = 'sidebar-closed';
+    var stored = null;
+    try { stored = localStorage.getItem(KEY); } catch (e) {}
+    if (stored === '1') body.classList.add('side-closed');
+
+    function isOpen() {
+      return wide.matches ? !body.classList.contains('side-closed') : body.classList.contains('menu-open');
+    }
+    function syncAria() {
+      var visible = isOpen();
+      drawer.setAttribute('aria-hidden', String(!visible));
+      openBtn.setAttribute('aria-expanded', String(visible));
+    }
+    function setOpen(open) {
+      if (wide.matches) {
+        body.classList.toggle('side-closed', !open);
+        try { localStorage.setItem(KEY, open ? '0' : '1'); } catch (e) {}
+      } else {
+        body.classList.toggle('menu-open', open);
+        (open ? closeBtn : openBtn).focus();
+      }
+      syncAria();
+    }
+
+    openBtn.addEventListener('click', function () { setOpen(!isOpen()); });
+    closeBtn.addEventListener('click', function () { setOpen(false); });
+    scrim.addEventListener('click', function () { setOpen(false); });
+
+    drawer.querySelectorAll('[data-close]').forEach(function (a) {
+      a.addEventListener('click', function () { if (!wide.matches) setOpen(false); });
+    });
+
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && !wide.matches && body.classList.contains('menu-open')) {
+        setOpen(false);
+      }
+    });
+
+    var onChange = function () { body.classList.remove('menu-open'); syncAria(); };
+    if (wide.addEventListener) wide.addEventListener('change', onChange); else wide.addListener(onChange);
+    syncAria();
+  }
+
+  /* ----------------------------------------------------------
+     4. Universal Copy-to-Clipboard for Code Blocks
+     ---------------------------------------------------------- */
+  function attachCopyHandler(btn, getTextFn) {
+    btn.addEventListener('click', function () {
+      var text = getTextFn();
+      if (!text) return;
+      navigator.clipboard.writeText(text).then(function () {
+        var orig = btn.textContent;
+        btn.textContent = 'Copied';
+        btn.classList.add('copied');
+        setTimeout(function () {
+          btn.textContent = orig;
+          btn.classList.remove('copied');
+        }, 1800);
+      }).catch(function () {});
+    });
+  }
+
+  // Existing .cmd-box__copy buttons (e.g. eks-commands.html)
+  document.querySelectorAll('.cmd-box__copy').forEach(function (btn) {
+    attachCopyHandler(btn, function () {
+      var targetId = btn.getAttribute('data-target');
+      var targetEl = targetId ? document.getElementById(targetId) : btn.closest('.cmd-box').querySelector('.code');
+      return targetEl ? (targetEl.innerText || targetEl.textContent).trim() : '';
+    });
+  });
+
+  // Auto-enhance standalone <pre class="code"> across all guides with a clean copy button
+  document.querySelectorAll('pre.code').forEach(function (pre) {
+    if (pre.closest('.cmd-box')) return;
+    var wrapper = document.createElement('div');
+    wrapper.className = 'code-wrap';
+    pre.parentNode.insertBefore(wrapper, pre);
+    wrapper.appendChild(pre);
+
+    var copyBtn = document.createElement('button');
+    copyBtn.type = 'button';
+    copyBtn.className = 'code-copy';
+    copyBtn.setAttribute('aria-label', 'Copy code to clipboard');
+    copyBtn.textContent = 'Copy';
+    wrapper.appendChild(copyBtn);
+
+    attachCopyHandler(copyBtn, function () {
+      return (pre.innerText || pre.textContent).trim();
+    });
+  });
+
+  /* ----------------------------------------------------------
+     5. Scroll Reveal Observer (Landing Page)
+     ---------------------------------------------------------- */
+  var revealItems = document.querySelectorAll('.reveal');
+  if (revealItems.length > 0) {
+    if ('IntersectionObserver' in window) {
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (en) {
+          if (en.isIntersecting) {
+            en.target.classList.add('in');
+            io.unobserve(en.target);
+          }
+        });
+      }, { threshold: 0.1, rootMargin: '0px 0px -32px 0px' });
+      revealItems.forEach(function (el) { io.observe(el); });
+    } else {
+      revealItems.forEach(function (el) { el.classList.add('in'); });
+    }
+  }
+
+  /* ----------------------------------------------------------
+     6. Interactive Checklist Persistence (eks-commands.html)
+     ---------------------------------------------------------- */
+  var checkItems = document.querySelectorAll('.task-item');
+  if (checkItems.length > 0) {
+    var CHECK_KEY = 'eks-tasks-state';
+    var savedState = {};
+    try { savedState = JSON.parse(localStorage.getItem(CHECK_KEY)) || {}; } catch (e) {}
+
+    checkItems.forEach(function (item) {
+      var idx = item.getAttribute('data-index');
+      var checkbox = item.querySelector('input[type="checkbox"]');
+      if (!checkbox) return;
+      if (savedState[idx]) {
+        checkbox.checked = true;
+        item.classList.add('completed');
+      }
+      checkbox.addEventListener('change', function () {
+        if (checkbox.checked) {
+          item.classList.add('completed');
+          savedState[idx] = true;
+        } else {
+          item.classList.remove('completed');
+          delete savedState[idx];
+        }
+        try { localStorage.setItem(CHECK_KEY, JSON.stringify(savedState)); } catch (e) {}
+      });
+    });
+  }
+})();

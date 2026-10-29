@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Kubernetes Workloads, Networking, Storage &amp; Probes — Deployments, Services, Ingress, PVCs &amp; ConfigMaps</title>
+  <meta name="description" content="Master Kubernetes Phases 5–8: Deploying applications, Rolling Updates, ClusterIP vs NodePort vs LoadBalancer, Ingress, CoreDNS, PersistentVolumeClaims (PVC), AWS EBS StorageClass, ConfigMaps, Secrets, Resource Limits, and Liveness/Readiness Probes.">
+  <meta name="color-scheme" content="dark">
+  <meta name="theme-color" content="#07080c">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="guide.css">
+  <link rel="stylesheet" href="sidebar.css">
+</head>
+<body class="guide">
+
+  <header class="topbar">
+    <div class="topbar__inner">
+      <div class="topbar__left">
+        <button class="menu-btn" id="menu-open" type="button" aria-controls="drawer" aria-expanded="false">
+          <span class="menu-btn__bars" aria-hidden="true"></span>
+          Menu
+        </button>
+        <a class="topbar__brand" href="index.html">Deploybook</a>
+      </div>
+      <nav class="topbar__nav" aria-label="Jump to">
+        <a href="#phase-5">Deploying</a>
+        <a href="#phase-6">Networking</a>
+        <a href="#diagram">Diagram</a>
+        <a href="#phase-7">Storage &amp; EBS</a>
+        <a href="#phase-8">Config &amp; Probes</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="scrim" id="scrim"></div>
+  <aside class="drawer" id="drawer" aria-label="Site menu">
+    <div class="drawer__head">
+      <a class="drawer__brand" href="index.html">Deploybook</a>
+      <button class="drawer__close" id="menu-close" type="button" aria-label="Hide sidebar">&times;</button>
+    </div>
+    <nav aria-label="Guides"></nav>
+    <p class="drawer__foot">Short guides in plain English, written for people who are just starting out.</p>
+  </aside>
+
+  <main id="top">
+
+    <!-- ===== Hero ===== -->
+    <section class="hero">
+      <p class="eyebrow">Stage 04 · Part 2 of 4 · Workloads, Networking &amp; Storage</p>
+      <h1>Workloads, Networking,<br>Storage &amp; Probes.</h1>
+      <p class="hero__lead">Deploy applications with zero downtime, expose traffic via Services and Ingress, attach persistent AWS EBS volumes, and protect your cluster with ConfigMaps, Secrets, and health probes.</p>
+      <p class="hero__meta">Phases 5–8 of 10 · 16 minute read</p>
+    </section>
+
+    <article class="article">
+
+      <!-- ===== K8s 4-Part Track Switcher ===== -->
+      <div class="guide-banner">
+        <div class="guide-banner__text">
+          <h4>Structured 4-Part Kubernetes Curriculum</h4>
+          <p>Jump between the four parts of the Kubernetes DevOps track anytime:</p>
+          <div class="diag-pills" style="justify-content:flex-start;margin-top:12px;">
+            <a class="diag-pill" href="kubernetes.html"><span class="diag-pill__num">Part 1</span> Basics &amp; Architecture (Phases 1–4)</a>
+            <a class="diag-pill" href="k8s-workloads.html" style="border-color:var(--accent);background:var(--accent-soft);color:var(--accent-ink);"><span class="diag-pill__num">Part 2</span> Workloads, Net, Storage &amp; Probes (Phases 5–8)</a>
+            <a class="diag-pill" href="eks.html"><span class="diag-pill__num">Part 3</span> Amazon EKS, Scaling &amp; 8 Projects (Phases 9–10)</a>
+            <a class="diag-pill" href="eks-commands.html"><span class="diag-pill__num">Part 4</span> EKS CLI &amp; ECR Cheat Sheet</a>
+          </div>
+        </div>
+      </div>
+
+      <nav class="contents" aria-label="Contents">
+        <h2>In Part 2 (This Guide)</h2>
+        <ol>
+          <li><a href="#phase-5">Phase 5: Deploying Applications (Pods, Deployments, Rollouts &amp; Rollbacks)</a></li>
+          <li><a href="#phase-6">Phase 6: Networking Basics (ClusterIP, NodePort, LoadBalancer, Ingress &amp; DNS)</a></li>
+          <li><a href="#diagram">Visual Diagram: Ingress, Services &amp; Persistent Storage</a></li>
+          <li><a href="#phase-7">Phase 7: Storage Basics (Volumes, PV, PVC, StorageClass &amp; AWS EBS)</a></li>
+          <li><a href="#phase-8">Phase 8: Configuration, Resource Requests/Limits &amp; Health Probes</a></li>
+          <li><a href="#recap">Quick Recap &amp; Next Steps</a></li>
+        </ol>
+      </nav>
+
+      <!-- ========================================================
+           Phase 5: Deploying Applications
+           ======================================================== -->
+      <section class="section" id="phase-5">
+        <span class="section__num">PHASE 05</span>
+        <h2>Deploying Applications</h2>
+        <p>In Phase 4, you learned how YAML files work. Now let's deploy, scale, update, and roll back real applications.</p>
+
+        <h3>1. Create a Pod vs. Deploy with a Deployment</h3>
+        <p>You can spin up a single Pod quickly from the terminal to test an image, but in production you always wrap your app in a <strong>Deployment</strong> so Kubernetes maintains multiple replicas and heals crashes:</p>
+
+        <pre class="code"><span class="c"># Quick one-line Pod creation (great for testing)</span>
+kubectl run nginx-test --image=nginx:alpine --port=80
+
+<span class="c"># Production Deployment YAML (deployment.yaml)</span>
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: react-web
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: react-web
+  template:
+    metadata:
+      labels:
+        app: react-web
+    spec:
+      containers:
+        - name: web
+          image: nginx:1.27-alpine
+          ports:
+            - containerPort: 80</pre>
+
+        <h3>2. Run Multiple Replicas &amp; Expose with a Service</h3>
+        <pre class="code"><span class="c"># Apply the Deployment and verify 3 replicas are Running</span>
+kubectl apply -f deployment.yaml
+kubectl get deployments
+kubectl get pods -l app=react-web
+
+<span class="c"># Scale up or down dynamically</span>
+kubectl scale deployment react-web --replicas=5
+
+<span class="c"># Expose the Deployment on port 80 and test in your browser locally</span>
+kubectl expose deployment react-web --type=LoadBalancer --port=80
+kubectl port-forward svc/react-web 8080:80
+<span class="c"># Now open http://localhost:8080 in your browser!</span></pre>
+
+        <h3>3. Update an Application Image, Rollout &amp; Rollback</h3>
+        <p>When you release version 2.0 of your app, Kubernetes performs a <strong>Rolling Update</strong>—starting new v2.0 pods and waiting until they are healthy before terminating old v1.0 pods. Zero visitors ever see an error page.</p>
+
+        <pre class="code"><span class="c"># 1. Update the container image to a new version</span>
+kubectl set image deployment/react-web web=nginx:1.28-alpine
+
+<span class="c"># 2. Watch the live rolling update progress</span>
+kubectl rollout status deployment/react-web
+
+<span class="c"># 3. View revision history</span>
+kubectl rollout history deployment/react-web
+
+<span class="c"># 4. Instant rollback to the previous working version if v2 has a bug!</span>
+kubectl rollout undo deployment/react-web</pre>
+      </section>
+
+      <!-- ========================================================
+           Phase 6: Networking Basics
+           ======================================================== -->
+      <section class="section" id="phase-6">
+        <span class="section__num">PHASE 06</span>
+        <h2>Networking Basics</h2>
+        <p>Kubernetes networking is built on one simple rule: <strong>Every Pod gets its own unique IP address</strong> inside the cluster, and every Pod can talk to every other Pod directly without NAT.</p>
+        <p>However, because Pods die and respawn with <em>new</em> IP addresses, you never hardcode a Pod IP. Instead, you use <strong>Services</strong>, <strong>CoreDNS</strong>, and <strong>Ingress</strong>.</p>
+
+        <h3>1. The 3 Service Types Compared</h3>
+        <table class="cheat-table" aria-label="Kubernetes Service Types">
+          <thead>
+            <tr>
+              <th style="width: 24%;">Service Type</th>
+              <th>How It Works &amp; When to Use It</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>ClusterIP</code><br><span style="font-size:12px;color:var(--text-3);">(Default)</span></td>
+              <td>Creates a private internal IP reachable <strong>only inside the cluster</strong>. Use this for backend APIs, Redis caches, and databases that the public internet should never touch directly.</td>
+            </tr>
+            <tr>
+              <td><code>NodePort</code></td>
+              <td>Opens a static port (between <code>30000–32767</code>) on every Worker Node’s IP address. Traffic hitting <code>NodeIP:30080</code> is forwarded to your Pods. Great for local testing or custom on-prem proxies.</td>
+            </tr>
+            <tr>
+              <td><code>LoadBalancer</code></td>
+              <td>Instructs your cloud provider (AWS, GCP, Azure) to provision an external <strong>Cloud Load Balancer (AWS ELB/NLB)</strong> with a public DNS name that routes internet traffic straight to your Service.</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3>2. Service Discovery &amp; DNS in Kubernetes (CoreDNS)</h3>
+        <p>Every Kubernetes cluster runs a built-in DNS server called <strong>CoreDNS</strong>. The moment you create a Service named <code>orders-api</code> in the <code>default</code> namespace, CoreDNS automatically registers a DNS record for it:</p>
+        <div class="oneline">
+          <span class="oneline__label">How microservices talk to each other</span>
+          <p>Your React or Node app simply calls <code>http://orders-api</code> (or <code>http://orders-api.default.svc.cluster.local</code> across namespaces). CoreDNS resolves that name to the Service’s steady ClusterIP automatically.</p>
+        </div>
+
+        <h3>3. Introduction to Ingress (One Smart Front Door)</h3>
+        <p>Each <code>type: LoadBalancer</code> Service creates a separate AWS Load Balancer (~$18/month each). If you have 10 microservices, paying for 10 separate cloud load balancers is wasteful.</p>
+        <p>An <strong>Ingress</strong> sits in front of multiple <code>ClusterIP</code> Services and routes HTTP/HTTPS traffic using domain names and URL paths through a <strong>single</strong> cloud load balancer (powered by an <strong>Ingress Controller</strong> like the AWS Load Balancer Controller or NGINX Ingress):</p>
+
+        <pre class="code"><span class="c"># Example: Ingress routing / to React frontend and /api to Express backend</span>
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: app-ingress
+spec:
+  rules:
+    - host: myapp.example.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: react-web
+                port:
+                  number: 80
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: orders-api
+                port:
+                  number: 3000</pre>
+      </section>
+
+    </article>
+
+    <!-- ===== Networking & Storage Diagram ===== -->
+    <section class="diagram-section" id="diagram">
+      <div class="diagram-head">
+        <span class="section__num" style="font-size:14px;font-weight:600;color:var(--accent-ink);display:block;margin-bottom:12px;">NETWORKING &amp; STORAGE DIAGRAM</span>
+        <h2 style="margin:0 0 20px;font-size:clamp(30px,4.4vw,40px);line-height:1.15;font-weight:700;letter-spacing:-0.028em;">Ingress, Services &amp; Persistent EBS Volumes</h2>
+        <p style="margin:0;color:var(--text-2);">How external users enter through Ingress, get routed via ClusterIP Services, and how stateful Pods persist data onto AWS EBS volumes using PVCs.</p>
+      </div>
+
+      <figure class="diagram" style="margin:0;">
+        <svg viewBox="0 0 960 520" role="img" aria-labelledby="net-stor-title net-stor-desc">
+          <title id="net-stor-title">Kubernetes Ingress, Service Routing, and Persistent Volume Storage Diagram</title>
+          <desc id="net-stor-desc">Shows Internet traffic hitting an AWS ALB Ingress, routing / to Frontend Service and /api to Backend Service, and Backend Pods mounting a PersistentVolumeClaim backed by AWS EBS.</desc>
+
+          <defs>
+            <marker id="nah" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+              <path d="M0,1 L9,5 L0,9 z" class="d-arrow"/>
+            </marker>
+          </defs>
+
+          <!-- Outer Cluster Box -->
+          <rect class="d-cloud" x="150" y="20" width="790" height="480" rx="22"/>
+          <text class="d-small" x="176" y="48">KUBERNETES CLUSTER · NETWORKING &amp; STORAGE FLOW</text>
+
+          <!-- Users -->
+          <rect class="d-box" x="16" y="185" width="108" height="75" rx="14"/>
+          <text class="d-title" x="70" y="218" text-anchor="middle">Browser</text>
+          <text class="d-sub" x="70" y="240" text-anchor="middle">HTTPS traffic</text>
+          <line class="d-line" x1="124" y1="222" x2="174" y2="222" marker-end="url(#nah)"/>
+
+          <!-- Ingress / ALB -->
+          <rect class="d-lb" x="178" y="145" width="155" height="155" rx="14"/>
+          <text class="d-title" x="255" y="182" text-anchor="middle">Ingress</text>
+          <text class="d-sub" x="255" y="204" text-anchor="middle">AWS ALB Controller</text>
+          <text class="d-small" x="255" y="235" text-anchor="middle" style="fill:var(--accent-ink)">/ &rarr; react-web</text>
+          <text class="d-small" x="255" y="258" text-anchor="middle" style="fill:var(--warm)">/api &rarr; orders-api</text>
+
+          <!-- Arrows from Ingress to Services -->
+          <line class="d-line" x1="333" y1="185" x2="395" y2="135" marker-end="url(#nah)"/>
+          <line class="d-line" x1="333" y1="255" x2="395" y2="305" marker-end="url(#nah)"/>
+
+          <!-- Service 1: Frontend -->
+          <rect class="d-box" x="400" y="80" width="180" height="95" rx="12"/>
+          <text class="d-title" x="490" y="112" text-anchor="middle">Service: react-web</text>
+          <text class="d-sub" x="490" y="134" text-anchor="middle">type: ClusterIP (:80)</text>
+          <text class="d-sub" x="490" y="154" text-anchor="middle">Selector: app=react-web</text>
+
+          <!-- Service 2: Backend -->
+          <rect class="d-box" x="400" y="255" width="180" height="95" rx="12"/>
+          <text class="d-title" x="490" y="287" text-anchor="middle">Service: orders-api</text>
+          <text class="d-sub" x="490" y="309" text-anchor="middle">type: ClusterIP (:3000)</text>
+          <text class="d-sub" x="490" y="329" text-anchor="middle">DNS: orders-api.default</text>
+
+          <!-- Arrows from Services to Pods -->
+          <line class="d-line" x1="580" y1="127" x2="642" y2="127" marker-end="url(#nah)"/>
+          <line class="d-line" x1="580" y1="302" x2="642" y2="302" marker-end="url(#nah)"/>
+
+          <!-- Pods Group -->
+          <rect class="d-pod" x="646" y="72" width="265" height="110" rx="12"/>
+          <text class="d-podtitle" x="666" y="102">Frontend Pods (x3 replicas)</text>
+          <text class="d-sub" x="666" y="126">Stateless React + Nginx</text>
+          <text class="d-sub" x="666" y="148">Reads ConfigMap &amp; Probes</text>
+
+          <rect class="d-pod" x="646" y="245" width="265" height="115" rx="12"/>
+          <text class="d-podtitle" x="666" y="275">Backend / DB Pod</text>
+          <text class="d-sub" x="666" y="299">Reads Secret (DB_PASSWORD)</text>
+          <text class="d-sub" x="666" y="321">Mounts /var/lib/data via PVC</text>
+
+          <!-- Storage PVC -> PV -> EBS -->
+          <line class="d-line" x1="778" y1="360" x2="778" y2="395" marker-end="url(#nah)"/>
+          <rect class="d-control" x="400" y="400" width="510" height="76" rx="12"/>
+          <text class="d-on-dark" x="424" y="430">Persistent Storage: PVC &rarr; PV &rarr; StorageClass (gp3)</text>
+          <text class="d-on-dark2" x="424" y="454">Backed by AWS EBS Volume (Survives Pod crashes &amp; restarts)</text>
+        </svg>
+
+        <ul class="legend">
+          <li><strong>Ingress</strong>Single public entry point routing hostnames and paths (<code>/</code> and <code>/api</code>) to internal Services.</li>
+          <li><strong>ClusterIP &amp; CoreDNS</strong>Internal Services give Pods a permanent DNS name and load-balance across replicas.</li>
+          <li><strong>ConfigMap &amp; Secret</strong>Inject environment variables and credentials into Pods at runtime without rebuilding images.</li>
+          <li><strong>PVC &rarr; PV &rarr; EBS</strong>Detaches data storage from ephemeral Pods so database files survive restarts.</li>
+        </ul>
+      </figure>
+    </section>
+
+    <article class="article">
+
+      <!-- ========================================================
+           Phase 7: Storage Basics
+           ======================================================== -->
+      <section class="section" id="phase-7">
+        <span class="section__num">PHASE 07</span>
+        <h2>Storage Basics: Volumes, PV, PVC &amp; AWS EBS</h2>
+        <p>By default, container filesystems are <strong>ephemeral (temporary)</strong>. When a Pod crashes or gets replaced during a rollout, every file written inside that container is wiped clean.</p>
+        <p>That is fine for stateless web servers (like React or Nginx), but fatal for databases or file uploads. Kubernetes solves this with four storage abstractions:</p>
+
+        <div class="words" role="table" aria-label="Kubernetes Storage Abstractions">
+          <div class="words__row" role="row">
+            <div class="words__term" role="cell">1. Volume</div>
+            <p class="words__def" role="cell">A directory mounted into a Pod (such as <code>emptyDir</code>) that lets containers share files for the lifetime of that Pod.</p>
+          </div>
+          <div class="words__row" role="row">
+            <div class="words__term" role="cell">2. PersistentVolume (PV)</div>
+            <p class="words__def" role="cell"><strong>The Actual Hard Drive.</strong> A piece of real cluster storage (like an AWS EBS disk or NFS share) whose lifecycle is completely independent of any Pod.</p>
+          </div>
+          <div class="words__row" role="row">
+            <div class="words__term" role="cell">3. PersistentVolumeClaim (PVC)</div>
+            <p class="words__def" role="cell"><strong>The Storage Voucher / Request.</strong> A developer writes a PVC saying: <em>“My Pod needs 20Gi of fast SSD storage.”</em> Kubernetes binds the PVC to a matching PV.</p>
+          </div>
+          <div class="words__row" role="row">
+            <div class="words__term" role="cell">4. StorageClass</div>
+            <p class="words__def" role="cell"><strong>The Automated Provisioner.</strong> Instead of an admin manually creating PVs, a StorageClass (like <code>ebs-sc</code> / <code>gp3</code> on AWS EKS) dynamically creates a brand-new AWS EBS hard drive on demand whenever a Pod submits a PVC.</p>
+          </div>
+        </div>
+
+        <h3>Example: Requesting AWS EBS Storage with a PVC</h3>
+        <pre class="code">apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: app-data-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce        <span class="c"># Mounted by a single node at a time (standard for AWS EBS)</span>
+  storageClassName: gp3    <span class="c"># Uses the AWS EBS CSI Driver to create a gp3 SSD volume</span>
+  resources:
+    requests:
+      storage: 10Gi</pre>
+      </section>
+
+      <!-- ========================================================
+           Phase 8: Configuration, Resource Management & Probes
+           ======================================================== -->
+      <section class="section" id="phase-8">
+        <span class="section__num">PHASE 08</span>
+        <h2>Configuration, Resources &amp; Health Probes</h2>
+        <p>Production-ready Kubernetes deployments require three finishing touches: externalized configuration (<strong>ConfigMaps &amp; Secrets</strong>), hardware guardrails (<strong>Requests &amp; Limits</strong>), and automated health checks (<strong>Liveness &amp; Readiness Probes</strong>).</p>
+
+        <h3>1. Environment Variables, ConfigMaps &amp; Secrets</h3>
+        <div class="pair">
+          <div class="pair__item">
+            <h3>ConfigMap · Plain Config</h3>
+            <p>Holds non-secret settings (<code>LOG_LEVEL=info</code>, <code>API_URL</code>). Create via YAML or CLI:<br><code>kubectl create configmap app-config --from-literal=API_URL=https://api.myapp.com</code></p>
+          </div>
+          <div class="pair__item">
+            <h3>Secret · Sensitive Credentials</h3>
+            <p>Holds passwords and API keys (base64-encoded in etcd, encrypted at rest in EKS):<br><code>kubectl create secret generic db-secret --from-literal=DB_PASS=s3cr3t!</code></p>
+          </div>
+        </div>
+
+        <h3>2. CPU and Memory Requests vs. Limits</h3>
+        <p>Without resource boundaries, a single memory-leaking container can starve the entire Worker Node and crash neighboring apps:</p>
+        <ul class="recap">
+          <li><span><strong>Requests (Guaranteed Minimum):</strong> How much CPU/RAM the container is guaranteed to get. The <strong>Scheduler</strong> uses <code>requests</code> to decide which Worker Node has enough room for the Pod.</span></li>
+          <li><span><strong>Limits (Hard Ceiling):</strong> The maximum CPU/RAM the container is allowed to consume. If a container exceeds its CPU limit, it is throttled; if it exceeds its memory limit, it is terminated with <strong>OOMKilled (Out Of Memory)</strong>.</span></li>
+        </ul>
+
+        <h3>3. Liveness Probes vs. Readiness Probes</h3>
+        <div class="pair">
+          <div class="pair__item">
+            <h3>Readiness Probe · "Can I take traffic?"</h3>
+            <p>Checks if the container has finished booting and loading caches. If it fails, Kubernetes <strong>removes the Pod from the Service load balancer</strong> until it recovers (without restarting it).</p>
+          </div>
+          <div class="pair__item">
+            <h3>Liveness Probe · "Am I deadlocked?"</h3>
+            <p>Checks if the app is still alive and responsive. If a Liveness probe fails repeatedly, Kubernetes <strong>kills and restarts the container</strong> automatically to heal the deadlock.</p>
+          </div>
+        </div>
+
+        <h3>Complete Production Deployment YAML (Combining All of Phase 8)</h3>
+        <pre class="code">apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: production-api
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: production-api
+  template:
+    metadata:
+      labels:
+        app: production-api
+    spec:
+      containers:
+        - name: api
+          image: 123456789012.dkr.ecr.ap-south-1.amazonaws.com/orders-api:1.2
+          ports:
+            - containerPort: 3000
+
+          <span class="c"># 1. Inject ConfigMap &amp; Secret as Environment Variables</span>
+          env:
+            - name: API_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config
+                  key: API_URL
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: db-secret
+                  key: DB_PASS
+
+          <span class="c"># 2. CPU &amp; Memory Requests and Limits</span>
+          resources:
+            requests:
+              cpu: "100m"       <span class="c"># 0.1 CPU core guaranteed</span>
+              memory: "128Mi"   <span class="c"># 128 MB RAM guaranteed</span>
+            limits:
+              cpu: "500m"       <span class="c"># Max 0.5 CPU core</span>
+              memory: "256Mi"   <span class="c"># Max 256 MB RAM (OOMKilled above this)</span>
+
+          <span class="c"># 3. Readiness &amp; Liveness Health Probes</span>
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: 3000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 3000
+            initialDelaySeconds: 15
+            periodSeconds: 20</pre>
+      </section>
+
+      <!-- ========================================================
+           Quick Recap
+           ======================================================== -->
+      <section class="section" id="recap">
+        <span class="section__num">RECAP</span>
+        <h2>Quick recap: Phases 5–8</h2>
+        <ul class="recap">
+          <li><span>Use <strong>Deployments</strong> to manage replicas, perform zero-downtime <strong>rolling updates</strong>, and <strong>roll back</strong> broken releases with <code>kubectl rollout undo</code>.</span></li>
+          <li><span><strong>ClusterIP</strong> is for internal traffic, <strong>NodePort</strong> opens a static node port, and <strong>LoadBalancer</strong> provisions a cloud load balancer.</span></li>
+          <li><span><strong>Ingress</strong> routes multiple hostnames and paths (<code>/</code> and <code>/api</code>) through a single cloud load balancer, while <strong>CoreDNS</strong> provides automatic internal DNS names.</span></li>
+          <li><span><strong>PVCs</strong> request persistent storage from a <strong>StorageClass</strong> (like AWS EBS <code>gp3</code>) so database files survive Pod restarts.</span></li>
+          <li><span>Use <strong>ConfigMaps</strong> and <strong>Secrets</strong> for configuration, <strong>Requests/Limits</strong> to prevent resource starvation, and <strong>Readiness/Liveness Probes</strong> for traffic safety and auto-healing.</span></li>
+        </ul>
+
+        <div class="oneline" style="margin-top:40px;">
+          <span class="oneline__label">Next: Cloud Production with Amazon EKS (Phases 9–10)</span>
+          <p>Now let's take everything you learned into AWS: how Amazon EKS works, how to troubleshoot failing pods, how HPA autoscaling and Helm work, and 8 hands-on beginner projects.</p>
+        </div>
+      </section>
+
+    </article>
+  </main>
+
+  <nav class="more" aria-label="Previous and next guides">
+    <p class="more__label">Continue the Kubernetes Track</p>
+    <div class="more__grid">
+      <a href="kubernetes.html"><strong>Part 1: K8s Basics &amp; Architecture</strong><span>Phases 1–4: Control Plane, Worker Nodes, Core Objects &amp; YAML.</span><em>&larr; Previous in K8s Track</em></a>
+      <a href="eks.html"><strong>Part 3: Amazon EKS &amp; 8 Projects</strong><span>Phases 9–10: AWS EKS, Troubleshooting, HPA, Helm &amp; 8 Practical Projects.</span><em>Next in K8s Track &rarr;</em></a>
+      <a href="eks-commands.html"><strong>Part 4: EKS CLI Cheat Sheet</strong><span>Step-by-step terminal commands &amp; React ECR deploy.</span><em>Open Cheat Sheet &rarr;</em></a>
+    </div>
+  </nav>
+
+  <footer class="footer sitefoot">
+    <p class="sitefoot__fine">Kubernetes Workloads, Networking, Storage &amp; Probes (Phases 5–8). Simplified on purpose. Real systems have more moving parts, but these ideas are the foundation for all of them.</p>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
+

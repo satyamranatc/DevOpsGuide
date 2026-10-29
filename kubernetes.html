@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Kubernetes Basics Syllabus &amp; Architecture — Control Plane, Nodes, Pods, Deployments &amp; Services</title>
+  <meta name="description" content="Complete 10-Phase Kubernetes Basics Syllabus for DevOps Beginners: Docker vs Kubernetes, Control Plane vs Worker Nodes, Pods, Deployments, ReplicaSets, Services, Namespaces, and Minikube setup.">
+  <meta name="color-scheme" content="dark">
+  <meta name="theme-color" content="#07080c">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="guide.css">
+  <link rel="stylesheet" href="sidebar.css">
+</head>
+<body class="guide">
+
+  <header class="topbar">
+    <div class="topbar__inner">
+      <div class="topbar__left">
+        <button class="menu-btn" id="menu-open" type="button" aria-controls="drawer" aria-expanded="false">
+          <span class="menu-btn__bars" aria-hidden="true"></span>
+          Menu
+        </button>
+        <a class="topbar__brand" href="index.html">Deploybook</a>
+      </div>
+      <nav class="topbar__nav" aria-label="Jump to">
+        <a href="#syllabus">10-Phase Syllabus</a>
+        <a href="#phase-1">Intro</a>
+        <a href="#phase-2">Architecture</a>
+        <a href="#diagram">Diagram</a>
+        <a href="#phase-3">Components</a>
+        <a href="#phase-4">Setup &amp; YAML</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="scrim" id="scrim"></div>
+  <aside class="drawer" id="drawer" aria-label="Site menu">
+    <div class="drawer__head">
+      <a class="drawer__brand" href="index.html">Deploybook</a>
+      <button class="drawer__close" id="menu-close" type="button" aria-label="Hide sidebar">&times;</button>
+    </div>
+    <nav aria-label="Guides"></nav>
+    <p class="drawer__foot">Short guides in plain English, written for people who are just starting out.</p>
+  </aside>
+
+  <main id="top">
+
+    <!-- ===== Hero ===== -->
+    <section class="hero">
+      <p class="eyebrow">Stage 04 · Part 1 of 4 · Kubernetes Foundations</p>
+      <h1>Kubernetes Basics &amp;<br>Architecture.</h1>
+      <p class="hero__lead">Understand the fundamentals of Kubernetes from zero: the 10-phase DevOps syllabus, Control Plane vs. Worker Nodes, core objects, and local setup.</p>
+      <p class="hero__meta">Phases 1–4 of 10 · 14 minute read</p>
+    </section>
+
+    <article class="article">
+
+      <!-- ===== K8s 4-Part Track Switcher ===== -->
+      <div class="guide-banner">
+        <div class="guide-banner__text">
+          <h4>Structured 4-Part Kubernetes Curriculum</h4>
+          <p>We split Kubernetes into four focused guides so you can master each layer without overwhelm:</p>
+          <div class="diag-pills" style="justify-content:flex-start;margin-top:12px;">
+            <a class="diag-pill" href="kubernetes.html" style="border-color:var(--accent);background:var(--accent-soft);color:var(--accent-ink);"><span class="diag-pill__num">Part 1</span> Basics &amp; Architecture (Phases 1–4)</a>
+            <a class="diag-pill" href="k8s-workloads.html"><span class="diag-pill__num">Part 2</span> Workloads, Net, Storage &amp; Probes (Phases 5–8)</a>
+            <a class="diag-pill" href="eks.html"><span class="diag-pill__num">Part 3</span> Amazon EKS, Scaling &amp; 8 Projects (Phases 9–10)</a>
+            <a class="diag-pill" href="eks-commands.html"><span class="diag-pill__num">Part 4</span> EKS CLI &amp; ECR Cheat Sheet</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== Recommended Learning Order ===== -->
+      <div class="oneline">
+        <span class="oneline__label">Recommended Learning Order for DevOps Beginners</span>
+        <p><strong>Docker</strong> &rarr; <strong>Kubernetes Architecture</strong> &rarr; <strong>Pods</strong> &rarr; <strong>Deployments</strong> &rarr; <strong>Services</strong> &rarr; <strong>YAML</strong> &rarr; <strong>Networking</strong> &rarr; <strong>Storage</strong> &rarr; <strong>Troubleshooting</strong> &rarr; <strong>Scaling</strong> &rarr; <strong>CI/CD</strong></p>
+      </div>
+
+      <div class="analogy">
+        <span class="analogy__label">How to study this track</span>
+        <p>Start with <strong>Pods, Deployments, Services, and kubectl</strong> right here. Once you understand these building blocks, move to <a href="eks.html">Amazon EKS</a> and <a href="eks-commands.html">EKS CLI</a> to deploy your React container from Amazon ECR. Keep the official <a href="https://kubernetes.io/docs/home/" target="_blank" rel="noopener">Kubernetes Documentation</a> bookmarked as your primary reference.</p>
+      </div>
+
+      <!-- ===== Master 10-Phase Syllabus Map ===== -->
+      <section class="section" id="syllabus" style="padding-top:40px;">
+        <span class="section__num">SYLLABUS</span>
+        <h2>Kubernetes Basics Syllabus for DevOps Beginners</h2>
+        <p>Goal: Understand the fundamentals of Kubernetes and learn how to deploy, network, store, scale, and troubleshoot applications using it. Click any phase to jump directly to that section:</p>
+
+        <div class="flow-grid" style="grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));">
+          <a class="flow-card" href="#phase-1" style="text-decoration:none;">
+            <div class="flow-card__step">Phase 1 · Part 1</div>
+            <div class="flow-card__title">Introduction to K8s</div>
+            <p class="flow-card__desc">What K8s is, orchestration, Docker vs K8s, and DevOps use cases.</p>
+          </a>
+          <a class="flow-card" href="#phase-2" style="text-decoration:none;">
+            <div class="flow-card__step">Phase 2 · Part 1</div>
+            <div class="flow-card__title">K8s Architecture</div>
+            <p class="flow-card__desc">Control Plane (API Server, etcd, Scheduler) &amp; Worker Nodes (Kubelet, Kube-proxy).</p>
+          </a>
+          <a class="flow-card" href="#phase-3" style="text-decoration:none;">
+            <div class="flow-card__step">Phase 3 · Part 1</div>
+            <div class="flow-card__title">Essential Components</div>
+            <p class="flow-card__desc">Pod, Node, Deployment, ReplicaSet, Service, Namespace, Labels, ConfigMap &amp; Secret.</p>
+          </a>
+          <a class="flow-card" href="#phase-4" style="text-decoration:none;">
+            <div class="flow-card__step">Phase 4 · Part 1</div>
+            <div class="flow-card__title">Installation &amp; YAML</div>
+            <p class="flow-card__desc">Install kubectl, Minikube/Kind, intro to EKS, and the 4 mandatory YAML fields.</p>
+          </a>
+          <a class="flow-card" href="k8s-workloads.html#phase-5" style="text-decoration:none;">
+            <div class="flow-card__step">Phase 5 · Part 2 &rarr;</div>
+            <div class="flow-card__title">Deploying Applications</div>
+            <p class="flow-card__desc">Pods, Deployments, replicas, exposing Services, rolling updates &amp; rollbacks.</p>
+          </a>
+          <a class="flow-card" href="k8s-workloads.html#phase-6" style="text-decoration:none;">
+            <div class="flow-card__step">Phase 6 · Part 2 &rarr;</div>
+            <div class="flow-card__title">Networking Basics</div>
+            <p class="flow-card__desc">Pod-to-Pod, ClusterIP, NodePort, LoadBalancer, Ingress &amp; CoreDNS.</p>
+          </a>
+          <a class="flow-card" href="k8s-workloads.html#phase-7" style="text-decoration:none;">
+            <div class="flow-card__step">Phase 7 · Part 2 &rarr;</div>
+            <div class="flow-card__title">Storage Basics</div>
+            <p class="flow-card__desc">Volumes, PersistentVolume (PV), PVC, StorageClass &amp; AWS EBS CSI.</p>
+          </a>
+          <a class="flow-card" href="k8s-workloads.html#phase-8" style="text-decoration:none;">
+            <div class="flow-card__step">Phase 8 · Part 2 &rarr;</div>
+            <div class="flow-card__title">Config, Resources &amp; Probes</div>
+            <p class="flow-card__desc">Env vars, ConfigMaps, Secrets, CPU/RAM requests &amp; limits, Liveness &amp; Readiness probes.</p>
+          </a>
+          <a class="flow-card" href="eks.html#troubleshooting" style="text-decoration:none;">
+            <div class="flow-card__step">Phase 9 · Part 3 &rarr;</div>
+            <div class="flow-card__title">Troubleshooting</div>
+            <p class="flow-card__desc">Pod lifecycle, logs, describe, ImagePullBackOff, CrashLoopBackOff &amp; Service debugging.</p>
+          </a>
+          <a class="flow-card" href="eks.html#devops" style="text-decoration:none;">
+            <div class="flow-card__step">Phase 10 · Part 3 &rarr;</div>
+            <div class="flow-card__title">K8s in DevOps &amp; 8 Projects</div>
+            <p class="flow-card__desc">ECR, Horizontal Pod Autoscaler (HPA), Helm, CI/CD, Prometheus &amp; 8 hands-on labs.</p>
+          </a>
+        </div>
+      </section>
+
+      <nav class="contents" aria-label="Contents" style="margin-top:36px;">
+        <h2>In Part 1 (This Guide)</h2>
+        <ol>
+          <li><a href="#phase-1">Phase 1: Introduction to Kubernetes &amp; Docker vs K8s</a></li>
+          <li><a href="#words">The Restaurant Mental Model</a></li>
+          <li><a href="#phase-2">Phase 2: Kubernetes Architecture (Control Plane &amp; Nodes)</a></li>
+          <li><a href="#diagram">Full Architecture Diagram</a></li>
+          <li><a href="#phase-3">Phase 3: Essential Kubernetes Components</a></li>
+          <li><a href="#phase-4">Phase 4: Installation, Setup &amp; Understanding YAML</a></li>
+          <li><a href="#recap">Quick Recap &amp; Next Steps</a></li>
+        </ol>
+      </nav>
+
+      <!-- ========================================================
+           Phase 1: Introduction to Kubernetes
+           ======================================================== -->
+      <section class="section" id="phase-1">
+        <span class="section__num">PHASE 01</span>
+        <h2>Introduction to Kubernetes</h2>
+        <p>Imagine you’ve built a food delivery application. At first it is one program that does everything: displays the menu, takes orders, and processes payments.</p>
+        <p>As your company grows, you split that big program into smaller, independent programs called <strong>microservices</strong>—one container for the menu, one for orders, and one for payments.</p>
+        <p>Now you face a new problem: you have <strong>50 containers running across 10 servers</strong>. What happens if Server 3 loses power at 2:00 AM? What happens on Friday night when dinner traffic spikes 10x? Starting, restarting, networking, and scaling dozens of containers by hand is impossible.</p>
+        <p>That is **Container Orchestration**, and **Kubernetes (K8s)** is the industry-standard tool that automates it.</p>
+
+        <div class="oneline">
+          <span class="oneline__label">What is Kubernetes in one line?</span>
+          <p>Kubernetes is an open-source container orchestrator that automatically deploys, heals, networks, and scales your containers across a cluster of servers.</p>
+        </div>
+
+        <h3>Docker vs. Kubernetes: Are they competitors?</h3>
+        <p>Beginners often ask whether they should learn Docker <em>or</em> Kubernetes. In reality, they work together as two halves of the same team:</p>
+
+        <div class="pair">
+          <div class="pair__item">
+            <h3>Docker · Packs the Box</h3>
+            <p>Docker packages your application code and dependencies into an isolated <strong>container image</strong> and runs containers on a <em>single</em> computer.</p>
+          </div>
+          <div class="pair__item">
+            <h3>Kubernetes · Runs the Fleet</h3>
+            <p>Kubernetes takes the container images you built with Docker and coordinates thousands of them across <em>many</em> cloud servers simultaneously.</p>
+          </div>
+        </div>
+
+        <h3>Why we need Kubernetes in DevOps (Core Use Cases)</h3>
+        <ul class="recap">
+          <li><span><strong>Self-Healing:</strong> If a container crashes or a server dies, Kubernetes detects it within seconds and launches a fresh replacement automatically.</span></li>
+          <li><span><strong>Automated Scaling:</strong> Adds more container copies during traffic spikes and removes them at night to save cloud bills.</span></li>
+          <li><span><strong>Zero-Downtime Rollouts:</strong> Updates v1.0 of your app to v2.0 gradually, one pod at a time, and automatically rolls back if v2.0 has a bug.</span></li>
+          <li><span><strong>Service Discovery &amp; Load Balancing:</strong> Gives changing containers one permanent DNS name and distributes traffic evenly across healthy copies.</span></li>
+        </ul>
+      </section>
+
+      <!-- ========================================================
+           The Restaurant Mental Model
+           ======================================================== -->
+      <section class="section" id="words">
+        <span class="section__num">MENTAL MODEL</span>
+        <h2>The Restaurant Idea</h2>
+        <p>Before diving into the technical architecture, picture a busy restaurant. Every Kubernetes term maps cleanly to a role you already know:</p>
+
+        <div class="words" role="table" aria-label="Kubernetes words and their restaurant meaning">
+          <div class="words__row" role="row">
+            <div class="words__term" role="cell">Container</div>
+            <p class="words__def" role="cell">A sealed lunch box. Your microservice plus everything it needs, packed together.</p>
+          </div>
+          <div class="words__row" role="row">
+            <div class="words__term" role="cell">Pod</div>
+            <p class="words__def" role="cell">A tray that carries the lunch box. The smallest unit Kubernetes places and moves around.</p>
+          </div>
+          <div class="words__row" role="row">
+            <div class="words__term" role="cell">Worker Node</div>
+            <p class="words__def" role="cell">One kitchen (a real Linux server / EC2 instance) where trays are prepared.</p>
+          </div>
+          <div class="words__row" role="row">
+            <div class="words__term" role="cell">Control Plane</div>
+            <p class="words__def" role="cell">The head office / manager. Decides which kitchen prepares which tray and replaces broken ones.</p>
+          </div>
+          <div class="words__row" role="row">
+            <div class="words__term" role="cell">Cluster</div>
+            <p class="words__def" role="cell">The entire restaurant: the manager’s office (Control Plane) plus all the kitchens (Worker Nodes).</p>
+          </div>
+        </div>
+
+        <h3>How the pieces nest inside each other</h3>
+        <div class="layers" role="img" aria-label="A container sits inside a pod, a pod sits inside a node, and nodes sit inside a cluster.">
+          <div class="layer layer--cluster">
+            <span class="layer__name">CLUSTER · the whole restaurant</span>
+            <div class="layer layer--node">
+              <span class="layer__name">WORKER NODE · a kitchen (server)</span>
+              <div class="layer layer--pod">
+                <span class="layer__name">POD · a tray (gets an IP address)</span>
+                <div class="layer layer--container">
+                  <span class="layer__name">CONTAINER · a lunch box</span>
+                  Your microservice (e.g. React frontend or Orders API)
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <p class="layers__caption">Container &rarr; Pod &rarr; Worker Node &rarr; Cluster</p>
+      </section>
+
+      <!-- ========================================================
+           Phase 2: Kubernetes Architecture
+           ======================================================== -->
+      <section class="section" id="phase-2">
+        <span class="section__num">PHASE 02</span>
+        <h2>Kubernetes Architecture: Under the Hood</h2>
+        <p>Every Kubernetes cluster is divided into two halves: the <strong>Control Plane</strong> (the brains that make decisions) and the <strong>Worker Nodes</strong> (the muscles that run your containers).</p>
+
+        <h3>1. The Control Plane (The Brains)</h3>
+        <p>The Control Plane watches the cluster 24/7 and ensures reality matches your YAML files. It consists of four core components:</p>
+
+        <div class="words" role="table" aria-label="Control Plane components">
+          <div class="words__row" role="row">
+            <div class="words__term" role="cell">API Server (kube-apiserver)</div>
+            <p class="words__def" role="cell"><strong>The Front Desk.</strong> Every command you run with <code>kubectl</code>—and every message between internal components—goes through the API Server. It validates requests and is the only component allowed to talk to <code>etcd</code>.</p>
+          </div>
+          <div class="words__row" role="row">
+            <div class="words__term" role="cell">etcd</div>
+            <p class="words__def" role="cell"><strong>The Cluster Vault / Memory.</strong> A fast, distributed key-value database that stores the entire state of the cluster: what nodes exist, what pods are running, and all ConfigMaps and Secrets.</p>
+          </div>
+          <div class="words__row" role="row">
+            <div class="words__term" role="cell">Scheduler (kube-scheduler)</div>
+            <p class="words__def" role="cell"><strong>The Matchmaker.</strong> Watches for newly requested pods that don't have a server yet, checks the available CPU and RAM on every Worker Node, and assigns the pod to the best node.</p>
+          </div>
+          <div class="words__row" role="row">
+            <div class="words__term" role="cell">Controller Manager</div>
+            <p class="words__def" role="cell"><strong>The Watchdog Loop.</strong> Runs background control loops (Node Controller, Deployment/ReplicaSet Controller). If you asked for 3 pods and only 2 are alive, it immediately requests a 3rd.</p>
+          </div>
+        </div>
+
+        <h3>2. The Worker Nodes (The Muscles)</h3>
+        <p>Every Worker Node (EC2 server) runs three mandatory agents so it can receive orders from the Control Plane and execute containers:</p>
+
+        <div class="words" role="table" aria-label="Worker Node components">
+          <div class="words__row" role="row">
+            <div class="words__term" role="cell">Kubelet</div>
+            <p class="words__def" role="cell"><strong>The Kitchen Captain.</strong> An agent installed on every node. It listens to the API Server for pod assignments, tells the Container Runtime to start the containers, and reports health back to the Control Plane.</p>
+          </div>
+          <div class="words__row" role="row">
+            <div class="words__term" role="cell">Container Runtime</div>
+            <p class="words__def" role="cell"><strong>The Engine.</strong> The low-level software (usually <code>containerd</code> or <code>CRI-O</code>) that actually pulls the container image from the registry and starts/stops the Linux container process.</p>
+          </div>
+          <div class="words__row" role="row">
+            <div class="words__term" role="cell">Kube-proxy</div>
+            <p class="words__def" role="cell"><strong>The Traffic Router.</strong> Runs on every node and programs Linux networking rules (iptables/IPVS) so network traffic sent to a Kubernetes Service is forwarded to healthy pods anywhere in the cluster.</p>
+          </div>
+        </div>
+      </section>
+
+    </article>
+
+    <!-- ===== Full Architecture Diagram ===== -->
+    <section class="diagram-section" id="diagram">
+      <div class="diagram-head">
+        <span class="section__num" style="font-size:14px;font-weight:600;color:var(--accent-ink);display:block;margin-bottom:12px;">ARCHITECTURE DIAGRAM</span>
+        <h2 style="margin:0 0 20px;font-size:clamp(30px,4.4vw,40px);line-height:1.15;font-weight:700;letter-spacing:-0.028em;">Control Plane &amp; Worker Nodes</h2>
+        <p style="margin:0;color:var(--text-2);">How <code>kubectl</code> talks to the API Server, how the Control Plane schedules work, and how Kubelet, Kube-proxy, and containerd run your pods on Worker Nodes.</p>
+      </div>
+
+      <figure class="diagram" style="margin:0;">
+        <svg viewBox="0 0 960 600" role="img" aria-labelledby="k8s-arch-title k8s-arch-desc">
+          <title id="k8s-arch-title">Kubernetes Cluster Architecture Diagram</title>
+          <desc id="k8s-arch-desc">Shows kubectl communicating with the Control Plane (API Server, etcd, Scheduler, Controller Manager) which manages two Worker Nodes running Kubelet, Kube-proxy, Container Runtime, and Pods.</desc>
+
+          <defs>
+            <marker id="kah" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+              <path d="M0,1 L9,5 L0,9 z" class="d-arrow"/>
+            </marker>
+          </defs>
+
+          <!-- Cluster Boundary -->
+          <rect class="d-cloud" x="150" y="20" width="790" height="560" rx="22"/>
+          <text class="d-small" x="176" y="48">KUBERNETES CLUSTER</text>
+
+          <!-- Developer / kubectl -->
+          <rect class="d-box" x="14" y="105" width="112" height="76" rx="14"/>
+          <text class="d-title" x="70" y="138" text-anchor="middle">kubectl</text>
+          <text class="d-sub" x="70" y="160" text-anchor="middle">Your CLI / YAML</text>
+          <line class="d-line" x1="126" y1="143" x2="178" y2="143" marker-end="url(#kah)"/>
+
+          <!-- Control Plane Box -->
+          <rect class="d-control" x="180" y="65" width="735" height="155" rx="16"/>
+          <text class="d-small" x="204" y="92" style="fill:var(--accent-ink)">CONTROL PLANE · THE MANAGER (Run by AWS in EKS)</text>
+
+          <!-- API Server -->
+          <rect class="d-box" x="204" y="108" width="165" height="90" rx="10"/>
+          <text class="d-title" x="286" y="138" text-anchor="middle">API Server</text>
+          <text class="d-sub" x="286" y="160" text-anchor="middle">Front desk &amp; auth</text>
+          <text class="d-sub" x="286" y="180" text-anchor="middle">REST endpoint</text>
+
+          <!-- etcd -->
+          <rect class="d-box" x="385" y="108" width="155" height="90" rx="10"/>
+          <text class="d-title" x="462" y="138" text-anchor="middle">etcd</text>
+          <text class="d-sub" x="462" y="160" text-anchor="middle">Key-value vault</text>
+          <text class="d-sub" x="462" y="180" text-anchor="middle">Cluster state</text>
+
+          <!-- Scheduler -->
+          <rect class="d-box" x="556" y="108" width="160" height="90" rx="10"/>
+          <text class="d-title" x="636" y="138" text-anchor="middle">Scheduler</text>
+          <text class="d-sub" x="636" y="160" text-anchor="middle">Picks best Node</text>
+          <text class="d-sub" x="636" y="180" text-anchor="middle">Checks CPU/RAM</text>
+
+          <!-- Controller Manager -->
+          <rect class="d-box" x="732" y="108" width="165" height="90" rx="10"/>
+          <text class="d-title" x="814" y="138" text-anchor="middle">Controllers</text>
+          <text class="d-sub" x="814" y="160" text-anchor="middle">Watches replicas</text>
+          <text class="d-sub" x="814" y="180" text-anchor="middle">Auto-heals pods</text>
+
+          <!-- Control Plane to Worker Nodes arrows -->
+          <line class="d-line" x1="350" y1="220" x2="350" y2="262" marker-end="url(#kah)"/>
+          <line class="d-line" x1="720" y1="220" x2="720" y2="262" marker-end="url(#kah)"/>
+          <text class="d-sub" x="362" y="246">API Server &harr; Kubelet</text>
+          <text class="d-sub" x="732" y="246">API Server &harr; Kubelet</text>
+
+          <!-- Worker Node 1 -->
+          <rect class="d-node" x="180" y="268" width="352" height="290" rx="16"/>
+          <text class="d-small" x="202" y="295">WORKER NODE 1 · EC2 Server</text>
+
+          <!-- Node 1 Agents -->
+          <rect class="d-box" x="200" y="310" width="98" height="58" rx="8"/>
+          <text class="d-title" x="249" y="335" text-anchor="middle" style="font-size:13px">Kubelet</text>
+          <text class="d-sub" x="249" y="354" text-anchor="middle" style="font-size:11px">Node agent</text>
+
+          <rect class="d-box" x="307" y="310" width="102" height="58" rx="8"/>
+          <text class="d-title" x="358" y="335" text-anchor="middle" style="font-size:13px">containerd</text>
+          <text class="d-sub" x="358" y="354" text-anchor="middle" style="font-size:11px">Runtime</text>
+
+          <rect class="d-box" x="418" y="310" width="94" height="58" rx="8"/>
+          <text class="d-title" x="465" y="335" text-anchor="middle" style="font-size:13px">Kube-proxy</text>
+          <text class="d-sub" x="465" y="354" text-anchor="middle" style="font-size:11px">Network rules</text>
+
+          <!-- Node 1 Pods -->
+          <rect class="d-pod" x="200" y="384" width="150" height="154" rx="12"/>
+          <text class="d-podtitle" x="216" y="410">Pod · React UI</text>
+          <rect class="d-box" x="214" y="424" width="122" height="96" rx="8"/>
+          <text class="d-sub" x="275" y="465" text-anchor="middle">Container</text>
+          <text class="d-sub" x="275" y="486" text-anchor="middle">nginx:alpine (:80)</text>
+
+          <rect class="d-pod" x="362" y="384" width="150" height="154" rx="12"/>
+          <text class="d-podtitle" x="378" y="410">Pod · Orders API</text>
+          <rect class="d-box" x="376" y="424" width="122" height="96" rx="8"/>
+          <text class="d-sub" x="437" y="465" text-anchor="middle">Container</text>
+          <text class="d-sub" x="437" y="486" text-anchor="middle">node:22 (:3000)</text>
+
+          <!-- Worker Node 2 -->
+          <rect class="d-node" x="562" y="268" width="352" height="290" rx="16"/>
+          <text class="d-small" x="584" y="295">WORKER NODE 2 · EC2 Server</text>
+
+          <!-- Node 2 Agents -->
+          <rect class="d-box" x="582" y="310" width="98" height="58" rx="8"/>
+          <text class="d-title" x="631" y="335" text-anchor="middle" style="font-size:13px">Kubelet</text>
+          <text class="d-sub" x="631" y="354" text-anchor="middle" style="font-size:11px">Node agent</text>
+
+          <rect class="d-box" x="689" y="310" width="102" height="58" rx="8"/>
+          <text class="d-title" x="740" y="335" text-anchor="middle" style="font-size:13px">containerd</text>
+          <text class="d-sub" x="740" y="354" text-anchor="middle" style="font-size:11px">Runtime</text>
+
+          <rect class="d-box" x="800" y="310" width="94" height="58" rx="8"/>
+          <text class="d-title" x="847" y="335" text-anchor="middle" style="font-size:13px">Kube-proxy</text>
+          <text class="d-sub" x="847" y="354" text-anchor="middle" style="font-size:11px">Network rules</text>
+
+          <!-- Node 2 Pods -->
+          <rect class="d-pod" x="582" y="384" width="150" height="154" rx="12"/>
+          <text class="d-podtitle" x="598" y="410">Pod · React UI #2</text>
+          <rect class="d-box" x="596" y="424" width="122" height="96" rx="8"/>
+          <text class="d-sub" x="657" y="465" text-anchor="middle">Container</text>
+          <text class="d-sub" x="657" y="486" text-anchor="middle">nginx:alpine (:80)</text>
+
+          <rect class="d-pod" x="744" y="384" width="150" height="154" rx="12"/>
+          <text class="d-podtitle" x="760" y="410">Pod · Payments</text>
+          <rect class="d-box" x="758" y="424" width="122" height="96" rx="8"/>
+          <text class="d-sub" x="819" y="465" text-anchor="middle">Container</text>
+          <text class="d-sub" x="819" y="486" text-anchor="middle">node:22 (:4000)</text>
+        </svg>
+
+        <ul class="legend">
+          <li><strong>API Server &amp; etcd</strong>All commands enter via the API Server and are saved in <code>etcd</code>.</li>
+          <li><strong>Scheduler &amp; Controllers</strong>Controllers notice missing pods; Scheduler assigns them to a Worker Node with free capacity.</li>
+          <li><strong>Kubelet &amp; containerd</strong>Kubelet receives the order on the node and instructs <code>containerd</code> to pull and start the container.</li>
+          <li><strong>Kube-proxy</strong>Routes internal and external Service traffic cleanly to the right Pod IP.</li>
+        </ul>
+      </figure>
+    </section>
+
+    <article class="article">
+
+      <!-- ========================================================
+           Phase 3: Essential Kubernetes Components
+           ======================================================== -->
+      <section class="section" id="phase-3">
+        <span class="section__num">PHASE 03</span>
+        <h2>Essential Kubernetes Components</h2>
+        <p>When you write Kubernetes YAML files or run <code>kubectl</code> commands, you interact with these nine fundamental objects:</p>
+
+        <table class="cheat-table" aria-label="Essential Kubernetes Components">
+          <thead>
+            <tr>
+              <th style="width: 26%;">Object</th>
+              <th>What It Is &amp; Why You Use It</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>Pod</code></td>
+              <td>The smallest deployable unit in Kubernetes. Wraps one (or more tightly coupled) containers with a shared network IP and storage. Pods are disposable and ephemeral.</td>
+            </tr>
+            <tr>
+              <td><code>Node</code></td>
+              <td>A physical or virtual machine (like an AWS EC2 instance) that runs your Pods.</td>
+            </tr>
+            <tr>
+              <td><code>ReplicaSet</code></td>
+              <td>The count keeper. Ensures a specified number of identical Pod replicas (e.g., <code>replicas: 3</code>) are running at all times.</td>
+            </tr>
+            <tr>
+              <td><code>Deployment</code></td>
+              <td>The higher-level manager that owns a <strong>ReplicaSet</strong>. You almost never create raw Pods or ReplicaSets directly—you create a Deployment so you get rolling updates and easy rollbacks.</td>
+            </tr>
+            <tr>
+              <td><code>Service</code></td>
+              <td>Provides one permanent IP address, DNS name, and load balancer in front of a set of changing Pods.</td>
+            </tr>
+            <tr>
+              <td><code>Namespace</code></td>
+              <td>Virtual folders inside a single cluster to isolate teams or environments (e.g., <code>default</code>, <code>kube-system</code>, <code>dev</code>, <code>prod</code>).</td>
+            </tr>
+            <tr>
+              <td><code>Labels &amp; Selectors</code></td>
+              <td><strong>Labels</strong> are key-value sticky notes attached to Pods (e.g., <code>app: react-ui</code>). <strong>Selectors</strong> are how Services and Deployments find all Pods with that sticky note.</td>
+            </tr>
+            <tr>
+              <td><code>ConfigMap</code></td>
+              <td>Stores non-sensitive configuration data (like <code>API_URL=https://api.example.com</code> or <code>nginx.conf</code>) decoupled from your container image.</td>
+            </tr>
+            <tr>
+              <td><code>Secret</code></td>
+              <td>Stores sensitive data (database passwords, API tokens, TLS certs) separately so you never hardcode credentials inside a Dockerfile.</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="analogy">
+          <span class="analogy__label">How Deployment, ReplicaSet, and Pods connect</span>
+          <p><strong>Deployment</strong> manages &rarr; <strong>ReplicaSet</strong> (keeps the count at 3) which creates &rarr; <strong>3 Pods</strong>. When you update your app image, the Deployment creates a <em>new</em> ReplicaSet and smoothly shifts pods over one by one.</p>
+        </div>
+      </section>
+
+      <!-- ========================================================
+           Phase 4: Installation, Setup & YAML
+           ======================================================== -->
+      <section class="section" id="phase-4">
+        <span class="section__num">PHASE 04</span>
+        <h2>Kubernetes Installation, Setup &amp; YAML</h2>
+        <p>To practice Kubernetes, you need two things: the remote control CLI (<code>kubectl</code>) and a Kubernetes cluster (either free on your laptop with <strong>Minikube / Kind</strong>, or in the cloud with <strong>Amazon EKS</strong>).</p>
+
+        <h3>1. Install kubectl &amp; a Local Cluster (Minikube or Kind)</h3>
+        <pre class="code"><span class="c"># Install kubectl and Minikube on macOS (Homebrew)</span>
+brew install kubernetes-cli minikube
+
+<span class="c"># Start a local single-node Kubernetes cluster on your laptop (requires Docker running)</span>
+minikube start
+
+<span class="c"># Verify kubectl is connected to your cluster</span>
+kubectl cluster-info
+kubectl get nodes</pre>
+
+        <div class="pair">
+          <div class="pair__item">
+            <h3>Minikube / Kind · Local Practice</h3>
+            <p>Runs a miniature Kubernetes cluster inside Docker on your laptop for free. Ideal for learning YAML syntax, Pods, and Services without spending a cent.</p>
+          </div>
+          <div class="pair__item">
+            <h3>Amazon EKS · Cloud Production</h3>
+            <p>AWS runs the Control Plane across 3 data centers and provisions real EC2 Worker Nodes and cloud Load Balancers. Connect anytime with <code>aws eks update-kubeconfig --name myEks</code>.</p>
+          </div>
+        </div>
+
+        <h3>2. Basic kubectl Commands</h3>
+        <p>Every <code>kubectl</code> command follows a simple grammar: <code>kubectl &lt;action&gt; &lt;resource&gt; [name] [flags]</code>.</p>
+        <pre class="code"><span class="c"># Check cluster contexts (switch between local minikube and AWS EKS)</span>
+kubectl config get-contexts
+kubectl config current-context
+
+<span class="c"># List nodes, pods, deployments, and services</span>
+kubectl get nodes
+kubectl get pods -A
+kubectl get deployments
+kubectl get services
+
+<span class="c"># Apply or delete a YAML manifest file</span>
+kubectl apply -f deployment.yaml
+kubectl delete -f deployment.yaml</pre>
+
+        <h3>3. Understand Kubernetes YAML Files (The 4 Mandatory Fields)</h3>
+        <p>Every Kubernetes YAML manifest in the world—whether it’s a Pod, a Deployment, a Service, or an Ingress—always has the exact same <strong>four root fields</strong>:</p>
+
+        <div class="words words--cmd" role="table" aria-label="4 mandatory Kubernetes YAML fields">
+          <div class="words__row" role="row">
+            <div class="words__term" role="cell">1. apiVersion</div>
+            <p class="words__def" role="cell">Which version of the Kubernetes API schema to use (e.g., <code>v1</code> for Pods/Services, <code>apps/v1</code> for Deployments).</p>
+          </div>
+          <div class="words__row" role="row">
+            <div class="words__term" role="cell">2. kind</div>
+            <p class="words__def" role="cell">What type of object you want to create (e.g., <code>Pod</code>, <code>Deployment</code>, <code>Service</code>, <code>ConfigMap</code>).</p>
+          </div>
+          <div class="words__row" role="row">
+            <div class="words__term" role="cell">3. metadata</div>
+            <p class="words__def" role="cell">Identity tags for the object: its <code>name</code>, <code>namespace</code>, and <code>labels</code>.</p>
+          </div>
+          <div class="words__row" role="row">
+            <div class="words__term" role="cell">4. spec</div>
+            <p class="words__def" role="cell"><strong>Specification (Desired State).</strong> The blueprint describing what you want inside the object: which container image, which ports, and how many replicas.</p>
+          </div>
+        </div>
+
+        <pre class="code"><span class="c"># Example: The 4 mandatory sections in a simple Pod YAML</span>
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx-demo
+  labels:
+    app: web
+spec:
+  containers:
+    - name: nginx
+      image: nginx:alpine
+      ports:
+        - containerPort: 80</pre>
+      </section>
+
+      <!-- ========================================================
+           Quick Recap
+           ======================================================== -->
+      <section class="section" id="recap">
+        <span class="section__num">RECAP</span>
+        <h2>Quick recap: Phases 1–4</h2>
+        <ul class="recap">
+          <li><span><strong>Docker</strong> packages an app into a container; <strong>Kubernetes</strong> orchestrates containers across many servers.</span></li>
+          <li><span>The <strong>Control Plane</strong> (API Server, etcd, Scheduler, Controller Manager) makes all scheduling and self-healing decisions.</span></li>
+          <li><span><strong>Worker Nodes</strong> run <strong>Kubelet</strong>, <strong>containerd</strong>, and <strong>Kube-proxy</strong> to execute your Pods.</span></li>
+          <li><span><strong>Deployments</strong> manage <strong>ReplicaSets</strong>, which manage <strong>Pods</strong>; <strong>Services</strong> provide a stable network endpoint using <strong>Labels &amp; Selectors</strong>.</span></li>
+          <li><span>Every Kubernetes YAML file contains <code>apiVersion</code>, <code>kind</code>, <code>metadata</code>, and <code>spec</code>.</span></li>
+        </ul>
+
+        <div class="oneline" style="margin-top:40px;">
+          <span class="oneline__label">Ready for Phases 5–8?</span>
+          <p>Now that you understand the architecture and components, move to Part 2 to deploy applications, configure Services &amp; Ingress, attach persistent EBS storage, and set up ConfigMaps, Secrets, and health probes.</p>
+        </div>
+      </section>
+
+    </article>
+  </main>
+
+  <nav class="more" aria-label="Previous and next guides">
+    <p class="more__label">Continue the Kubernetes Track</p>
+    <div class="more__grid">
+      <a href="k8s-workloads.html"><strong>Part 2: Workloads, Net &amp; Storage</strong><span>Phases 5–8: Deployments, Services, Ingress, PVCs, ConfigMaps &amp; Probes.</span><em>Next in K8s Track &rarr;</em></a>
+      <a href="eks.html"><strong>Part 3: Amazon EKS &amp; 8 Projects</strong><span>Phases 9–10: AWS EKS, Troubleshooting, Scaling, Helm &amp; 8 Beginner Projects.</span><em>Cloud Production &rarr;</em></a>
+      <a href="eks-commands.html"><strong>Part 4: EKS CLI Cheat Sheet</strong><span>Copy-paste terminal commands &amp; React ECR deployment.</span><em>Open Cheat Sheet &rarr;</em></a>
+    </div>
+  </nav>
+
+  <footer class="footer sitefoot">
+    <p class="sitefoot__fine">Kubernetes Basics Syllabus (Phases 1–4). Simplified on purpose. Real systems have more moving parts, but these ideas are the foundation for all of them.</p>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
+

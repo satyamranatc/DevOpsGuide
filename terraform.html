@@ -569,73 +569,9 @@ terraform destroy</pre>
   </nav>
 
   <footer class="footer sitefoot">
-    <div class="sitefoot__inner">
-      <div class="sitefoot__brand">
-        <a href="index.html">Deploybook</a>
-        <p>Plain-English DevOps guides, from your first commit to a live app.</p>
-        <a class="sitefoot__home" href="index.html#roadmap">See the full roadmap &rarr;</a>
-      </div>
-      <nav aria-label="All guides">
-        <p class="sitefoot__label">All guides, in reading order</p>
-        <ol>
-          <li><a href="github.html">Git &amp; GitHub</a></li>
-          <li><a href="shell.html">Shell scripting</a></li>
-          <li><a href="aws.html">AWS essentials</a></li>
-          <li><a href="ec2.html">EC2 servers</a></li>
-          <li><a href="docker.html">Docker</a></li>
-          <li><a href="nginx.html">Nginx</a></li>
-          <li><a href="cicd.html">CI/CD with GitHub Actions</a></li>
-          <li><a href="eks.html">EKS</a></li>
-          <li><a href="terraform.html" aria-current="page">Terraform</a></li>
-          <li><a href="grafana.html">Grafana</a></li>
-        </ol>
-      </nav>
-    </div>
     <p class="sitefoot__fine">A beginner’s guide to Terraform &amp; Infrastructure as Code. Simplified on purpose. Real systems have more moving parts, but these ideas are the foundation for all of them.</p>
   </footer>
 
-  <script>
-    (function () {
-      var body = document.body;
-      var openBtn = document.getElementById('menu-open');
-      var closeBtn = document.getElementById('menu-close');
-      var scrim = document.getElementById('scrim');
-      var drawer = document.getElementById('drawer');
-
-      var wide = window.matchMedia('(min-width: 1025px)');
-      var KEY = 'sidebar-closed';
-      var stored = null;
-      try { stored = localStorage.getItem(KEY); } catch (e) {}
-      if (stored === '1') body.classList.add('side-closed');
-
-      function isOpen() {
-        return wide.matches ? !body.classList.contains('side-closed') : body.classList.contains('menu-open');
-      }
-      function syncAria() {
-        var visible = isOpen();
-        drawer.setAttribute('aria-hidden', String(!visible));
-        openBtn.setAttribute('aria-expanded', String(visible));
-      }
-      function setOpen(open) {
-        if (wide.matches) {
-          body.classList.toggle('side-closed', !open);
-          try { localStorage.setItem(KEY, open ? '0' : '1'); } catch (e) {}
-        } else {
-          body.classList.toggle('menu-open', open);
-          (open ? closeBtn : openBtn).focus();
-        }
-        syncAria();
-      }
-      openBtn.addEventListener('click', function () { setOpen(!isOpen()); });
-      closeBtn.addEventListener('click', function () { setOpen(false); });
-      scrim.addEventListener('click', function () { setOpen(false); });
-      document.addEventListener('keydown', function (e) {
-        if (e.key === 'Escape' && !wide.matches && body.classList.contains('menu-open')) setOpen(false);
-      });
-      var onChange = function () { body.classList.remove('menu-open'); syncAria(); };
-      if (wide.addEventListener) wide.addEventListener('change', onChange); else wide.addListener(onChange);
-      syncAria();
-    })();
-  </script>
+  <script src="app.js"></script>
 </body>
 </html>
