@@ -145,290 +145,100 @@
 
   <main>
 
-    <!-- ===== Award-Winning Interactive Hero ===== -->
+    <!-- ===== Simple, Clean Hero ===== -->
     <div class="stage-bg" id="hero-stage">
-      <div class="hero-backdrop" aria-hidden="true">
-        <div class="hero-backdrop__grid"></div>
-        <div class="hero-backdrop__glow" id="hero-spotlight"></div>
-      </div>
+      <div class="aurora" aria-hidden="true"></div>
 
-      <section class="hero-pro" aria-labelledby="hero-headline">
-        <!-- Top Status Bar / Eyebrow -->
-        <div class="hero-pro__top reveal">
-          <a class="hero-status" href="#roadmap">
-            <span class="hero-status__dot" aria-hidden="true"></span>
-            <span class="hero-status__tag">OPEN ENGINEERING LIBRARY</span>
-            <span class="hero-status__sep" aria-hidden="true">&middot;</span>
-            <span class="hero-status__text">9 Stages &middot; 13 Live Guides &middot; 10-Phase K8s Syllabus</span>
-            <span class="hero-status__arrow" aria-hidden="true">&rarr;</span>
-          </a>
+      <section class="hero2" aria-labelledby="hero-headline">
+        <a class="badge reveal" href="#roadmap">
+          <b></b>
+          <span>New to DevOps? Start here &middot; 13 live guides</span>
+        </a>
+
+        <h1 id="hero-headline" class="reveal" data-d="1">
+          Learn DevOps,<br><em>one simple guide at a time.</em>
+        </h1>
+
+        <p class="hero2__lead reveal" data-d="2">
+          Plain English, visual diagrams, and real commands&mdash;from your first Git commit to Kubernetes on AWS. Each guide takes about 10 minutes.
+        </p>
+
+        <div class="hero2__cta reveal" data-d="3">
+          <a class="btn btn--primary" href="github.html">Start with Git &amp; GitHub <span aria-hidden="true">&rarr;</span></a>
+          <a class="btn btn--ghost" href="kubernetes.html">Kubernetes 10-Phase Track</a>
+          <a class="btn btn--ghost" href="#roadmap">Full roadmap</a>
         </div>
 
-        <!-- Main Asymmetric Split: Value Proposition + Interactive Pipeline Console -->
-        <div class="hero-pro__grid">
-          <!-- Left Column: Purpose, Value Prop & Clear Actions -->
-          <div class="hero-pro__copy">
-            <h1 id="hero-headline" class="hero-pro__title reveal" data-d="1">
-              From first commit to <span class="hero-pro__accent">cloud production.</span><br>
-              <span class="hero-pro__serif">Explained in plain English.</span>
-            </h1>
+        <!-- Simple Interactive 5-Step Journey Strip -->
+        <div class="hero-flow reveal" data-d="3" aria-label="How the DevOps journey works">
+          <div class="hero-flow__steps" role="tablist" aria-label="DevOps stages">
+            <button type="button" class="hero-flow__step is-active" role="tab" aria-selected="true" data-step="0">
+              <span class="hero-flow__num">01</span>
+              <span class="hero-flow__name">Git &amp; Bash</span>
+            </button>
+            <span class="hero-flow__arrow" aria-hidden="true">&rarr;</span>
+            <button type="button" class="hero-flow__step" role="tab" aria-selected="false" data-step="1">
+              <span class="hero-flow__num">02</span>
+              <span class="hero-flow__name">AWS &amp; Nginx</span>
+            </button>
+            <span class="hero-flow__arrow" aria-hidden="true">&rarr;</span>
+            <button type="button" class="hero-flow__step" role="tab" aria-selected="false" data-step="2">
+              <span class="hero-flow__num">03</span>
+              <span class="hero-flow__name">Docker</span>
+            </button>
+            <span class="hero-flow__arrow" aria-hidden="true">&rarr;</span>
+            <button type="button" class="hero-flow__step" role="tab" aria-selected="false" data-step="3">
+              <span class="hero-flow__num">04</span>
+              <span class="hero-flow__name">CI/CD</span>
+            </button>
+            <span class="hero-flow__arrow" aria-hidden="true">&rarr;</span>
+            <button type="button" class="hero-flow__step" role="tab" aria-selected="false" data-step="4">
+              <span class="hero-flow__num">05</span>
+              <span class="hero-flow__name">Kubernetes &amp; EKS</span>
+            </button>
+            <span class="hero-flow__arrow" aria-hidden="true">&rarr;</span>
+            <button type="button" class="hero-flow__step" role="tab" aria-selected="false" data-step="5">
+              <span class="hero-flow__num">06</span>
+              <span class="hero-flow__name">Terraform &amp; Grafana</span>
+            </button>
+          </div>
 
-            <p class="hero-pro__lead reveal" data-d="2">
-              Stop drowning in 2,000-page cloud manuals. <strong>Deploybook</strong> turns Linux, Docker, AWS, CI/CD, Kubernetes, and Terraform into visual mental models and copy-pasteable production workflows you can master in <strong>10 minutes per guide</strong>.
+          <div class="hero-flow__card" id="hero-flow-card" role="tabpanel">
+            <p class="hero-flow__desc" id="hero-flow-desc">
+              <strong>Stage 01 &middot; Save &amp; automate code:</strong> Track every change with Git, collaborate on GitHub, and automate repetitive server commands with Bash scripts.
             </p>
-
-            <!-- Value Pillars (Why care?) -->
-            <ul class="hero-pillars reveal" data-d="2" aria-label="Why learn with Deploybook">
-              <li>
-                <span class="hero-pillars__icon" aria-hidden="true">&#9670;</span>
-                <div>
-                  <strong>Zero Jargon</strong>
-                  <span>Every concept starts with a real-world analogy before touching YAML or CLI flags.</span>
-                </div>
-              </li>
-              <li>
-                <span class="hero-pillars__icon" aria-hidden="true">&#9670;</span>
-                <div>
-                  <strong>Visual Architecture</strong>
-                  <span>Interactive system diagrams show exactly how traffic flows from DNS to containers.</span>
-                </div>
-              </li>
-              <li>
-                <span class="hero-pillars__icon" aria-hidden="true">&#9670;</span>
-                <div>
-                  <strong>Production Commands</strong>
-                  <span>Battle-tested commands for Git, Docker, GitHub Actions, Amazon EKS, and Terraform.</span>
-                </div>
-              </li>
-            </ul>
-
-            <!-- Primary & Secondary CTAs (What to do next?) -->
-            <div class="hero-pro__actions reveal" data-d="3">
-              <a class="btn btn--primary btn--hero" href="github.html">
-                <span>Start Stage 01: Git &amp; GitHub</span>
-                <kbd class="btn__kbd" aria-hidden="true">8 min</kbd>
-                <span aria-hidden="true">&rarr;</span>
-              </a>
-              <a class="btn btn--ghost btn--hero" href="kubernetes.html">
-                <span>10-Phase Kubernetes Track</span>
-              </a>
-              <a class="btn btn--subtle" href="diagrams.html">
-                <span>Architecture Diagrams</span>
-                <span aria-hidden="true">&#8599;</span>
-              </a>
-            </div>
-
-            <!-- Trust / Proof Telemetry Strip -->
-            <div class="hero-metrics reveal" data-d="3" aria-label="Library metrics">
-              <div class="hero-metrics__item">
-                <strong>9</strong>
-                <span>Ordered Stages</span>
-              </div>
-              <div class="hero-metrics__item">
-                <strong>13</strong>
-                <span>Live Deep-Dives</span>
-              </div>
-              <div class="hero-metrics__item">
-                <strong>8</strong>
-                <span>Hands-On K8s Labs</span>
-              </div>
-              <div class="hero-metrics__item">
-                <strong>100%</strong>
-                <span>Free &amp; No Sign-Up</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- Right Column: Interactive "Commit to Cloud" Live Architecture Simulator -->
-          <div class="hero-pro__visual reveal" data-d="2">
-            <div class="pipeline-console" id="pipeline-console" role="region" aria-label="Interactive DevOps Deployment Pipeline Visualizer">
-              <!-- Console Window Header -->
-              <div class="pipeline-console__bar">
-                <div class="pipeline-console__dots" aria-hidden="true">
-                  <span></span><span></span><span></span>
-                </div>
-                <div class="pipeline-console__title">
-                  <span class="pipeline-console__pulse" aria-hidden="true"></span>
-                  <span>deploybook://live-architecture-pipeline</span>
-                </div>
-                <div class="pipeline-console__controls">
-                  <button type="button" class="pipeline-console__play" id="pipeline-autoplay" aria-pressed="true" title="Toggle auto-stepping through pipeline stages">
-                    <span class="pipeline-console__play-dot" aria-hidden="true"></span>
-                    <span id="pipeline-autoplay-label">Auto</span>
-                  </button>
-                </div>
-              </div>
-
-              <!-- Interactive 6-Stage Stepper Tabs -->
-              <div class="pipeline-tabs" role="tablist" aria-label="Deployment lifecycle stages">
-                <button type="button" class="pipeline-tab is-active" role="tab" aria-selected="true" aria-controls="pipeline-panel" id="ptab-0" data-stage="0">
-                  <span class="pipeline-tab__num">01</span>
-                  <span class="pipeline-tab__name">Git Push</span>
-                </button>
-                <button type="button" class="pipeline-tab" role="tab" aria-selected="false" aria-controls="pipeline-panel" id="ptab-1" data-stage="1">
-                  <span class="pipeline-tab__num">02</span>
-                  <span class="pipeline-tab__name">Docker</span>
-                </button>
-                <button type="button" class="pipeline-tab" role="tab" aria-selected="false" aria-controls="pipeline-panel" id="ptab-2" data-stage="2">
-                  <span class="pipeline-tab__num">03</span>
-                  <span class="pipeline-tab__name">CI/CD</span>
-                </button>
-                <button type="button" class="pipeline-tab" role="tab" aria-selected="false" aria-controls="pipeline-panel" id="ptab-3" data-stage="3">
-                  <span class="pipeline-tab__num">04</span>
-                  <span class="pipeline-tab__name">AWS &amp; Nginx</span>
-                </button>
-                <button type="button" class="pipeline-tab" role="tab" aria-selected="false" aria-controls="pipeline-panel" id="ptab-4" data-stage="4">
-                  <span class="pipeline-tab__num">05</span>
-                  <span class="pipeline-tab__name">K8s &amp; EKS</span>
-                </button>
-                <button type="button" class="pipeline-tab" role="tab" aria-selected="false" aria-controls="pipeline-panel" id="ptab-5" data-stage="5">
-                  <span class="pipeline-tab__num">06</span>
-                  <span class="pipeline-tab__name">Observe</span>
-                </button>
-              </div>
-
-              <!-- Auto-progress indicator line -->
-              <div class="pipeline-progress" aria-hidden="true">
-                <div class="pipeline-progress__bar" id="pipeline-progress-bar"></div>
-              </div>
-
-              <!-- Interactive Visual Topology Map (SVG + Nodes) -->
-              <div class="pipeline-stage" id="pipeline-panel" role="tabpanel" aria-labelledby="ptab-0">
-                <div class="pipeline-map" aria-hidden="true">
-                  <svg class="pipeline-map__svg" viewBox="0 0 600 120" preserveAspectRatio="xMidYMid meet">
-                    <defs>
-                      <linearGradient id="pipeLineGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-                        <stop offset="0%" stop-color="#3b82f6" stop-opacity="0.2" />
-                        <stop offset="50%" stop-color="#60a5fa" stop-opacity="0.95" />
-                        <stop offset="100%" stop-color="#34d399" stop-opacity="0.85" />
-                      </linearGradient>
-                    </defs>
-                    <!-- Base connector track -->
-                    <line x1="55" y1="60" x2="545" y2="60" stroke="rgba(255,255,255,0.09)" stroke-width="2" stroke-dasharray="4 4" />
-                    <!-- Active progress connector -->
-                    <line id="pipeline-svg-active-line" x1="55" y1="60" x2="55" y2="60" stroke="url(#pipeLineGrad)" stroke-width="3" stroke-linecap="round" />
-                    <!-- Animated data packet -->
-                    <circle class="pipeline-map__packet" cx="55" cy="60" r="4" fill="#60a5fa" />
-
-                    <!-- 6 Interactive Topology Nodes -->
-                    <g class="pnode is-active" data-node="0" transform="translate(55, 60)">
-                      <circle class="pnode__ring" r="24" />
-                      <circle class="pnode__core" r="16" />
-                      <text y="4" text-anchor="middle" class="pnode__label">GIT</text>
-                      <text y="39" text-anchor="middle" class="pnode__sub">Commit</text>
-                    </g>
-                    <g class="pnode" data-node="1" transform="translate(153, 60)">
-                      <circle class="pnode__ring" r="24" />
-                      <circle class="pnode__core" r="16" />
-                      <text y="4" text-anchor="middle" class="pnode__label">IMG</text>
-                      <text y="39" text-anchor="middle" class="pnode__sub">Docker</text>
-                    </g>
-                    <g class="pnode" data-node="2" transform="translate(251, 60)">
-                      <circle class="pnode__ring" r="24" />
-                      <circle class="pnode__core" r="16" />
-                      <text y="4" text-anchor="middle" class="pnode__label">CI</text>
-                      <text y="39" text-anchor="middle" class="pnode__sub">Actions</text>
-                    </g>
-                    <g class="pnode" data-node="3" transform="translate(349, 60)">
-                      <circle class="pnode__ring" r="24" />
-                      <circle class="pnode__core" r="16" />
-                      <text y="4" text-anchor="middle" class="pnode__label">AWS</text>
-                      <text y="39" text-anchor="middle" class="pnode__sub">EC2/Nginx</text>
-                    </g>
-                    <g class="pnode" data-node="4" transform="translate(447, 60)">
-                      <circle class="pnode__ring" r="24" />
-                      <circle class="pnode__core" r="16" />
-                      <text y="4" text-anchor="middle" class="pnode__label">EKS</text>
-                      <text y="39" text-anchor="middle" class="pnode__sub">K8s Pods</text>
-                    </g>
-                    <g class="pnode" data-node="5" transform="translate(545, 60)">
-                      <circle class="pnode__ring" r="24" />
-                      <circle class="pnode__core" r="16" />
-                      <text y="4" text-anchor="middle" class="pnode__label">MON</text>
-                      <text y="39" text-anchor="middle" class="pnode__sub">Grafana</text>
-                    </g>
-                  </svg>
-                </div>
-
-                <!-- Plain-English Mental Model Card for Active Stage -->
-                <div class="pipeline-explain">
-                  <div class="pipeline-explain__head">
-                    <span class="pipeline-explain__badge" id="p-stage-badge">STAGE 01 &middot; VERSION CONTROL</span>
-                    <span class="pipeline-explain__metric" id="p-stage-metric">HEAD &rarr; main</span>
-                  </div>
-                  <h2 class="pipeline-explain__title" id="p-stage-title">Save a snapshot &amp; collaborate safely</h2>
-                  <p class="pipeline-explain__analogy" id="p-stage-analogy">
-                    <strong>Plain-English mental model:</strong> Git is a time machine for your code; GitHub is the shared cloud vault where your team reviews changes before merging.
-                  </p>
-                </div>
-
-                <!-- Live Terminal Preview for Active Stage -->
-                <div class="pipeline-term">
-                  <div class="pipeline-term__head">
-                    <span class="pipeline-term__prompt">terminal &mdash; zsh</span>
-                    <button type="button" class="pipeline-term__copy" id="p-copy-btn" aria-label="Copy stage command">
-                      <span id="p-copy-label">Copy command</span>
-                    </button>
-                  </div>
-                  <pre class="pipeline-term__code"><code id="p-stage-cmd">$ git checkout -b feat/payment-api
-$ git commit -m "Add Stripe webhook handler"
-$ git push -u origin feat/payment-api</code></pre>
-                  <div class="pipeline-term__out" id="p-stage-out">
-                    <span class="pipeline-term__status">&#10003;</span>
-                    <span id="p-stage-out-text">Branch pushed &middot; Pull Request #42 opened for team review</span>
-                  </div>
-                </div>
-
-                <!-- Stage Action Footer -->
-                <div class="pipeline-footer">
-                  <div class="pipeline-footer__meta">
-                    <span class="pipeline-footer__hint">Use <kbd>&larr;</kbd> <kbd>&rarr;</kbd> keys or click any stage above</span>
-                  </div>
-                  <a class="pipeline-footer__link" id="p-stage-link" href="github.html">
-                    <span id="p-stage-link-text">Read Stage 01: Git &amp; GitHub (8 min)</span>
-                    <span aria-hidden="true">&rarr;</span>
-                  </a>
-                </div>
-              </div>
-            </div>
+            <a class="hero-flow__link" id="hero-flow-link" href="github.html">Read Git &amp; GitHub (8 min) &rarr;</a>
           </div>
         </div>
 
-        <!-- Interactive Quick-Jump Command Bar (Filterable Curriculum Strip) -->
-        <div class="hero-quickbar reveal" data-d="3" aria-label="Quick jump to any guide">
-          <div class="hero-quickbar__header">
-            <div class="hero-quickbar__title">
-              <span class="hero-quickbar__spark" aria-hidden="true">&#9889;</span>
-              <span>Jump straight to a live guide or reference</span>
-            </div>
-            <div class="hero-quickbar__filters" role="group" aria-label="Filter guides by track">
-              <button type="button" class="qfilter is-active" data-filter="all">All (15)</button>
-              <button type="button" class="qfilter" data-filter="foundations">Foundations</button>
-              <button type="button" class="qfilter" data-filter="cloud">AWS &amp; Containers</button>
-              <button type="button" class="qfilter" data-filter="k8s">Kubernetes (10-Phase)</button>
-              <button type="button" class="qfilter" data-filter="ops">CI/CD, IaC &amp; Monitoring</button>
-            </div>
-          </div>
-
-          <ul class="quick__list" id="hero-quick-list">
-            <li data-cat="foundations"><a href="diagrams.html" class="quick-card quick-card--featured"><span class="quick-card__tag">Visuals</span><strong>Architecture Diagrams</strong><span>Docker, EC2, Nginx, K8s</span></a></li>
-            <li data-cat="foundations"><a href="encyclopedia.html" class="quick-card quick-card--featured"><span class="quick-card__tag">50+ Terms</span><strong>Tech Encyclopedia</strong><span>1-line plain-English defs</span></a></li>
-            <li data-cat="foundations"><a href="github.html" class="quick-card"><span class="quick-card__tag">Stage 01</span><strong>Git &amp; GitHub</strong><span>8 min read</span></a></li>
-            <li data-cat="foundations"><a href="shell.html" class="quick-card"><span class="quick-card__tag">Stage 02</span><strong>Shell Scripting</strong><span>12 min read</span></a></li>
-            <li data-cat="cloud"><a href="aws.html" class="quick-card"><span class="quick-card__tag">Stage 03</span><strong>AWS Essentials</strong><span>14 min read</span></a></li>
-            <li data-cat="cloud"><a href="ec2.html" class="quick-card"><span class="quick-card__tag">Stage 04</span><strong>EC2 Servers</strong><span>15 min read</span></a></li>
-            <li data-cat="cloud"><a href="docker.html" class="quick-card"><span class="quick-card__tag">Stage 05</span><strong>Docker</strong><span>12 min read</span></a></li>
-            <li data-cat="cloud"><a href="nginx.html" class="quick-card"><span class="quick-card__tag">Stage 06</span><strong>Nginx &amp; HTTPS</strong><span>14 min read</span></a></li>
-            <li data-cat="ops"><a href="cicd.html" class="quick-card"><span class="quick-card__tag">Stage 07</span><strong>CI/CD Actions</strong><span>20 min read</span></a></li>
-            <li data-cat="k8s"><a href="kubernetes.html" class="quick-card quick-card--k8s"><span class="quick-card__tag">K8s Pt 1</span><strong>Kubernetes Basics</strong><span>Phases 1–4 &middot; Architecture</span></a></li>
-            <li data-cat="k8s"><a href="k8s-workloads.html" class="quick-card quick-card--k8s"><span class="quick-card__tag">K8s Pt 2</span><strong>K8s Workloads</strong><span>Phases 5–8 &middot; Net &amp; EBS</span></a></li>
-            <li data-cat="k8s"><a href="eks.html" class="quick-card quick-card--k8s"><span class="quick-card__tag">K8s Pt 3</span><strong>Amazon EKS</strong><span>Phases 9–10 &middot; 8 Projects</span></a></li>
-            <li data-cat="k8s"><a href="eks-commands.html" class="quick-card quick-card--k8s"><span class="quick-card__tag">K8s CLI</span><strong>EKS Cheat Sheet</strong><span>kubectl &amp; ECR deploy</span></a></li>
-            <li data-cat="ops"><a href="terraform.html" class="quick-card"><span class="quick-card__tag">Stage 09</span><strong>Terraform IaC</strong><span>15 min read</span></a></li>
-            <li data-cat="ops"><a href="grafana.html" class="quick-card"><span class="quick-card__tag">Stage 10</span><strong>Grafana</strong><span>13 min read</span></a></li>
+        <!-- Clean Quick-Jump List -->
+        <div class="quick reveal" data-d="3">
+          <p class="quick__label">Or jump straight to any guide</p>
+          <ul class="quick__list">
+            <li><a href="diagrams.html" class="quick__featured"><strong>Diagrams</strong><span>Visual cheatsheet</span></a></li>
+            <li><a href="encyclopedia.html" class="quick__featured"><strong>Encyclopedia</strong><span>50+ DevOps terms</span></a></li>
+            <li><a href="github.html"><strong>Git &amp; GitHub</strong><span>8 min read</span></a></li>
+            <li><a href="shell.html"><strong>Shell scripting</strong><span>12 min read</span></a></li>
+            <li><a href="aws.html"><strong>AWS essentials</strong><span>14 min read</span></a></li>
+            <li><a href="ec2.html"><strong>EC2 servers</strong><span>15 min read</span></a></li>
+            <li><a href="docker.html"><strong>Docker</strong><span>12 min read</span></a></li>
+            <li><a href="nginx.html"><strong>Nginx</strong><span>14 min read</span></a></li>
+            <li><a href="cicd.html"><strong>CI/CD</strong><span>20 min read</span></a></li>
+            <li><a href="kubernetes.html"><strong>Kubernetes</strong><span>10-Phase Track</span></a></li>
+            <li><a href="k8s-workloads.html"><strong>K8s Workloads</strong><span>Net, EBS &amp; Probes</span></a></li>
+            <li><a href="eks.html"><strong>Amazon EKS</strong><span>Cloud &amp; 8 Projects</span></a></li>
+            <li><a href="eks-commands.html"><strong>EKS CLI</strong><span>10 min read</span></a></li>
+            <li><a href="terraform.html"><strong>Terraform</strong><span>15 min read</span></a></li>
+            <li><a href="grafana.html"><strong>Grafana</strong><span>13 min read</span></a></li>
           </ul>
         </div>
       </section>
+
+      <div class="stats reveal" aria-label="Library at a glance">
+        <div><strong>9</strong><span>stages</span></div>
+        <div><strong>13</strong><span>live guides</span></div>
+        <div><strong>~10 min</strong><span>per guide</span></div>
+      </div>
 
       <!-- Tool ribbon -->
       <div class="marquee" aria-label="Tools you will learn">
